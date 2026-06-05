@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan — Selling — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; display: flex; flex-direction: column; overflow: hidden; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+
+    /* ── APP SHELL ── */
+    .app-shell { flex: 1; min-height: 0; display: flex; flex-direction: row; overflow: hidden; }
+
+    /* ── LEFT ICON NAV ── */
+    .icon-nav { width: 64px; flex-shrink: 0; height: 100%; background: #ffffff; border-right: 1px solid #DEE2E6; display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 4px; }
+    .icon-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; width: 100%; cursor: pointer; text-decoration: none; }
+    .icon-nav-item:hover { background: #F8F9FA; opacity: 1; }
+    .icon-glyph { width: 28px; height: 28px; border-radius: 50%; background: #DCDEE5; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #495057; }
+    .icon-label { font-size: 10px; color: #495057; font-weight: 500; }
+    .icon-nav-item.active .icon-glyph { background: #212529; color: #ffffff; }
+    .icon-nav-item.active .icon-label { color: #000000; font-weight: 700; }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { flex-shrink: 0; padding: 28px 40px 0; background: #F8F9FA; }
+    .page-title { font-size: 36px; font-weight: 900; color: #000000; margin-bottom: 16px; }
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #DEE2E6; }
+    .plan-tab { font-size: 15px; font-weight: 500; color: #495057; padding: 10px 20px; text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+    .plan-tab.active { color: #000000; font-weight: 700; border-bottom-color: #000000; }
+    .plan-tab:hover { color: #343A40; opacity: 1; }
+
+    /* ── PAGE BODY: milestones | content | voyager ── */
+    .page-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 300px 1fr 380px; }
+
+    /* ── MILESTONE COLUMN ── */
+    .milestone-col { overflow-y: auto; padding: 24px 16px; border-right: 1px solid #DEE2E6; background: #F8F9FA; }
+    .milestone-list { display: flex; flex-direction: column; gap: 8px; }
+    .milestone-item { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 14px 16px; cursor: pointer; text-decoration: none; display: block; }
+    .milestone-item.active { border: 2px solid #000000; background: #F8F9FA; }
+    .milestone-item:hover { background: #F8F9FA; opacity: 1; }
+    .milestone-icon { width: 28px; height: 28px; border-radius: 50%; background: #212529; display: flex; align-items: center; justify-content: center; margin-bottom: 6px; font-size: 12px; color: #ffffff; }
+    .milestone-name { font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+    .milestone-sub { font-size: 11px; color: #6C757D; line-height: 1.4; }
+
+    /* ── MAIN CONTENT COLUMN ── */
+    .main-col { overflow-y: auto; padding: 24px 24px 40px; min-width: 0; }
+
+    /* Home value card */
+    .home-value-card { background: #ffffff; border: 1px solid #C8CDD3; color: #212529; border-radius: 6px; overflow: hidden; margin-bottom: 16px; display: grid; grid-template-columns: 160px 1fr; gap: 0; align-items: stretch; }
+    .home-photo { background: #DCDEE5; border-right: 1px solid #C8CDD3; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6C757D; }
+    .hv-label { font-size: 11px; color: #495057; margin-bottom: 4px; }
+    .hv-value { font-size: 28px; font-weight: 800; color: #212529; margin-bottom: 12px; }
+    .hv-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .hv-stat { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 8px 10px; }
+    .hv-stat-label { font-size: 10px; color: #343A40; margin-bottom: 2px; }
+    .hv-stat-value { font-size: 14px; font-weight: 700; color: #212529; }
+    .hv-link { margin-top: 10px; font-size: 12px; color: #495057; }
+
+    /* Comparison module */
+    .comparison-module { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 18px 20px; margin-bottom: 16px; }
+    .comparison-module-title { font-size: 15px; font-weight: 700; color: #000000; margin-bottom: 3px; }
+    .comparison-module-sub { font-size: 12px; color: #6C757D; margin-bottom: 14px; }
+    .comparison-cols { display: flex; gap: 0; align-items: stretch; border: 1px solid #DEE2E6; border-radius: 4px; overflow: hidden; }
+    .comparison-divider { width: 1px; background: #DEE2E6; flex-shrink: 0; }
+    .comparison-pill { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 20px; border: 1px solid #000000; color: #000000; margin-bottom: 10px; }
+    .comparison-brand { font-size: 20px; font-weight: 900; color: #000000; margin-bottom: 4px; }
+    .comparison-price { font-size: 22px; font-weight: 800; color: #000000; margin-bottom: 4px; }
+    .comparison-meta { font-size: 11px; color: #6C757D; margin-bottom: 8px; }
+    .comparison-tagline { font-size: 12px; color: #343A40; font-weight: 600; }
+    .comparison-cta { display: block; background: #212529; color: #ffffff; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 4px; text-decoration: none; text-align: center; margin-top: 14px; }
+    .comparison-cta:hover { background: #343A40; opacity: 1; }
+    .comparison-col { flex: 1; padding: 16px; cursor: pointer; }
+    .comparison-col:hover { background: rgba(0,0,0,0.02); }
+    .comparison-col.selected { background: transparent; border: 2px solid #000000; border-radius: 4px; }
+    .comparison-module.active { background: #ffffff; border: 1px solid #C8CDD3; }
+    .comparison-module.active .comparison-cols { border-color: #C8CDD3; }
+    .comparison-module.active .comparison-divider { background: #C8CDD3; }
+    .comparison-expiry { display: inline-flex; align-items: center; gap: 4px; font-size: 11px; color: #6C757D; margin-bottom: 8px; cursor: pointer; }
+    .comparison-expiry-dot { width: 6px; height: 6px; border-radius: 50%; background: #cc6600; flex-shrink: 0; }
+    .comparison-expiry:hover { color: #343A40; }
+    .comparison-decide-chip { width: 100%; margin-top: 14px; background: transparent; border: 1px solid #CED4DA; border-radius: 6px; padding: 8px 12px; font-size: 12px; color: #495057; font-style: italic; cursor: pointer; text-align: left; font-family: inherit; display: flex; align-items: center; gap: 6px; }
+    .comparison-decide-chip::before { content: "↗"; font-style: normal; font-size: 10px; color: #ADB5BD; }
+    .comparison-decide-chip:hover { background: #F8F9FA; }
+
+    /* Content rows */
+    .content-row { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 6px; padding: 16px 18px; margin-bottom: 8px; display: flex; gap: 14px; align-items: flex-start; }
+    .content-row-icon { width: 32px; height: 32px; border-radius: 50%; background: #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #495057; }
+    .content-row-body { flex: 1; }
+    .content-row-title { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 3px; }
+    .content-row-desc { font-size: 13px; color: #495057; line-height: 1.5; }
+    .btn-outline { display: inline-block; margin-top: 8px; border: 1.5px solid #212529; border-radius: 4px; padding: 7px 16px; font-size: 13px; font-weight: 600; color: #212529; text-decoration: none; }
+    .btn-outline:hover { background: #F8F9FA; opacity: 1; }
+
+    /* Demand discovery module */
+    .demand-module { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 6px; padding: 18px 20px; margin-bottom: 16px; transition: border-left 0.15s; }
+    .demand-module.active { background: #ffffff; border: 1px solid #C8CDD3; }
+    .demand-module-title { font-size: 15px; font-weight: 700; color: #000000; margin-bottom: 3px; }
+    .demand-module-sub { font-size: 12px; color: #6C757D; margin-bottom: 18px; }
+    .demand-chart { display: flex; flex-direction: column; gap: 14px; margin-bottom: 14px; }
+    .demand-row { display: flex; flex-direction: column; gap: 4px; cursor: pointer; padding: 6px 8px; border-radius: 4px; margin: 0 -8px; }
+    .demand-row:hover { background: rgba(0,0,0,0.04); }
+    .demand-row.selected { background: transparent; border: 2px solid #000000; border-radius: 4px; }
+    .demand-row-header { display: flex; justify-content: space-between; align-items: baseline; }
+    .demand-metric { font-size: 12px; font-weight: 600; color: #495057; }
+    .demand-number { font-size: 14px; font-weight: 800; color: #000000; }
+    .demand-track { display: flex; height: 20px; border-radius: 3px; overflow: hidden; width: 100%; }
+    .demand-bar.cash { background: #CED4DA; flex-shrink: 0; width: 20px; }
+    .demand-bar.zillow { background: #343A40; flex: 1; }
+    .demand-legend { display: flex; gap: 16px; margin-bottom: 14px; }
+    .demand-legend-item { display: flex; align-items: center; gap: 6px; font-size: 11px; color: #495057; }
+    .demand-legend-dot { width: 10px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+    .demand-footnote { font-size: 11px; color: #ADB5BD; margin-bottom: 14px; line-height: 1.5; }
+    .demand-prompts { display: flex; flex-direction: column; gap: 5px; margin-bottom: 14px; }
+    .demand-prompt-chip { background: transparent; border: 1px solid #CED4DA; border-radius: 6px; padding: 6px 10px; font-size: 11px; color: #495057; font-style: italic; cursor: pointer; text-align: left; font-family: inherit; line-height: 1.4; display: flex; align-items: center; gap: 6px; }
+    .demand-prompt-chip:hover { background: rgba(0,0,0,0.04); }
+    .demand-prompt-chip::before { content: "↗"; font-style: normal; font-size: 10px; color: #ADB5BD; flex-shrink: 0; }
+    .demand-cta { display: flex; align-items: center; gap: 12px; background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 6px; padding: 12px 14px; text-decoration: none; }
+    .demand-cta-check { width: 28px; height: 28px; background: #000000; border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: #ffffff; font-size: 14px; }
+    .demand-cta-text { font-size: 13px; color: #343A40; line-height: 1.4; }
+    .demand-cta-text strong { color: #000000; text-decoration: underline; }
+
+    /* ── VOYAGER SIDEBAR ── */
+    .voyager-sidebar { border-left: 1px solid #DEE2E6; display: flex; flex-direction: column; background: #ffffff; min-height: 0; }
+    .voyager-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .voyager-panel-header { padding: 12px 14px; border-bottom: 1px solid #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+    .voyager-panel-title { font-size: 12px; font-weight: 800; color: #000000; }
+    .voyager-panel-mode { font-size: 10px; color: #ADB5BD; }
+    .voyager-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .voyager-messages > * { flex-shrink: 0; }
+    .chat-history-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; align-self: stretch; }
+    .chat-history-toggle-line { flex: 1; height: 1px; background: #DEE2E6; }
+    .chat-history-toggle-btn { font-size: 11px; font-weight: 600; color: #495057; background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 20px; padding: 4px 10px; white-space: nowrap; flex-shrink: 0; }
+    .chat-history-toggle:hover .chat-history-toggle-btn { background: #E9ECEF; color: #343A40; }
+    .chat-history-items { display: none; flex-direction: column; gap: 12px; align-self: stretch; }
+    .chat-history-items.open { display: flex; }
+    .msg-voyager { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; }
+    .msg-voyager strong { color: #000000; }
+    .msg-voyager-demand { background: #D0D2DD; border: 1px solid #C8CDD3; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; animation: demandPulse 0.6s ease-out; }
+    @keyframes demandPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0.15); }
+      50%  { box-shadow: 0 0 0 6px rgba(0,0,0,0.06); }
+      100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    }
+    .msg-user { background: #000000; color: #ffffff; border-radius: 8px 0 8px 8px; padding: 10px 12px; font-size: 12px; line-height: 1.6; align-self: flex-end; max-width: 85%; }
+    .msg-cta { display: block; background: #212529; color: #ffffff; font-size: 12px; font-weight: 700; padding: 9px 12px; border-radius: 4px; text-decoration: none; text-align: center; margin-top: 10px; }
+    .msg-cta:hover { background: #343A40; opacity: 1; }
+    .msg-module-link { font-size: 12px; font-weight: 600; color: #000000; text-decoration: none; display: block; padding: 2px 0; }
+    .msg-module-link:hover { opacity: 0.7; }
+    .voyager-bottom { flex-shrink: 0; border-top: 1px solid #DEE2E6; background: #ffffff; }
+    .voyager-suggestions { padding: 8px 12px 4px; display: flex; flex-direction: column; gap: 5px; }
+    .suggested-q { background: #F8F9FA; border: 1px solid #CED4DA; border-radius: 6px; padding: 7px 10px; font-size: 11px; color: #343A40; font-style: italic; cursor: pointer; text-align: left; font-family: inherit; white-space: normal; line-height: 1.4; width: 100%; }
+    .suggested-q:hover { background: #E9ECEF; }
+    .voyager-input-row { padding: 8px 12px 12px; }
+    .voyager-input-wrap { position: relative; display: flex; align-items: center; }
+    .voyager-input { width: 100%; border: 1.5px solid #CED4DA; border-radius: 20px; padding: 9px 44px 9px 16px; font-size: 12px; font-family: inherit; outline: none; }
+    .voyager-input:focus { border-color: #000000; }
+    .voyager-send { position: absolute; right: 5px; width: 30px; height: 30px; border-radius: 50%; background: #212529; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; color: #ffffff; }
+  </style>
+</head>
+<body>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+
+  <!-- Left icon nav -->
+  <nav class="icon-nav">
+    <a href="index.html" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+      <span class="icon-label">Search</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+      <span class="icon-label">Updates</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+      <span class="icon-label">Favorites</span>
+    </a>
+    <a href="plan-overview.html" class="icon-nav-item active">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <span class="icon-label">Plan</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></div>
+      <span class="icon-label">Inbox</span>
+    </a>
+    <a href="reengagement.html" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><path d="M3.05 11a9 9 0 1 0 .5-3M3 4v4h4"/></svg></div>
+      <span class="icon-label">Recent</span>
+    </a>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">Plan</div>
+      <div class="tab-bar">
+        <a href="plan-overview.html" class="plan-tab">Overview</a>
+        <a href="plan-selling.html" class="plan-tab active">Selling</a>
+      </div>
+    </div>
+
+    <!-- Page body -->
+    <div class="page-body">
+
+      <!-- Milestone list column -->
+      <div class="milestone-col">
+        <div class="milestone-list">
+          <a href="#" class="milestone-item active">
+            <div class="milestone-icon">$</div>
+            <div class="milestone-name">Understand your selling position</div>
+            <div class="milestone-sub">Get clear on your home's value, timing, and selling options.</div>
+          </a>
+          <a href="#" class="milestone-item">
+            <div class="milestone-icon">&#9962;</div>
+            <div class="milestone-name">Prepare your home &amp; list it</div>
+            <div class="milestone-sub">Set your strategy and prepare your home to attract buyers.</div>
+          </a>
+          <a href="#" class="milestone-item">
+            <div class="milestone-icon">&#9906;</div>
+            <div class="milestone-name">Find a buyer</div>
+            <div class="milestone-sub">Review your offers and choose what works best for you.</div>
+          </a>
+          <a href="#" class="milestone-item">
+            <div class="milestone-icon">&#10003;</div>
+            <div class="milestone-name">Close your sale</div>
+            <div class="milestone-sub">Wrap up the final steps and complete your sale.</div>
+          </a>
+        </div>
+      </div>
+
+      <!-- Main content column -->
+      <main class="main-col">
+
+        <!-- Home value card -->
+        <div class="home-value-card">
+          <div class="home-photo">Home photo</div>
+          <div style="padding: 20px 24px;">
+            <div class="hv-label">Zestimate&reg;</div>
+            <div class="hv-value">$612,000</div>
+            <div class="hv-stats">
+              <div class="hv-stat">
+                <div class="hv-stat-label">30-day change</div>
+                <div class="hv-stat-value">+$4,800</div>
+              </div>
+              <div class="hv-stat">
+                <div class="hv-stat-label">Zestimate per sqft</div>
+                <div class="hv-stat-value">$332</div>
+              </div>
+              <div class="hv-stat" style="grid-column: 1 / -1;">
+                <div class="hv-stat-label">Zestimate range</div>
+                <div class="hv-stat-value">$581k – $643k</div>
+              </div>
+            </div>
+            <div class="hv-link"><a href="nfshdp-postclaim.html" style="color:#343A40; font-size:12px; font-weight:600;">View history &rsaquo;</a></div>
+          </div>
+        </div>
+
+        <!-- Cash offer comparison module -->
+        <div id="comparison-module" class="comparison-module" onmouseleave="deactivateModule('comparison-module')">
+          <div class="comparison-module-title">Your cash offer comparison</div>
+          <div class="comparison-module-sub">Based on 4821 Maple Ave &nbsp;&middot;&nbsp; Updated Jun 4, 2026</div>
+          <div class="comparison-cols">
+            <div class="comparison-col" id="col-opendoor" onclick="comparisonColClick('opendoor')">
+              <div class="comparison-pill">Cash offer</div>
+              <div class="comparison-brand">Opendoor</div>
+              <div class="comparison-price">$578,000–$601,000</div>
+              <div class="comparison-expiry" onclick="expiryClick(event)">
+                <span class="comparison-expiry-dot"></span>
+                13 days left &nbsp;·&nbsp; Expires Jun 17
+              </div>
+              <div class="comparison-tagline">Sell on a faster timeline</div>
+            </div>
+            <div class="comparison-divider"></div>
+            <div class="comparison-col" id="col-zillow" onclick="comparisonColClick('zillow')">
+              <div class="comparison-pill">Partner agent with Showcase</div>
+              <div class="comparison-brand">Zillow</div>
+              <div class="comparison-price">~$612,000+</div>
+              <div class="comparison-meta">Incl. Showcase boost &#9432;</div>
+              <div class="comparison-tagline">Maximize sales price</div>
+            </div>
+          </div>
+          <button class="comparison-decide-chip" onclick="comparisonDecideClick()">"Which option makes more sense for my situation?"</button>
+          <div style="margin-top:14px; padding-top:14px; border-top:1px solid #DEE2E6; display:flex; align-items:center; gap:12px;">
+            <div style="width:36px; height:36px; border-radius:50%; background:#343A40; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; color:#fff; flex-shrink:0;">SC</div>
+            <div>
+              <div style="font-size:13px; font-weight:700; color:#000;">Your agent: Sarah Chen</div>
+              <div style="font-size:11px; color:#6C757D;">Connected &nbsp;·&nbsp; Responds in under 1 hour</div>
+            </div>
+            <a href="#" style="margin-left:auto; font-size:13px; font-weight:600; color:#000;">Message &rsaquo;</a>
+          </div>
+        </div>
+
+        <!-- Demand discovery module — shown only when cash offer comparison is present -->
+        <div id="demand-module" class="demand-module" onmouseleave="deactivateModule('demand-module')">
+          <div class="demand-module-title">A cash offer reaches one buyer. A Zillow listing reaches the market.</div>
+          <div class="demand-module-sub">Buyer activity on 3 bed homes in 98103 this month</div>
+
+          <div class="demand-legend">
+            <div class="demand-legend-item"><div class="demand-legend-dot" style="background:#CED4DA;"></div> Cash offer</div>
+            <div class="demand-legend-item"><div class="demand-legend-dot" style="background:#343A40;"></div> Zillow listing</div>
+          </div>
+
+          <div class="demand-chart">
+            <div class="demand-row" onclick="demandMetricClick('views')">
+              <div class="demand-row-header">
+                <span class="demand-metric">Views</span>
+                <span class="demand-number">1,847</span>
+              </div>
+              <div class="demand-track">
+                <div class="demand-bar cash"></div>
+                <div class="demand-bar zillow"></div>
+              </div>
+            </div>
+            <div class="demand-row" onclick="demandMetricClick('saves')">
+              <div class="demand-row-header">
+                <span class="demand-metric">Saves</span>
+                <span class="demand-number">312</span>
+              </div>
+              <div class="demand-track" style="width:65%;">
+                <div class="demand-bar cash"></div>
+                <div class="demand-bar zillow"></div>
+              </div>
+            </div>
+            <div class="demand-row" onclick="demandMetricClick('shares')">
+              <div class="demand-row-header">
+                <span class="demand-metric">Shares</span>
+                <span class="demand-number">94</span>
+              </div>
+              <div class="demand-track" style="width:38%;">
+                <div class="demand-bar cash"></div>
+                <div class="demand-bar zillow"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="demand-footnote">Based on weekly averages for similar listings. Cash offer = 1 buyer, no open market exposure.</div>
+
+          <a href="agent-modal.html" class="demand-cta">
+            <div class="demand-cta-check">&#10003;</div>
+            <div class="demand-cta-text">Boost reach by up to 75% with a <strong>Showcase listing</strong></div>
+          </a>
+
+          <div style="border-top: 1px solid #d0dae6; margin: 14px 0 10px;"></div>
+
+          <div class="demand-prompts">
+            <button class="demand-prompt-chip" onclick="demandPromptClick('showcase-boost')">"How does Showcase affect these numbers?"</button>
+          </div>
+        </div>
+
+        <!-- Additional selling guidance rows -->
+        <div class="content-row">
+          <div class="content-row-icon">&#9200;</div>
+          <div class="content-row-body">
+            <div class="content-row-title">Understand market conditions</div>
+            <div class="content-row-desc">Home prices, competition, and days on market affect your strategy. Seattle is a neutral market — homes like yours are selling in about 15 days.</div>
+          </div>
+        </div>
+
+        <div class="content-row">
+          <div class="content-row-icon">&#9906;</div>
+          <div class="content-row-body">
+            <div class="content-row-title">Determine when you might sell</div>
+            <div class="content-row-desc">Your timeline shapes your selling approach. Clarify when you'd like to move to better align with your options.</div>
+          </div>
+        </div>
+
+        <div class="content-row">
+          <div class="content-row-icon">&#9685;</div>
+          <div class="content-row-body">
+            <div class="content-row-title">Understand the selling process</div>
+            <div class="content-row-desc">From listing to closing, knowing what to expect reduces surprises. Learn the key steps so you can move forward prepared.</div>
+            <a href="#" class="btn-outline">View the process &rsaquo;</a>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Voyager right panel -->
+      <div class="voyager-sidebar">
+        <div class="voyager-panel">
+          <div class="voyager-panel-header">
+            <span class="voyager-panel-title">Your Home Advisor</span>
+            <span class="voyager-panel-mode">Decision support mode</span>
+          </div>
+          <div class="voyager-messages">
+
+            <!-- Collapsed history from previous surfaces -->
+            <div class="chat-history-toggle" onclick="toggleChatHistory(this)">
+              <div class="chat-history-toggle-line"></div>
+              <div class="chat-history-toggle-btn">&#8679; 4 previous messages</div>
+              <div class="chat-history-toggle-line"></div>
+            </div>
+            <div class="chat-history-items">
+              <div class="msg-user">Is now a good time to sell?</div>
+              <div class="msg-voyager">
+                Seattle is a neutral market — homes like yours are selling in about 15 days. Based on your Zestimate and recent activity, your timing looks solid.
+                <a href="nfshdp-postclaim.html" class="msg-module-link" style="margin-top:6px;">&#8594; View: Here's where you stand if you were to sell today</a>
+              </div>
+              <div class="msg-voyager">
+                Welcome to your Plan — this is where everything comes together.<br><br>
+                On the <strong>Overview tab</strong> you can track your home's value. The <strong>Selling tab</strong> is where you compare your options and work through the decision with Sarah Chen.
+              </div>
+            </div>
+
+            <!-- Anchor: most recent message before this surface -->
+            <div class="msg-voyager" style="opacity: 0.6; font-size: 11px; font-style: italic; align-self: stretch; text-align: center; background: transparent; border: none; padding: 0;">From Overview</div>
+
+            <!-- New messages for Selling tab -->
+            <div class="msg-voyager">
+              <strong>Intent detected:</strong> based on getting a cash offer, it looks like you're seriously thinking about selling.<br><br>
+              Your Opendoor estimate: <strong>$578k–$601k</strong>. Your full comparison is on this page.<br><br>
+              You've connected with Sarah Chen — she can walk you through your options in detail.
+            </div>
+          </div>
+          <div class="voyager-bottom">
+            <div class="voyager-suggestions">
+              <button class="suggested-q" onclick="typeQuestion(this)">"What would my net proceeds be for each option?"</button>
+            </div>
+            <div class="voyager-input-row">
+              <div class="voyager-input-wrap">
+                <input id="voyager-input" class="voyager-input" type="text" placeholder="Ask your home advisor anything...">
+                <button class="voyager-send" onclick="sendMessage()">&#8593;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- end app-shell -->
+
+  <script>
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+
+  function scrollMessages() {
+    var msgs = document.querySelector('.voyager-messages');
+    requestAnimationFrame(function() { msgs.scrollTop = msgs.scrollHeight; });
+  }
+
+  function toggleChatHistory(toggle) {
+    var items = toggle.nextElementSibling;
+    var btn = toggle.querySelector('.chat-history-toggle-btn');
+    var isOpen = items.classList.toggle('open');
+    btn.innerHTML = isOpen ? '&#8681; Hide history' : '&#8679; 4 previous messages';
+  }
+
+  var comparisonInsights = {
+    opendoor: 'With Opendoor, you skip the open market entirely. No showings, no contingencies, no waiting. The process typically takes 2–3 weeks from acceptance to close. The tradeoff: you\'re accepting one pre-set price with no ability to negotiate up. The offer expires Jun 17 — after that you\'d need to request a new one, which may come in lower.',
+    zillow: 'Listing with Sarah Chen means your home goes live on Zillow with Showcase placement — priority position in search results, larger photos, and an interactive floor plan. You\'d typically see offers within 2–3 weeks in this market. The upside is competition: multiple buyers bidding can push the final price above the $612k estimate. The tradeoff is time and showing prep.'
+  };
+
+  var decideState = 0;
+
+  function deactivateModule(id) {
+    document.getElementById(id).classList.remove('active');
+    document.querySelectorAll('.demand-row').forEach(function(r) { r.classList.remove('selected'); });
+    document.querySelectorAll('.comparison-col').forEach(function(c) { c.classList.remove('selected'); });
+  }
+
+  function setActiveModule(id) {
+    ['comparison-module', 'demand-module'].forEach(function(m) {
+      document.getElementById(m).classList.remove('active');
+    });
+    // Clear all row/column selections when switching modules
+    document.querySelectorAll('.demand-row').forEach(function(r) { r.classList.remove('selected'); });
+    document.querySelectorAll('.comparison-col').forEach(function(c) { c.classList.remove('selected'); });
+    document.getElementById(id).classList.add('active');
+  }
+
+  function comparisonColClick(side) {
+    setActiveModule('comparison-module');
+    document.getElementById('col-' + side).classList.add('selected');
+    var msgs = document.querySelector('.voyager-messages');
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager-demand';
+    reply.textContent = comparisonInsights[side];
+    msgs.appendChild(reply);
+    scrollMessages();
+  }
+
+  function expiryClick(e) {
+    e.stopPropagation();
+    setActiveModule('comparison-module');
+    var msgs = document.querySelector('.voyager-messages');
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager-demand';
+    reply.textContent = 'Opendoor offers expire on a fixed date — after Jun 17, this offer is gone. You can request a new one, but prices are recalculated at that point and may differ. If you\'re leaning toward the cash offer, the real deadline to decide is a few days before expiry to allow time to review the contract.';
+    msgs.appendChild(reply);
+    scrollMessages();
+  }
+
+  function comparisonDecideClick() {
+    setActiveModule('comparison-module');
+    var msgs = document.querySelector('.voyager-messages');
+    if (decideState === 0) {
+      var userBubble = document.createElement('div');
+      userBubble.className = 'msg-user';
+      userBubble.textContent = 'Which option makes more sense for my situation?';
+      msgs.appendChild(userBubble);
+      var reply = document.createElement('div');
+      reply.className = 'msg-voyager-demand';
+      reply.innerHTML = 'Good question — it comes down to one thing: is your priority <strong>speed</strong> or <strong>maximizing your sale price</strong>?';
+      msgs.appendChild(reply);
+      decideState = 1;
+
+      setTimeout(function() {
+        var followUp = document.createElement('div');
+        followUp.className = 'msg-voyager-demand';
+        followUp.innerHTML = 'If speed: the Opendoor offer gets you to close in ~2 weeks with no showings. If price: listing with Sarah Chen puts your home in front of 1,800+ buyers — competition typically pushes offers above the Zestimate. Based on your timeline, which matters more right now?';
+        msgs.appendChild(followUp);
+        scrollMessages();
+      }, 800);
+    }
+    scrollMessages();
+  }
+
+  var demandInsights = {
+    views: 'Views are the top of the funnel — but on Zillow, they convert. A buyer who views your listing has already filtered by bedrooms, price, and location. These aren\'t casual browsers; they\'re qualified. A cash offer skips all of them.',
+    saves: 'Saves are the strongest signal short of an offer. A saved home means a buyer is actively comparing it against others — they\'re in decision mode. 312 buyers saved similar homes last month. A cash offer never reaches any of them.',
+    shares: 'Shares mean a buyer liked your home enough to show someone else — a partner, a parent, a co-signer. That second person often drives the final decision. 94 shares represents real social proof that a private cash sale never generates.'
+  };
+
+  var demandPromptInsights = {
+    'saves-intent': 'Saves are a stronger purchase signal than views. When a buyer saves a home, they\'re building a shortlist. The typical Zillow buyer saves 4–7 homes before making an offer — and homes with more saves tend to receive more competitive bids because buyers know others are watching too.',
+    'showcase-boost': 'Showcase listings get priority placement at the top of search results, larger photos, and an interactive floor plan. That visibility drives 75% more views on average compared to a standard listing — which means more saves, more shares, and more competing offers. Your agent can list with Showcase from day one.'
+  };
+
+  function demandMetricClick(metric) {
+    setActiveModule('demand-module');
+    event.currentTarget.classList.add('selected');
+
+    var msgs = document.querySelector('.voyager-messages');
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager-demand';
+    reply.textContent = demandInsights[metric];
+    msgs.appendChild(reply);
+    scrollMessages();
+  }
+
+  function demandPromptClick(key) {
+    setActiveModule('demand-module');
+
+    var msgs = document.querySelector('.voyager-messages');
+    var labels = {
+      'saves-intent': 'What do saves tell me about buyer intent?',
+      'showcase-boost': 'How does Showcase affect these numbers?'
+    };
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = labels[key];
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager-demand';
+    reply.textContent = demandPromptInsights[key];
+    msgs.appendChild(reply);
+    scrollMessages();
+  }
+
+  var suggestedReplies = {
+    'How does a cash offer compare to listing with an agent?': 'The core tradeoff is certainty vs. reach. Opendoor gives you one offer, fast. A Zillow listing puts your home in front of 1,847+ buyers actively searching in 98103 — and more buyers competing typically means a higher final price. See the buyer demand breakdown on this page for the full picture.'
+  };
+
+  function typeQuestion(btn) {
+    var val = btn.textContent.replace(/^"|"$/g, '');
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager';
+    reply.innerHTML = suggestedReplies[val] || 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.';
+    msgs.appendChild(reply);
+    scrollMessages();
+  }
+
+  // Hide demand module if cash offer comparison isn't present
+  (function() {
+    var hasCashOffer = document.querySelector('.comparison-module');
+    if (!hasCashOffer) document.getElementById('demand-module').style.display = 'none';
+  })();
+
+  function sendMessage() {
+    var input = document.getElementById('voyager-input');
+    var val = input.value.trim();
+    if (!val) return;
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager';
+    reply.textContent = 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.';
+    msgs.appendChild(reply);
+    input.value = '';
+    scrollMessages();
+  }
+
+  document.getElementById('voyager-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+  </script>
+
+</body>
+</html>

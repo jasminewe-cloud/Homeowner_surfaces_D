@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome back — 4821 Maple Ave — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; display: flex; flex-direction: column; height: 100%; min-height: 0; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+    .claimed-badge { display: inline-block; background: #212529; color: #ffffff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 8px; letter-spacing: 0.3px; }
+
+    /* ── APP SHELL ── */
+    .app-shell { flex: 1; min-height: 0; display: flex; flex-direction: row; overflow: hidden; }
+
+    /* ── LEFT ICON NAV ── */
+    .icon-nav { width: 64px; flex-shrink: 0; height: 100%; background: #ffffff; border-right: 1px solid #DEE2E6; display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 4px; }
+    .icon-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; width: 100%; cursor: pointer; text-decoration: none; }
+    .icon-nav-item:hover { background: #F8F9FA; opacity: 1; }
+    .icon-glyph { width: 28px; height: 28px; border-radius: 50%; background: #DCDEE5; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #495057; }
+    .icon-label { font-size: 10px; color: #495057; font-weight: 500; }
+    .icon-nav-item.active .icon-glyph { background: #212529; color: #ffffff; }
+    .icon-nav-item.active .icon-label { color: #000000; font-weight: 700; }
+
+    /* ── PHOTO SECTION ── */
+    .photo-grid { display: grid; grid-template-columns: 3fr 2fr; gap: 4px; height: 284px; align-items: stretch; }
+    .photo-hero { grid-row: 1 / 2; grid-column: 1; height: 100%; background: #DCDEE5; border: 1px solid #CED4DA; display: flex; align-items: center; justify-content: center; color: #6C757D; font-size: 13px; position: relative; border-radius: 4px 0 0 4px; }
+    .photo-thumb { background: #DCDEE5; border: 1px solid #CED4DA; display: flex; align-items: center; justify-content: center; color: #ADB5BD; font-size: 11px; }
+    .off-market-badge { position: absolute; top: 10px; left: 10px; background: #343A40; color: #ffffff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 3px; letter-spacing: 0.3px; }
+    .see-all-photos { position: absolute; bottom: 10px; right: 10px; background: #ffffff; border: 1px solid #CED4DA; color: #000000; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 3px; text-decoration: none; }
+    .see-all-photos:hover { background: #F8F9FA; opacity: 1; }
+    .photo-right-col { display: flex; flex-direction: column; gap: 8px; height: 100%; }
+    .photo-right-col .photo-thumb { flex: 1; min-height: 0; }
+    .photo-right-col .photo-thumb:first-child { border-radius: 0 4px 0 0; }
+
+    /* ── TWO-COLUMN LAYOUT ── */
+    .page-body-wrapper { flex: 1; min-height: 0; overflow: hidden; display: flex; }
+    .modal-drawer { flex: 1; min-width: 0; display: flex; align-items: stretch; justify-content: center; overflow: hidden; }
+    .modal-drawer-inner { width: 100%; max-width: 960px; background: #ffffff; display: flex; flex-direction: column; overflow: hidden; box-shadow: 0 4px 32px rgba(0,0,0,0.18); }
+    .main-col { flex: 1; min-height: 0; padding: 0 32px 40px; overflow-y: auto; }
+    .sidebar { width: 380px; flex-shrink: 0; min-height: 0; display: flex; flex-direction: column; background: #ffffff; border-left: 1px solid #DEE2E6; }
+
+    /* ── WELCOME BACK BANNER ── */
+    .welcome-back-banner { background: #D0D2DD; border: 1px solid #C8CDD3; border-radius: 4px; padding: 16px 18px; margin-bottom: 20px; }
+    .welcome-back-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #212529; margin-bottom: 6px; }
+    .welcome-back-text { font-size: 13px; color: #343A40; line-height: 1.6; }
+    .welcome-back-ctas { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+    .btn-black { display: inline-block; background: #212529; color: #ffffff; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 4px; text-decoration: none; }
+    .btn-black:hover { background: #343A40; opacity: 1; }
+    .btn-outline-sm { display: inline-block; background: transparent; color: #212529; font-size: 12px; font-weight: 600; padding: 6px 14px; border-radius: 4px; text-decoration: none; border: 1.5px solid #212529; }
+    .btn-outline-sm:hover { background: #F8F9FA; opacity: 1; }
+
+    /* ── CONTENT STYLES ── */
+    .zestimate-eyebrow { font-size: 11px; color: #495057; margin-bottom: 4px; }
+    .zestimate-eyebrow span { font-weight: 700; color: #000000; }
+    .price-large { font-size: 30px; font-weight: 800; color: #000000; line-height: 1.1; margin-bottom: 4px; }
+    .price-change { font-size: 13px; color: #343A40; margin-bottom: 4px; }
+    .address-line { font-size: 15px; color: #343A40; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+    .specs-inline { font-size: 14px; color: #343A40; font-weight: 600; margin-bottom: 8px; }
+    .refi-row { font-size: 13px; color: #495057; padding: 8px 0; border-top: 1px solid #E9ECEF; border-bottom: 1px solid #E9ECEF; margin-bottom: 16px; }
+    .refi-row a { color: #000000; font-weight: 600; }
+
+    .details-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #C8CDD3; border-radius: 4px; overflow: hidden; margin-bottom: 20px; background: #ffffff; }
+    .details-cell { padding: 12px 14px; border-right: 1px solid #DEE2E6; border-bottom: 1px solid #DEE2E6; font-size: 12px; color: #495057; }
+    .details-cell:nth-child(3n) { border-right: none; }
+    .details-cell:nth-child(4), .details-cell:nth-child(5), .details-cell:nth-child(6) { border-bottom: none; }
+    .details-cell strong { display: block; font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+
+    .section-heading { font-size: 17px; font-weight: 700; color: #000000; margin-bottom: 12px; }
+
+    .value-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+    .value-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; }
+    .value-card-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: #495057; margin-bottom: 6px; }
+    .value-card-amount { font-size: 20px; font-weight: 800; color: #000000; }
+    .history-subtext { font-size: 13px; color: #495057; margin-bottom: 14px; }
+    .tab-row { display: flex; gap: 0; border-bottom: 1px solid #DEE2E6; margin-bottom: 16px; }
+    .tab { font-size: 14px; font-weight: 600; color: #495057; text-decoration: none; padding: 8px 16px 10px; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+    .tab.active { color: #000000; border-bottom-color: #000000; }
+    .chart-placeholder { width: 100%; height: 220px; background: #DCDEE5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #6C757D; }
+
+    .card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #000000; margin-bottom: 8px; }
+    .equity-row { display: flex; gap: 32px; }
+    .equity-item { font-size: 14px; color: #343A40; }
+    .equity-item strong { display: block; font-size: 18px; font-weight: 800; color: #000000; }
+    .equity-label { font-size: 12px; color: #ADB5BD; margin-bottom: 2px; }
+    .equity-sub { font-size: 12px; color: #ADB5BD; margin-top: 2px; }
+
+    .ai-blurb { background: #D0D2DD; border: 1px solid #C8CDD3; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .ai-blurb-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #212529; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .ai-blurb p { font-size: 14px; color: #343A40; line-height: 1.6; }
+
+    /* Private label */
+    .private-label { display: flex; align-items: center; gap: 4px; font-size: 11px; color: #6C757D; margin-bottom: 8px; }
+    .private-label-eye { font-size: 12px; }
+
+    /* Photo edit button */
+    .photo-edit-btn { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; background: rgba(255,255,255,0.9); border: 1px solid #CED4DA; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; text-decoration: none; color: #343A40; z-index: 10; }
+    .photo-edit-btn:hover { background: #ffffff; opacity: 1; }
+
+    /* Agent matches (postclaim style) */
+    .agent-matches-section { margin-bottom: 28px; }
+    .section-heading-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .section-nav { font-size: 15px; color: #495057; letter-spacing: 2px; cursor: default; }
+    .agent-banner { background: #D0D2DD; padding: 10px 14px; border-radius: 4px; font-size: 13px; color: #343A40; margin-bottom: 12px; }
+    .btn-outline-sm { display: inline-block; background: transparent; color: #212529; font-size: 13px; font-weight: 600; padding: 6px 12px; border-radius: 4px; text-decoration: none; border: 1.5px solid #212529; }
+    .btn-outline-sm:hover { background: #F8F9FA; opacity: 1; }
+    .agent-card-connect { margin-top: 8px; }
+
+    /* Comps */
+    .comps-section { margin-bottom: 28px; }
+    .comps-subtext { font-size: 13px; color: #343A40; margin-bottom: 12px; line-height: 1.4; }
+    .comp-cards-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 14px; }
+    .comp-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 12px; }
+    .comp-photo { width: 100%; height: 100px; background: #DCDEE5; border-radius: 3px; margin-bottom: 8px; }
+    .comp-price { font-size: 15px; font-weight: 700; color: #000000; margin-bottom: 3px; }
+    .comp-specs { font-size: 12px; color: #6C757D; margin-bottom: 2px; }
+    .comp-address { font-size: 12px; color: #6C757D; margin-bottom: 4px; }
+    .comp-status { font-size: 12px; color: #495057; display: flex; align-items: center; gap: 4px; margin-bottom: 2px; }
+    .comp-status-dot { width: 8px; height: 8px; border-radius: 50%; background: #ADB5BD; flex-shrink: 0; }
+    .comp-mls { font-size: 11px; color: #ADB5BD; }
+    .comp-map-placeholder { width: 100%; height: 180px; background: #DCDEE5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #6C757D; margin-bottom: 20px; }
+    .comp-value-heading { font-size: 15px; font-weight: 700; color: #000000; margin-bottom: 4px; }
+    .comp-value-subtext { font-size: 13px; color: #6C757D; margin-bottom: 10px; }
+    .comp-chart-placeholder { width: 100%; height: 80px; background: #DCDEE5; border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 12px; color: #6C757D; margin-bottom: 0; }
+
+    /* Market insights */
+    .market-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+    .market-index-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; }
+    .market-index-label { font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+    .market-index-score { font-size: 26px; font-weight: 800; color: #000000; line-height: 1; margin-bottom: 2px; }
+    .market-index-sublabel { font-size: 11px; color: #495057; margin-bottom: 10px; }
+    .market-bar-wrap { width: 100%; height: 12px; background: #DCDEE5; border-radius: 3px; position: relative; margin-bottom: 6px; }
+    .market-bar-tick { position: absolute; top: -3px; bottom: -3px; width: 3px; background: #000000; border-radius: 2px; left: 50%; transform: translateX(-50%); }
+    .market-bar-labels { display: flex; justify-content: space-between; font-size: 10px; color: #6C757D; }
+    .stat-tiles { grid-column: 2 / 4; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .stat-tile { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 12px 14px; }
+    .stat-tile-value { font-size: 20px; font-weight: 800; color: #000000; margin-bottom: 2px; }
+    .stat-tile-label { font-size: 11px; color: #343A40; line-height: 1.3; }
+
+    /* ── CASH OFFER MODAL ── */
+    .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.55); z-index: 500; display: none; align-items: center; justify-content: center; }
+    .modal-overlay.open { display: flex; }
+    .modal-card { background: #ffffff; border-radius: 6px; width: 520px; max-width: 92vw; max-height: 92vh; overflow-y: auto; }
+    .modal-header { padding: 20px 24px 16px; display: flex; align-items: flex-start; justify-content: space-between; border-bottom: 1px solid #DEE2E6; }
+    .modal-title { font-size: 16px; font-weight: 800; color: #000000; }
+    .modal-subtitle { font-size: 12px; color: #6C757D; margin-top: 3px; }
+    .modal-close { background: none; border: none; font-size: 24px; color: #ADB5BD; cursor: pointer; line-height: 1; padding: 0; flex-shrink: 0; margin-left: 12px; }
+    .modal-body { padding: 20px 24px 24px; }
+    .modal-step { display: none; }
+    .modal-step.active { display: block; }
+    .form-group { margin-bottom: 16px; }
+    .form-label { font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 6px; display: block; }
+    .form-select { width: 100%; padding: 9px 12px; border: 1px solid #DEE2E6; border-radius: 4px; font-size: 13px; font-family: inherit; color: #343A40; background: #ffffff; }
+    .checkbox-group { display: flex; flex-direction: column; gap: 8px; }
+    .checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #343A40; cursor: pointer; }
+    .modal-cta-btn { display: block; width: 100%; background: #212529; color: #ffffff; font-size: 14px; font-weight: 700; padding: 12px; border-radius: 4px; border: none; cursor: pointer; font-family: inherit; text-align: center; margin-top: 8px; text-decoration: none; }
+    .modal-cta-btn:hover { background: #343A40; opacity: 1; }
+    .comparison-cols { display: flex; gap: 0; align-items: stretch; border: 1px solid #DEE2E6; border-radius: 4px; overflow: hidden; background: #ffffff; }
+    .comparison-col { flex: 1; padding: 16px; }
+    .comparison-divider { width: 1px; background: #DEE2E6; flex-shrink: 0; }
+    .comparison-pill { display: inline-block; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; padding: 3px 8px; border-radius: 20px; border: 1px solid #000000; color: #000000; margin-bottom: 10px; }
+    .comparison-brand { font-size: 20px; font-weight: 900; color: #000000; margin-bottom: 4px; letter-spacing: -0.5px; }
+    .comparison-price { font-size: 22px; font-weight: 800; color: #000000; margin-bottom: 4px; }
+    .comparison-meta { font-size: 12px; color: #6C757D; margin-bottom: 6px; }
+    .comparison-tagline { font-size: 13px; font-weight: 700; color: #000000; }
+
+    /* ── AI SUMMARY + ACCORDION ── */
+    .cash-offer-module { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .cash-offer-module-title { font-size: 15px; font-weight: 700; color: #000000; margin-bottom: 3px; }
+    .cash-offer-module-sub { font-size: 12px; color: #6C757D; margin-bottom: 14px; }
+    .cash-offer-plan-cta { display: block; background: #212529; color: #ffffff; font-size: 14px; font-weight: 700; padding: 12px 20px; border-radius: 4px; text-decoration: none; text-align: center; margin-top: 14px; }
+    .cash-offer-plan-cta:hover { background: #343A40; opacity: 1; }
+
+    .btn-sm { display: inline-block; background: #212529; color: #ffffff; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 4px; text-decoration: none; white-space: nowrap; }
+    .btn-sm:hover { background: #343A40; opacity: 1; }
+
+    .agent-cards-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .agent-card-main { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; display: flex; gap: 12px; align-items: flex-start; }
+    .agent-avatar-lg { width: 48px; height: 48px; border-radius: 50%; background: #DCDEE5; flex-shrink: 0; }
+    .agent-card-info { flex: 1; min-width: 0; }
+    .agent-card-name { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+    .agent-card-meta { font-size: 12px; color: #495057; line-height: 1.6; }
+
+    /* ── VOYAGER PANEL ── */
+    .voyager-panel { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
+    .voyager-panel-header { padding: 12px 14px; border-bottom: 1px solid #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+    .voyager-panel-title { font-size: 12px; font-weight: 800; color: #000000; }
+    .voyager-panel-mode { font-size: 10px; color: #ADB5BD; }
+    .voyager-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .voyager-messages > * { flex-shrink: 0; }
+
+    /* Chat history accordion */
+    .chat-history-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; align-self: stretch; }
+    .chat-history-toggle-line { flex: 1; height: 1px; background: #DEE2E6; }
+    .chat-history-toggle-btn { font-size: 11px; font-weight: 600; color: #495057; background: #E9ECEF; border: 1px solid #DEE2E6; border-radius: 20px; padding: 4px 10px; white-space: nowrap; flex-shrink: 0; }
+    .chat-history-toggle:hover .chat-history-toggle-btn { background: #DEE2E6; color: #343A40; }
+    .chat-history-items { display: none; flex-direction: column; gap: 12px; align-self: stretch; }
+    .chat-history-items.open { display: flex; }
+
+    /* Message bubbles */
+    .msg-voyager { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; }
+    .msg-voyager strong { color: #000000; }
+    .msg-user { background: #000000; color: #ffffff; border-radius: 8px 0 8px 8px; padding: 10px 12px; font-size: 12px; line-height: 1.6; align-self: flex-end; max-width: 85%; }
+    .msg-voyager-contextual { background: #D0D2DD; border: 1px solid #C8CDD3; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; }
+    .msg-cta { display: block; background: #212529; color: #ffffff; font-size: 12px; font-weight: 700; padding: 9px 12px; border-radius: 4px; text-decoration: none; text-align: center; margin-top: 10px; }
+    .msg-cta:hover { background: #343A40; opacity: 1; }
+    .msg-module-link { font-size: 12px; font-weight: 600; color: #000000; text-decoration: none; display: block; padding: 2px 0; }
+    .msg-module-link:hover { opacity: 0.7; }
+
+    /* Typing indicator */
+    .voyager-typing { display: flex; gap: 4px; align-items: center; padding: 4px 2px; }
+    .voyager-typing span { width: 7px; height: 7px; border-radius: 50%; background: #ADB5BD; animation: typingDot 1.2s infinite; }
+    .voyager-typing span:nth-child(2) { animation-delay: 0.2s; }
+    .voyager-typing span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes typingDot { 0%, 60%, 100% { opacity: 0.3; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
+
+    /* Pinned bottom */
+    .voyager-bottom { flex-shrink: 0; border-top: 1px solid #DEE2E6; background: #ffffff; }
+    .voyager-suggestions { padding: 8px 12px 4px; display: flex; flex-direction: column; gap: 5px; }
+    .suggested-q { background: #F8F9FA; border: 1px solid #CED4DA; border-radius: 6px; padding: 7px 10px; font-size: 11px; color: #343A40; font-style: italic; cursor: pointer; text-align: left; font-family: inherit; white-space: normal; line-height: 1.4; width: 100%; }
+    .suggested-q:hover { background: #E9ECEF; }
+    .voyager-input-row { padding: 6px 12px 10px; }
+    .voyager-input-wrap { position: relative; display: flex; align-items: center; }
+    .voyager-input { width: 100%; border: 1.5px solid #CED4DA; border-radius: 20px; padding: 9px 44px 9px 16px; font-size: 12px; font-family: inherit; color: #343A40; outline: none; background: #ffffff; }
+    .voyager-input:focus { border-color: #000000; }
+    .voyager-send-btn { position: absolute; right: 5px; width: 30px; height: 30px; border-radius: 50%; background: #212529; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; color: #ffffff; }
+  </style>
+</head>
+<body>
+
+  <!-- Cash offer modal -->
+  <div id="cash-offer-modal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <div class="modal-title">Get your cash offer estimate</div>
+          <div class="modal-subtitle">Powered by Opendoor &nbsp;·&nbsp; No obligation, takes 3 minutes</div>
+        </div>
+        <button class="modal-close" onclick="closeOrComplete()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <!-- Step 1 -->
+        <div id="modal-step-1" class="modal-step active">
+          <div style="font-size:13px; color:#495057; margin-bottom:20px;">Tell us a bit about your home so we can calculate an accurate offer range.</div>
+          <div class="form-group">
+            <label class="form-label">When are you looking to move?</label>
+            <select class="form-select">
+              <option>Select a timeframe</option>
+              <option>As soon as possible</option>
+              <option>Within 3 months</option>
+              <option>3–6 months</option>
+              <option>6–12 months</option>
+              <option>Just exploring</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">What's the current condition of your home?</label>
+            <select class="form-select">
+              <option>Select condition</option>
+              <option>Move-in ready</option>
+              <option>Good — minor repairs needed</option>
+              <option>Fair — some updating needed</option>
+              <option>Needs significant work</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Have you made significant upgrades in the last 5 years?</label>
+            <div class="checkbox-group">
+              <label class="checkbox-row"><input type="checkbox"> New kitchen or bath</label>
+              <label class="checkbox-row"><input type="checkbox"> New roof or HVAC</label>
+              <label class="checkbox-row"><input type="checkbox"> New flooring or windows</label>
+              <label class="checkbox-row"><input type="checkbox"> No major upgrades</label>
+            </div>
+          </div>
+          <button class="modal-cta-btn" onclick="goToModalStep(2)">See my estimate &rarr;</button>
+        </div>
+        <!-- Step 2 -->
+        <div id="modal-step-2" class="modal-step">
+          <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:4px;">Here's how your options compare</div>
+          <div style="font-size:12px; color:#6C757D; margin-bottom:16px;">Based on your home at 4821 Maple Ave, Seattle, WA 98103</div>
+          <div class="comparison-cols">
+            <div class="comparison-col">
+              <div class="comparison-pill">Cash offer</div>
+              <div class="comparison-brand">Opendoor</div>
+              <div class="comparison-price">$578,000–$601,000</div>
+              <div class="comparison-meta">Expires Jun 17, 2026</div>
+              <div class="comparison-tagline">Sell on a faster timeline</div>
+            </div>
+            <div class="comparison-divider"></div>
+            <div class="comparison-col">
+              <div class="comparison-pill">Partner agent with Showcase</div>
+              <div class="comparison-brand">Zillow</div>
+              <div class="comparison-price">~$624,000+</div>
+              <div class="comparison-meta">Incl. Showcase boost &#9432;</div>
+              <div class="comparison-tagline">Maximize sales price</div>
+            </div>
+          </div>
+          <div style="font-size:12px; color:#495057; line-height:1.6; margin-top:16px; margin-bottom:20px; padding:12px; background:#D0D2DD; border-radius:4px;">
+            The cash offer is <strong>$23,000–$46,000 below</strong> your Zestimate. Selling with a Zillow partner agent using Showcase could net you more — especially in this market where homes are selling in under 3 weeks.
+          </div>
+          <a href="plan-overview.html" class="modal-cta-btn" onclick="applyPostFlowState()">Move forward with the Plan tab &rarr;</a>
+          <div style="text-align:center; margin-top:10px; font-size:12px; color:#343A40;">Your cash offer estimate will be saved on your home profile.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+
+    <!-- Left icon nav -->
+    <nav class="icon-nav">
+      <a href="index.html" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <span class="icon-label">Search</span>
+      </a>
+      <a href="#" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <span class="icon-label">Updates</span>
+      </a>
+      <a href="#" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <span class="icon-label">Favorites</span>
+      </a>
+      <a href="plan-overview.html" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <span class="icon-label">Plan</span>
+      </a>
+      <a href="#" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></div>
+        <span class="icon-label">Inbox</span>
+      </a>
+      <a href="reengagement.html" class="icon-nav-item active">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><path d="M3.05 11a9 9 0 1 0 .5-3M3 4v4h4"/></svg></div>
+        <span class="icon-label">Recent</span>
+      </a>
+    </nav>
+
+    <div class="page-body-wrapper">
+      <div class="modal-drawer">
+        <div class="modal-drawer-inner">
+
+          <!-- Scrolling main content -->
+          <main class="main-col">
+
+            <!-- Photo grid -->
+            <div class="photo-section" style="padding: 0 0 16px; position: relative;">
+              <div class="photo-grid">
+                <div class="photo-hero">
+                  <span class="off-market-badge">Off market</span>
+                  Main photo — 528 11th Ave E
+                </div>
+                <div class="photo-right-col">
+                  <div class="photo-thumb" style="position:relative;">Photo 2<a href="#" class="photo-edit-btn" title="Edit photos &amp; home facts">&#9999;</a></div>
+                  <div class="photo-thumb">Photo 3</div>
+                  <div class="photo-thumb" style="position:relative;">
+                    Photo 4
+                    <a href="#" class="see-all-photos">&#9633; See all 16 photos</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Address + Zestimate -->
+            <div style="padding-top: 20px;">
+              <div class="zestimate-eyebrow"><span>Z</span> &nbsp;Zestimate&reg;</div>
+              <div class="price-large">$624,000</div>
+              <div class="price-change">&#8593; Up $12,000 since your last visit &nbsp;&middot;&nbsp; <a href="#" style="font-size:13px; font-weight:600; color:#000; text-decoration:none;">View Zestimate history</a></div>
+              <div class="address-line">
+                <span>4821 Maple Ave, Seattle, WA 98103 <span class="claimed-badge">Claimed &#10003;</span></span>
+                <a href="nfshdp-postclaim.html" style="font-size:12px; font-weight:600; color:#343A40; text-decoration:none; border:1px solid #CED4DA; border-radius:4px; padding:4px 10px; white-space:nowrap;">&#128065; View public listing</a>
+              </div>
+              <div class="specs-inline">3 beds &nbsp;&nbsp;&bull;&nbsp;&nbsp; 2 baths &nbsp;&nbsp;&bull;&nbsp;&nbsp; 1,840 sqft</div>
+              <div class="refi-row">Est. refi payment: $3,240/mo &nbsp;&nbsp;<a href="#">&#128309; Refinance your loan</a></div>
+            </div>
+
+            <!-- Property details grid -->
+            <div class="details-grid">
+              <div class="details-cell"><strong>Single family</strong>Type</div>
+              <div class="details-cell"><strong>Built in 1998</strong>Year built</div>
+              <div class="details-cell"><strong>5,200 sqft</strong>Lot size</div>
+              <div class="details-cell"><strong>$624,000</strong>Zestimate&reg;</div>
+              <div class="details-cell"><strong>$339/sqft</strong>Price per sqft</div>
+              <div class="details-cell"><strong>$2,100</strong>Estimated rent</div>
+            </div>
+
+            <!-- Welcome back + selling options (combined) -->
+            <div id="selling-options" style="margin-bottom: 20px;">
+
+              <!-- AI summary card -->
+              <div style="background:#D0D2DD; border:1px solid #C8CDD3; border-radius:4px; padding:16px 18px; margin-bottom:12px;">
+                <div style="display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#343A40"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#343A40"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#343A40"/></svg>
+                  <div style="font-size:16px; font-weight:700; color:#000000;">Welcome back</div>
+                </div>
+                <p style="font-size:14px; color:#495057; line-height:1.6;">Your home's value has increased <strong style="color:#000;">$12,000</strong> since your last visit — now at <strong style="color:#000;">$624,000</strong>. Seattle inventory remains low and conditions still favor sellers. Your estimated net proceeds have increased to ~$185,000. The market hasn't shifted significantly, but your equity position has improved. <a href="plan-overview.html" style="font-size:13px; font-weight:600; color:#000000; text-decoration:none; white-space:nowrap;">View your plan &rarr;</a></p>
+              </div>
+
+              <!-- Section header row -->
+              <div style="margin-bottom:10px;">
+                <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.8px; color:#6C757D;">Where you left off — selling options</div>
+              </div>
+
+              <!-- Previously explored options — tiled -->
+              <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px;">
+                <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+                  <div>
+                    <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">List with an agent</div>
+                    <div style="font-size:12px; color:#495057; margin-bottom:2px;">Sarah Chen</div>
+                    <div style="font-size:12px; color:#495057;">$605k–$643k &nbsp;&middot;&nbsp; 30–45 days</div>
+                  </div>
+                  <a href="agent-modal.html" style="font-size:12px; font-weight:600; color:#000000; text-decoration:underline;">Connect with Sarah &rarr;</a>
+                </div>
+                <div id="cash-offer-tile" style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px 14px; display:flex; flex-direction:column; justify-content:space-between; gap:10px;">
+                  <div>
+                    <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">Cash offer</div>
+                    <div style="font-size:12px; color:#495057; margin-bottom:6px;">Opendoor</div>
+                    <div style="display:inline-flex; align-items:center; gap:5px;">
+                      <span style="font-size:12px; color:#495057;">$578k–$601k</span>
+                      <span style="font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:0.4px; background:#E9ECEF; color:#495057; padding:2px 6px; border-radius:3px;">Expired</span>
+                    </div>
+                  </div>
+                  <a href="#" onclick="openModal(); return false;" style="font-size:12px; font-weight:600; color:#000000; text-decoration:underline;">Get new estimate &rarr;</a>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Home value section -->
+            <div class="section-heading">Home value</div>
+            <div class="value-cards">
+              <div class="value-card">
+                <div class="value-card-label">Zestimate&reg;</div>
+                <div class="value-card-amount">$624,000</div>
+              </div>
+              <div class="value-card">
+                <div class="value-card-label">Estimated sales range</div>
+                <div class="value-card-amount">$593K – $655K</div>
+              </div>
+              <div class="value-card">
+                <div class="value-card-label">Rent Zestimate&reg;</div>
+                <div class="value-card-amount">$2,100/mo</div>
+              </div>
+            </div>
+
+            <!-- Zestimate history -->
+            <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:18px 20px; margin-bottom:16px;">
+              <div style="display:flex; align-items:baseline; justify-content:space-between; margin-bottom:4px;">
+                <div style="display:flex; align-items:baseline; gap:16px;">
+                  <div class="section-heading" style="margin-bottom:0;">Zestimate&reg; history</div>
+                  <span style="font-size:13px; color:#495057;">Table view</span>
+                </div>
+                <a href="#" style="font-size:13px; font-weight:600; color:#000000; text-decoration:none; display:flex; align-items:center; gap:4px; white-space:nowrap;">&#9998; Edit home facts</a>
+              </div>
+              <div class="history-subtext">+8% in last 1 year</div>
+              <div class="tab-row">
+                <a href="#" class="tab active">Home values</a>
+                <a href="#" class="tab">Rent Zestimate</a>
+                <a href="#" class="tab">Tax paid</a>
+              </div>
+              <div class="chart-placeholder">Zestimate history chart</div>
+            </div>
+
+            <!-- Equity + net proceeds -->
+            <div class="card" style="margin-bottom: 16px;">
+              <div class="private-label"><span class="private-label-eye">&#128065;</span> Visible only to you</div>
+              <div class="card-title">Your home equity</div>
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+                <div>
+                  <div style="font-size: 11px; color: #ADB5BD; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px;">Estimated equity</div>
+                  <div style="font-size: 22px; font-weight: 800; color: #000;">$211,000</div>
+                </div>
+                <div>
+                  <div style="font-size: 11px; color: #ADB5BD; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 4px;">Estimated net proceeds</div>
+                  <div style="font-size: 22px; font-weight: 800; color: #000;">~$185,000</div>
+                  <div style="font-size: 11px; color: #ADB5BD;">after selling costs</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Cash offer comparison module (shown after getting new estimate) -->
+            <div id="cash-offer-module" class="cash-offer-module" style="display:none;">
+              <div class="cash-offer-module-title">Your cash offer comparison</div>
+              <div class="cash-offer-module-sub">Based on your home at 4821 Maple Ave &nbsp;·&nbsp; Updated today</div>
+              <div class="comparison-cols">
+                <div class="comparison-col">
+                  <div class="comparison-pill">Cash offer</div>
+                  <div class="comparison-brand">Opendoor</div>
+                  <div class="comparison-price">$590,000–$614,000</div>
+                  <div class="comparison-meta">Expires in 13 days</div>
+                  <div class="comparison-tagline">Sell on a faster timeline</div>
+                </div>
+                <div class="comparison-divider"></div>
+                <div class="comparison-col">
+                  <div class="comparison-pill">Partner agent with Showcase</div>
+                  <div class="comparison-brand">Zillow</div>
+                  <div class="comparison-price">~$624,000+</div>
+                  <div class="comparison-meta">Incl. Showcase boost &#9432;</div>
+                  <div class="comparison-tagline">Maximize sales price</div>
+                </div>
+              </div>
+              <a href="plan-overview.html" class="cash-offer-plan-cta">Ready to move forward? Continue to the Plan tab &rarr;</a>
+            </div>
+
+            <!-- Homeowner insights carousel -->
+            <div class="card" style="margin-bottom: 16px; overflow: hidden;">
+              <div class="private-label"><span class="private-label-eye">&#128065;</span> Visible only to you</div>
+              <div class="card-title">Your homeowner insights</div>
+              <div style="position: relative; overflow: hidden;">
+                <div id="insights-slides" style="display: flex; transition: transform 0.3s ease; width: 200%;">
+                  <!-- Slide 1 -->
+                  <div style="width: 50%; flex-shrink: 0; padding-right: 4px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;">
+                      <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+                        <div style="font-size:18px; font-weight:800; color:#000;">6.4%</div>
+                        <div style="font-size:11px; color:#343A40; line-height:1.3;">Current avg. 30-yr mortgage rate</div>
+                      </div>
+                      <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+                        <div style="font-size:18px; font-weight:800; color:#000;">+8.2%</div>
+                        <div style="font-size:11px; color:#343A40; line-height:1.3;">Appreciation for your home type YoY</div>
+                      </div>
+                      <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+                        <div style="font-size:18px; font-weight:800; color:#000;">$211k</div>
+                        <div style="font-size:11px; color:#343A40; line-height:1.3;">Your estimated home equity</div>
+                      </div>
+                    </div>
+                    <div style="padding-top:12px; display:flex; gap:12px; align-items:flex-start;">
+                      <div style="width:36px; height:36px; background:#DEE2E6; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:16px;">&#128176;</div>
+                      <div style="flex:1;">
+                        <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">Refinance and save</div>
+                        <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:6px;">With buyer demand high and your home up 8.2% this year, your equity position is strong. Refinancing now could reduce your monthly payments and free up cash.</div>
+                        <a href="#" style="font-size:12px; font-weight:600; color:#000; text-decoration:underline;">See today's rates &#8594;</a>
+                      </div>
+                      <div style="text-align:right; flex-shrink:0;">
+                        <div style="font-size:14px; font-weight:800; color:#000;">$3,240/mo</div>
+                        <div style="font-size:11px; color:#6C757D;">Est. payment</div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Slide 2 -->
+                  <div style="width: 50%; flex-shrink: 0; padding-left: 4px;">
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px;">
+                      <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+                        <div style="font-size:18px; font-weight:800; color:#000;">$2,100</div>
+                        <div style="font-size:11px; color:#343A40; line-height:1.3;">Rent Zestimate&reg; for your home</div>
+                      </div>
+                      <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+                        <div style="font-size:18px; font-weight:800; color:#000;">4.2%</div>
+                        <div style="font-size:11px; color:#343A40; line-height:1.3;">Rental yield for your home type in 98103</div>
+                      </div>
+                      <div style="background:#ffffff; border:1px solid #C8CDD3; border-radius:4px; padding:12px;">
+                        <div style="font-size:18px; font-weight:800; color:#000;">Low</div>
+                        <div style="font-size:11px; color:#343A40; line-height:1.3;">Rental vacancy rate in your area</div>
+                      </div>
+                    </div>
+                    <div style="padding-top:12px; display:flex; gap:12px; align-items:flex-start;">
+                      <div style="width:36px; height:36px; background:#DEE2E6; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:16px;">&#127968;</div>
+                      <div style="flex:1;">
+                        <div style="font-size:13px; font-weight:700; color:#000; margin-bottom:3px;">List your home for rent</div>
+                        <div style="font-size:12px; color:#495057; line-height:1.5; margin-bottom:6px;">Rental demand is high in your area. Find your next renter with Zillow Rental Manager and screen tenants online — for free.</div>
+                        <a href="#" style="font-size:12px; font-weight:600; color:#000; text-decoration:underline;">Learn more &#8594;</a>
+                      </div>
+                      <div style="text-align:right; flex-shrink:0;">
+                        <div style="font-size:14px; font-weight:800; color:#000;">$2,100/mo</div>
+                        <div style="font-size:11px; color:#6C757D;">Rent Zestimate&reg;</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div style="display:flex; justify-content:center; gap:8px; margin-top:14px; padding-top:10px; border-top:1px solid #DEE2E6;">
+                <button id="dot-1" onclick="goToSlide(0)" style="width:8px; height:8px; border-radius:50%; background:#000000; border:none; cursor:pointer; padding:0;"></button>
+                <button id="dot-2" onclick="goToSlide(1)" style="width:8px; height:8px; border-radius:50%; background:#CED4DA; border:none; cursor:pointer; padding:0;"></button>
+              </div>
+            </div>
+
+            <!-- Market conditions -->
+            <div class="section-heading" id="market">Market conditions for 98103</div>
+            <div class="market-grid">
+              <div class="market-index-card">
+                <div class="market-index-label">Neutral market <span style="font-size:11px; color:#ADB5BD;">&#9432;</span></div>
+                <div class="market-index-score">54<span style="font-size:14px; font-weight:400; color:#495057;">/100</span></div>
+                <div class="market-index-sublabel">Market index</div>
+                <div class="market-bar-wrap">
+                  <div class="market-bar-tick" style="left: 54%;"></div>
+                </div>
+                <div class="market-bar-labels">
+                  <span>Buyers market</span>
+                  <span>Sellers market</span>
+                </div>
+              </div>
+              <div class="stat-tiles">
+                <div class="stat-tile">
+                  <div class="stat-tile-value">0.4%</div>
+                  <div class="stat-tile-label">1-year price forecast</div>
+                </div>
+                <div class="stat-tile">
+                  <div class="stat-tile-value">12 days</div>
+                  <div class="stat-tile-label">Median days to pending</div>
+                </div>
+                <div class="stat-tile">
+                  <div class="stat-tile-value">81</div>
+                  <div class="stat-tile-label">New listings in last 30 days</div>
+                </div>
+                <div class="stat-tile">
+                  <div class="stat-tile-value">244</div>
+                  <div class="stat-tile-label">Active listings for sale</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Agent matches -->
+            <div class="agent-matches-section">
+              <div class="section-heading-row">
+                <div class="section-heading" style="margin-bottom:0;">Listing agent matches for 98103</div>
+                <span class="section-nav">&lt; &gt;</span>
+              </div>
+              <div class="agent-banner">&#127942; These agent matches are featured based on their recent sales in this area.</div>
+              <div class="agent-cards-grid">
+                <div class="agent-card-main">
+                  <div class="agent-avatar-lg"></div>
+                  <div class="agent-card-info">
+                    <div class="agent-card-name">Sarah Chen</div>
+                    <div class="agent-card-meta">
+                      4.8 &#9733; (25)<br>
+                      Redfin<br>
+                      12 recent sales<br>
+                      4 sales near you
+                    </div>
+                    <div class="agent-card-connect">
+                      <a href="agent-modal.html" class="btn-outline-sm">Connect</a>
+                    </div>
+                  </div>
+                </div>
+                <div class="agent-card-main">
+                  <div class="agent-avatar-lg"></div>
+                  <div class="agent-card-info">
+                    <div class="agent-card-name">Marcus Lee</div>
+                    <div class="agent-card-meta">
+                      4.5 &#9733; (18)<br>
+                      Compass<br>
+                      9 recent sales<br>
+                      3 sales near you
+                    </div>
+                    <div class="agent-card-connect">
+                      <a href="agent-modal.html" class="btn-outline-sm">Connect</a>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comparable homes -->
+            <div class="comps-section">
+              <div class="section-heading-row">
+                <div class="section-heading" style="margin-bottom:0;">Comparable homes</div>
+                <span class="section-nav">&lt; &gt;</span>
+              </div>
+              <div class="comps-subtext">These are recently sold homes with similar features to this home, such as bedrooms, bathrooms, location, and square footage.</div>
+              <div class="comp-cards-grid">
+                <div class="comp-card">
+                  <div class="comp-photo"></div>
+                  <div class="comp-price">$575,000</div>
+                  <div class="comp-specs">3 bd &middot; 2 ba &middot; 1,650 sqft</div>
+                  <div class="comp-address">4102 Pine St, Seattle...</div>
+                  <div class="comp-status"><span class="comp-status-dot"></span>Closed</div>
+                  <div class="comp-mls">MLS ID #10234567</div>
+                </div>
+                <div class="comp-card">
+                  <div class="comp-photo"></div>
+                  <div class="comp-price">$638,000</div>
+                  <div class="comp-specs">3 bd &middot; 2 ba &middot; 1,920 sqft</div>
+                  <div class="comp-address">3887 Oak Ave, Seattle...</div>
+                  <div class="comp-status"><span class="comp-status-dot"></span>Sold</div>
+                  <div class="comp-mls">MLS ID #10234568</div>
+                </div>
+                <div class="comp-card">
+                  <div class="comp-photo"></div>
+                  <div class="comp-price">$600,000</div>
+                  <div class="comp-specs">3 bd &middot; 2 ba &middot; 1,780 sqft</div>
+                  <div class="comp-address">5021 Elm Ct, Seattle...</div>
+                  <div class="comp-status"><span class="comp-status-dot"></span>Sold</div>
+                  <div class="comp-mls">MLS ID #10234569</div>
+                </div>
+                <div class="comp-card">
+                  <div class="comp-photo"></div>
+                  <div class="comp-price">$589,000</div>
+                  <div class="comp-specs">3 bd &middot; 2 ba &middot; 1,710 sqft</div>
+                  <div class="comp-address">4455 Cedar Ln, Seattle...</div>
+                  <div class="comp-status"><span class="comp-status-dot"></span>Closed</div>
+                  <div class="comp-mls">MLS ID #10234570</div>
+                </div>
+              </div>
+              <div class="comp-map-placeholder">Map — comparable homes near 4821 Maple Ave</div>
+              <div class="comp-value-heading">Comparative value</div>
+              <div class="comp-value-subtext">Here's how this home's value estimate compares to similar homes nearby.</div>
+              <div class="comp-chart-placeholder">Comparative value chart — $550k ... [&#127968; $624k] ... $660k</div>
+            </div>
+
+          </main>
+        </div><!-- end modal-drawer-inner -->
+      </div><!-- end modal-drawer -->
+
+      <!-- Voyager sidebar -->
+      <aside class="sidebar">
+        <div class="voyager-panel">
+
+          <div class="voyager-panel-header">
+            <span class="voyager-panel-title">Your Home Advisor</span>
+            <span class="voyager-panel-mode">Navigator mode</span>
+          </div>
+
+          <div id="voyager-messages" class="voyager-messages">
+
+            <!-- Collapsed history from previous session -->
+            <div class="chat-history-toggle" onclick="toggleChatHistory(this)">
+              <div class="chat-history-toggle-line"></div>
+              <div class="chat-history-toggle-btn">&#8679; 4 previous messages</div>
+              <div class="chat-history-toggle-line"></div>
+            </div>
+            <div class="chat-history-items">
+              <div class="msg-user">How is my Zestimate calculated?</div>
+              <div class="msg-voyager">The Zestimate is built from public records, recent nearby sales, and your home's listed details — bedrooms, bathrooms, square footage, and lot size. The more accurate your home facts are, the tighter the estimate.</div>
+              <div class="msg-user">Is now a good time to sell?</div>
+              <div class="msg-voyager">
+                Seattle is a neutral market — homes like yours were selling in about 15 days. Based on your Zestimate and recent activity, your timing looked solid.
+                <a href="nfshdp-postclaim.html" class="msg-module-link" style="margin-top:6px;">&#8594; View: Here's where you stand if you were to sell today</a>
+              </div>
+            </div>
+
+            <!-- Seam: time gap label -->
+            <div style="opacity: 0.55; font-size: 11px; font-style: italic; align-self: stretch; text-align: center; background: transparent; border: none; padding: 0; color: #6C757D;">3 months ago</div>
+
+            <!-- Reorientation message -->
+            <div class="msg-voyager-contextual">
+              Welcome back, Jasmine — it's been about 3 months.<br><br>
+              Here's what's changed since you were last here:<br>
+              &bull; <strong>Zestimate: $624,000</strong> — up $12k from $612k<br>
+              &bull; Market still neutral, inventory slightly tighter (12 days to pending vs. 15)<br>
+              &bull; You were looking at Sarah Chen and cash offers — hadn't connected yet<br><br>
+              Want to pick up where you left off, or take a fresh look at where you stand?
+            </div>
+
+          </div>
+
+          <div class="voyager-bottom">
+            <div id="voyager-suggestions" class="voyager-suggestions">
+              <button class="suggested-q" onclick="typeQuestion(this)">"What changed since my last visit?"</button>
+              <button class="suggested-q" onclick="typeQuestion(this)">"Where did I leave off with selling?"</button>
+              <button class="suggested-q" onclick="typeQuestion(this)">"Am I any closer to being ready to sell?"</button>
+            </div>
+            <div class="voyager-input-row">
+              <div class="voyager-input-wrap">
+                <input id="voyager-input" type="text" class="voyager-input" placeholder="Ask your home advisor anything…">
+                <button class="voyager-send-btn" onclick="sendMessage()">&#8593;</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </aside>
+    </div><!-- end page-body-wrapper -->
+  </div><!-- end app-shell -->
+
+  <script>
+  // ── HOMEOWNER INSIGHTS CAROUSEL ──
+  function goToSlide(index) {
+    var slides = document.getElementById('insights-slides');
+    slides.style.transform = 'translateX(-' + (index * 50) + '%)';
+    document.getElementById('dot-1').style.background = index === 0 ? '#000000' : '#CED4DA';
+    document.getElementById('dot-2').style.background = index === 1 ? '#000000' : '#CED4DA';
+  }
+
+  // ── ACCORDION ──
+  function toggleSellingOptions() {
+    var content = document.getElementById('selling-options-content');
+    var chevron = document.getElementById('selling-chevron');
+    if (content.style.display === 'none') {
+      content.style.display = 'block';
+      chevron.innerHTML = '&#8963;';
+    } else {
+      content.style.display = 'none';
+      chevron.innerHTML = '&#8964;';
+    }
+  }
+
+  // ── CASH OFFER MODAL ──
+  function openModal() {
+    document.getElementById('selling-options-content').style.display = 'block';
+    document.getElementById('selling-chevron').innerHTML = '&#8963;';
+    document.getElementById('modal-step-1').classList.add('active');
+    document.getElementById('modal-step-2').classList.remove('active');
+    document.getElementById('cash-offer-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('cash-offer-modal').classList.remove('open');
+  }
+
+  function closeOrComplete() {
+    var onResults = document.getElementById('modal-step-2').classList.contains('active');
+    closeModal();
+    if (onResults) applyPostFlowState();
+  }
+
+  function goToModalStep(step) {
+    document.getElementById('modal-step-1').classList.remove('active');
+    document.getElementById('modal-step-2').classList.remove('active');
+    document.getElementById('modal-step-' + step).classList.add('active');
+  }
+
+  document.getElementById('cash-offer-modal').addEventListener('click', function(e) {
+    if (e.target === this) closeOrComplete();
+  });
+
+  // ── POST FLOW STATE ──
+  function applyPostFlowState() {
+    sessionStorage.setItem('cashOfferComplete', '1');
+    // Swap the expired estimate row for a "view updated estimate" link
+    var tile = document.getElementById('cash-offer-tile');
+    tile.querySelector('div div:nth-child(2)').innerHTML = 'New estimate: <strong>$590k–$614k</strong> &nbsp;&middot;&nbsp; Expires in 13 days';
+    tile.querySelector('a').textContent = 'View comparison ↓';
+    tile.querySelector('a').style.cssText = 'font-size:13px; font-weight:600; color:#000000; text-decoration:none; white-space:nowrap;';
+    tile.querySelector('a').onclick = function(e) { e.preventDefault(); document.getElementById('cash-offer-module').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+    // Show comparison module
+    document.getElementById('cash-offer-module').style.display = 'block';
+    // Voyager response
+    var msgs = document.getElementById('voyager-messages');
+    var nav = document.createElement('div');
+    nav.className = 'msg-voyager';
+    nav.innerHTML = '<strong>Updated:</strong> your new cash offer estimate is $590k–$614k — up from $578k–$601k last time. Your comparison is saved below.<a href="plan-overview.html" class="msg-cta">Go to your Plan tab &rarr;</a>';
+    msgs.appendChild(nav);
+    scrollMessages();
+    document.getElementById('cash-offer-module').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+
+  function scrollMessages() {
+    var msgs = document.getElementById('voyager-messages');
+    requestAnimationFrame(function() { msgs.scrollTop = msgs.scrollHeight; });
+  }
+
+  function toggleChatHistory(toggle) {
+    var items = toggle.nextElementSibling;
+    var btn = toggle.querySelector('.chat-history-toggle-btn');
+    var isOpen = items.classList.toggle('open');
+    btn.innerHTML = isOpen ? '&#8681; Hide history' : '&#8679; 4 previous messages';
+  }
+
+  var suggestedReplies = {
+    'What changed since my last visit?': {
+      text: 'Since your last visit about 3 months ago:<br><br>&bull; <strong>Zestimate:</strong> $624,000 (+$12k)<br>&bull; <strong>Estimated equity:</strong> $211,000 (+$12k)<br>&bull; <strong>Estimated net proceeds:</strong> ~$185,000 (+$12k)<br>&bull; <strong>Market:</strong> Still neutral — inventory slightly tighter, homes selling in 12 days vs. 15<br><br>Your position has improved modestly. The window you were evaluating last time is still open.',
+      suggestions: ['"What does the $12k increase mean for my net proceeds?"', '"Is the market moving in my favor?"', '"What should I do next?"']
+    },
+    'Where did I leave off with selling?': {
+      text: 'Last time you were looking at two main options:<br><br><strong>1. List with an agent</strong> — you were browsing agent matches and had looked at Sarah Chen (Redfin, 4.8★). You hadn\'t connected yet.<br><br><strong>2. Cash offer</strong> — you explored an Opendoor estimate, which was $578k–$601k at the time. With your Zestimate now at $624k, that estimate would likely be higher.<br><br>You were at the research stage — nothing had been committed.',
+      suggestions: ['"Should I get a new cash offer estimate?"', '"What\'s the case for listing vs. cash offer now?"', '"How do I connect with Sarah Chen?"']
+    },
+    'Am I any closer to being ready to sell?': {
+      text: 'That depends on what\'s changed for you personally, not just the market — but a few things are in your favor:<br><br>&bull; Your equity position improved by ~$12k while you did nothing<br>&bull; The market is still moving quickly (12 days to pending)<br>&bull; Inventory tightened slightly, which tends to favor sellers<br><br>The real question is whether your personal situation — timeline, what you\'re moving to next, financial goals — has changed. That\'s what makes the difference between "ready" and "not yet."<br><br>The Plan tab is the best place to think this through.',
+      suggestions: ['"What would I need to do to be ready in 3 months?"', '"View my plan"', '"How do I know when I\'m ready to sell?"']
+    }
+  };
+
+  function setSuggestions(qs) {
+    var el = document.getElementById('voyager-suggestions');
+    el.innerHTML = '';
+    qs.forEach(function(q) {
+      var btn = document.createElement('button');
+      btn.className = 'suggested-q';
+      btn.textContent = q;
+      btn.onclick = function() { typeQuestion(btn); };
+      el.appendChild(btn);
+    });
+  }
+
+  function showTypingThenReply(msgs, replyFn, delay) {
+    var typing = document.createElement('div');
+    typing.className = 'msg-voyager';
+    typing.innerHTML = '<div class="voyager-typing"><span></span><span></span><span></span></div>';
+    msgs.appendChild(typing);
+    scrollMessages();
+    setTimeout(function() {
+      msgs.removeChild(typing);
+      replyFn();
+      scrollMessages();
+    }, delay || 900);
+  }
+
+  function typeQuestion(btn) {
+    var val = btn.textContent.replace(/^"|"$/g, '');
+    var msgs = document.getElementById('voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    scrollMessages();
+
+    var replyData = suggestedReplies[val];
+
+    showTypingThenReply(msgs, function() {
+      var replyEl = document.createElement('div');
+      replyEl.className = 'msg-voyager';
+      replyEl.innerHTML = replyData ? replyData.text : 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and recent history.';
+      msgs.appendChild(replyEl);
+      if (replyData && replyData.suggestions) {
+        setSuggestions(replyData.suggestions);
+      }
+    }, 900);
+  }
+
+  function sendMessage() {
+    var input = document.getElementById('voyager-input');
+    var val = input.value.trim();
+    if (!val) return;
+    var msgs = document.getElementById('voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    input.value = '';
+    scrollMessages();
+
+    showTypingThenReply(msgs, function() {
+      var replyEl = document.createElement('div');
+      replyEl.className = 'msg-voyager';
+      replyEl.textContent = 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and recent history.';
+      msgs.appendChild(replyEl);
+    }, 900);
+  }
+
+  document.getElementById('voyager-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+  </script>
+
+</body>
+</html>

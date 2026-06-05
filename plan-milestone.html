@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Choose Your Selling Option — Plan — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; min-height: 100vh; padding-bottom: 60px; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+
+    .subnav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; display: flex; gap: 0; }
+    .subnav-tab { padding: 14px 20px; font-size: 14px; font-weight: 500; color: #ADB5BD; text-decoration: none; border-bottom: 3px solid transparent; }
+    .subnav-tab.active { color: #000000; font-weight: 700; border-bottom: 3px solid #000000; }
+
+    .breadcrumb { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 10px 40px; font-size: 13px; color: #ADB5BD; }
+    .breadcrumb a { color: #ADB5BD; text-decoration: none; }
+    .breadcrumb a:hover { text-decoration: underline; }
+
+    .content { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+
+    .back-link { display: inline-block; font-size: 13px; color: #000000; text-decoration: none; font-weight: 600; margin-bottom: 24px; }
+    .back-link:hover { text-decoration: underline; opacity: 1; }
+
+    .page-title { font-size: 26px; font-weight: 800; color: #000000; margin-bottom: 10px; }
+    .page-body { font-size: 15px; color: #343A40; line-height: 1.6; margin-bottom: 28px; max-width: 640px; }
+
+    .options-grid { display: flex; flex-direction: column; gap: 16px; margin-bottom: 32px; }
+    .option-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 22px 24px; }
+    .option-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 8px; }
+    .option-name { font-size: 17px; font-weight: 800; color: #000000; }
+    .option-tag { font-size: 11px; color: #ADB5BD; background: #F8F9FA; border: 1px solid #DEE2E6; padding: 3px 9px; border-radius: 20px; white-space: nowrap; }
+    .option-desc { font-size: 14px; color: #343A40; line-height: 1.5; margin-bottom: 10px; }
+    .option-best { font-size: 13px; color: #ADB5BD; font-style: italic; }
+
+    .voyager-panel { position: fixed; bottom: 32px; right: 32px; width: 280px; background: #ffffff; border: 1.5px solid #000000; border-radius: 6px; padding: 16px; z-index: 200; }
+    .voyager-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #000000; border-bottom: 1px solid #DEE2E6; padding-bottom: 8px; margin-bottom: 10px; }
+    .voyager-mode { font-size: 11px; color: #ADB5BD; margin-bottom: 10px; }
+    .voyager-prompt { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #343A40; margin-bottom: 6px; font-style: italic; }
+    .voyager-note { font-size: 11px; color: #ADB5BD; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="subnav">
+    <a href="nfshdp-postclaim.html" class="subnav-tab">Home Profile</a>
+    <a href="plan-overview.html" class="subnav-tab active">Plan</a>
+    <a href="#" class="subnav-tab">Documents</a>
+    <a href="#" class="subnav-tab">Timeline</a>
+  </div>
+
+  <div class="breadcrumb">
+    <a href="plan-overview.html">Plan</a> &rsaquo; Choose your selling option
+  </div>
+
+  <main class="content">
+
+    <a href="plan-overview.html" class="back-link">&#8592; Back to your plan</a>
+
+    <h1 class="page-title">Choose your selling option</h1>
+    <p class="page-body">Based on your goals and timeline, here are your options. Your agent can help you decide which is right for you.</p>
+
+    <div class="options-grid">
+
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-name">Cash offer</div>
+          <span class="option-tag">Fast &amp; certain</span>
+        </div>
+        <div class="option-desc">Fast, certain, no showings. Sell directly to a buyer without listing publicly.</div>
+        <div class="option-best">Best for: sellers who need speed and certainty.</div>
+      </div>
+
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-name">Listing agent</div>
+          <span class="option-tag">Maximum price</span>
+        </div>
+        <div class="option-desc">Widest buyer reach, market-rate price. Work with an agent to list your home on the market.</div>
+        <div class="option-best">Best for: sellers who want to maximize sale price.</div>
+      </div>
+
+      <div class="option-card">
+        <div class="option-header">
+          <div class="option-name">FSBO</div>
+          <span class="option-tag">Full control</span>
+        </div>
+        <div class="option-desc">Full control, no agent commission. Sell without an agent and manage the process yourself.</div>
+        <div class="option-best">Best for: experienced sellers comfortable managing the process.</div>
+      </div>
+
+    </div>
+
+  </main>
+
+  <div class="voyager-panel">
+    <div class="voyager-label">VOYAGER</div>
+    <div class="voyager-mode">Options contextualizer mode</div>
+    <div class="voyager-prompt">"What's the difference between these offer structures?"</div>
+    <div class="voyager-note">Voyager helps you understand your options — your agent helps you decide.</div>
+  </div>
+
+  <script>
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+  </script>
+</body>
+</html>

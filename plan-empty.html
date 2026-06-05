@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; display: flex; flex-direction: column; overflow: hidden; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+
+    /* ── APP SHELL ── */
+    .app-shell { flex: 1; min-height: 0; display: flex; flex-direction: row; overflow: hidden; }
+
+    /* ── LEFT ICON NAV ── */
+    .icon-nav { width: 64px; flex-shrink: 0; height: 100%; background: #ffffff; border-right: 1px solid #DEE2E6; display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 4px; }
+    .icon-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; width: 100%; cursor: pointer; text-decoration: none; }
+    .icon-nav-item:hover { background: #F8F9FA; opacity: 1; }
+    .icon-glyph { width: 28px; height: 28px; border-radius: 50%; background: #DCDEE5; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #495057; }
+    .icon-label { font-size: 10px; color: #495057; font-weight: 500; }
+    .icon-nav-item.active .icon-glyph { background: #212529; color: #ffffff; }
+    .icon-nav-item.active .icon-label { color: #000000; font-weight: 700; }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { flex-shrink: 0; padding: 28px 40px 0; background: #F8F9FA; }
+    .page-title { font-size: 36px; font-weight: 900; color: #000000; margin-bottom: 16px; }
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #DEE2E6; }
+    .plan-tab { font-size: 15px; font-weight: 500; color: #ADB5BD; padding: 10px 20px; text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+    .plan-tab.active { color: #000000; font-weight: 700; border-bottom-color: #000000; }
+    .plan-tab:hover { color: #343A40; opacity: 1; }
+
+    /* ── PAGE BODY: main | right sidebar | voyager ── */
+    .page-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 340px 380px; }
+
+    /* ── MAIN COLUMN ── */
+    .main-col { overflow-y: auto; padding: 28px 24px 40px 40px; min-width: 0; }
+
+    /* Section heading */
+    .section-heading { font-size: 18px; font-weight: 800; color: #000000; margin-bottom: 14px; }
+
+    /* Empty home card */
+    .empty-home-card { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 6px; overflow: hidden; margin-bottom: 20px; display: grid; grid-template-columns: 200px 1fr; }
+    .empty-home-left { background: #343A40; color: #ffffff; padding: 24px 20px; display: flex; flex-direction: column; justify-content: space-between; }
+    .empty-home-title { font-size: 18px; font-weight: 800; color: #ffffff; line-height: 1.3; margin-bottom: 8px; }
+    .empty-home-sub { font-size: 12px; color: #CED4DA; line-height: 1.5; margin-bottom: 16px; }
+    .empty-home-search { background: #ffffff; border-radius: 4px; padding: 10px 12px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .empty-home-search-input { flex: 1; font-size: 12px; color: #ADB5BD; font-family: inherit; }
+    .empty-home-search-dot { width: 10px; height: 10px; border-radius: 50%; background: #ADB5BD; flex-shrink: 0; }
+    .empty-home-right { padding: 24px; display: flex; flex-direction: column; justify-content: center; gap: 14px; }
+    .empty-stat-label { font-size: 11px; color: #ADB5BD; margin-bottom: 2px; }
+    .empty-stat-value { font-size: 28px; font-weight: 800; color: #CED4DA; }
+    .empty-stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .empty-stat-tile { background: #F8F9FA; border-radius: 4px; padding: 10px 12px; }
+    .empty-stat-tile-label { font-size: 11px; color: #CED4DA; margin-bottom: 3px; }
+    .empty-stat-tile-value { font-size: 16px; font-weight: 800; color: #CED4DA; }
+
+    /* ── RIGHT SIDEBAR ── */
+    .right-sidebar { overflow-y: auto; padding: 28px 16px 40px; border-left: 1px solid #DEE2E6; }
+    .right-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 18px 20px; margin-bottom: 16px; }
+    .right-card-title { font-size: 16px; font-weight: 800; color: #000000; margin-bottom: 14px; }
+
+    /* Choose your agent */
+    .agent-placeholder { display: flex; gap: 12px; align-items: flex-start; }
+    .agent-placeholder-avatar { width: 40px; height: 40px; border-radius: 50%; background: #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 18px; color: #ADB5BD; }
+    .agent-placeholder-body { flex: 1; }
+    .agent-placeholder-title { font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 4px; }
+    .agent-placeholder-sub { font-size: 12px; color: #6C757D; line-height: 1.5; margin-bottom: 10px; }
+    .agent-placeholder-cta { font-size: 12px; font-weight: 700; color: #000000; text-decoration: underline; }
+
+    /* Process steps */
+    .process-row { display: flex; gap: 10px; padding: 10px 8px; border-bottom: 1px solid #DEE2E6; align-items: flex-start; border-radius: 4px; margin: 0 -8px; }
+    .process-row:last-child { border-bottom: none; }
+    .process-icon { width: 32px; height: 32px; border-radius: 4px; background: #DCDEE5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #CED4DA; }
+    .process-row-body { flex: 1; }
+    .process-row-title { font-size: 12px; font-weight: 700; color: #ADB5BD; margin-bottom: 2px; }
+    .process-row-desc { font-size: 11px; color: #CED4DA; line-height: 1.4; }
+
+    /* ── VOYAGER SIDEBAR ── */
+    .voyager-sidebar { border-left: 1px solid #DEE2E6; display: flex; flex-direction: column; background: #ffffff; min-height: 0; }
+    .voyager-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .voyager-panel-header { padding: 12px 14px; border-bottom: 1px solid #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+    .voyager-panel-title { font-size: 12px; font-weight: 800; color: #000000; }
+    .voyager-panel-mode { font-size: 10px; color: #ADB5BD; }
+    .voyager-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .voyager-messages > * { flex-shrink: 0; }
+    .msg-voyager { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; }
+    .msg-voyager strong { color: #000000; }
+    .msg-cta { display: block; background: #212529; color: #ffffff; font-size: 12px; font-weight: 700; padding: 9px 12px; border-radius: 4px; text-decoration: none; text-align: center; margin-top: 10px; }
+    .msg-cta:hover { background: #343A40; opacity: 1; }
+    .voyager-bottom { flex-shrink: 0; border-top: 1px solid #DEE2E6; background: #ffffff; }
+    .voyager-suggestions { padding: 8px 12px 4px; display: flex; flex-direction: column; gap: 5px; }
+    .suggested-q { background: #F8F9FA; border: 1px solid #CED4DA; border-radius: 6px; padding: 7px 10px; font-size: 11px; color: #343A40; font-style: italic; cursor: pointer; text-align: left; font-family: inherit; white-space: normal; line-height: 1.4; width: 100%; }
+    .suggested-q:hover { background: #E9ECEF; }
+    .voyager-input-row { padding: 8px 12px 12px; }
+    .voyager-input-wrap { position: relative; display: flex; align-items: center; }
+    .voyager-input { width: 100%; border: 1.5px solid #CED4DA; border-radius: 20px; padding: 9px 44px 9px 16px; font-size: 12px; font-family: inherit; outline: none; }
+    .voyager-input:focus { border-color: #000000; }
+    .voyager-send { position: absolute; right: 5px; width: 30px; height: 30px; border-radius: 50%; background: #212529; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; color: #ffffff; }
+
+    /* Not-ready nudge banner */
+    .not-ready-banner { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 6px; padding: 18px 20px; margin-bottom: 24px; display: flex; align-items: flex-start; gap: 14px; }
+    .not-ready-icon { width: 36px; height: 36px; border-radius: 50%; background: #F8F9FA; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+    .not-ready-body { flex: 1; }
+    .not-ready-title { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 4px; }
+    .not-ready-sub { font-size: 13px; color: #495057; line-height: 1.5; margin-bottom: 10px; }
+    .not-ready-cta { display: inline-block; font-size: 13px; font-weight: 700; color: #000000; text-decoration: none; border: 1.5px solid #000000; border-radius: 4px; padding: 7px 14px; }
+    .not-ready-cta:hover { background: #F8F9FA; opacity: 1; }
+  </style>
+</head>
+<body>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+
+    <nav class="icon-nav">
+      <a href="index.html" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+        <span class="icon-label">Search</span>
+      </a>
+      <a href="#" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <span class="icon-label">Updates</span>
+      </a>
+      <a href="#" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+        <span class="icon-label">Favorites</span>
+      </a>
+      <a href="plan-empty.html" class="icon-nav-item active">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+        <span class="icon-label">Plan</span>
+      </a>
+      <a href="#" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></div>
+        <span class="icon-label">Inbox</span>
+      </a>
+      <a href="reengagement.html" class="icon-nav-item">
+        <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><path d="M3.05 11a9 9 0 1 0 .5-3M3 4v4h4"/></svg></div>
+        <span class="icon-label">Recent</span>
+      </a>
+    </nav>
+
+    <div class="page-wrapper">
+
+      <div class="page-header">
+        <div class="page-title">Plan</div>
+        <div class="tab-bar">
+          <a href="plan-empty.html" class="plan-tab active">Overview</a>
+          <a href="plan-empty.html" class="plan-tab">Selling</a>
+        </div>
+      </div>
+
+      <div class="page-body">
+
+        <!-- Main content -->
+        <main class="main-col">
+
+          <!-- Financial snapshot — empty state -->
+          <div class="section-heading">Financial snapshot</div>
+          <div class="empty-home-card">
+            <div class="empty-home-left">
+              <div>
+                <div class="empty-home-title">Start with your home</div>
+                <div class="empty-home-sub">Track your home value and understand your equity.</div>
+              </div>
+              <a href="nfshdp-preclaim.html" style="text-decoration:none;">
+                <div class="empty-home-search">
+                  <span class="empty-home-search-input">Search home address</span>
+                  <div class="empty-home-search-dot"></div>
+                </div>
+              </a>
+            </div>
+            <div class="empty-home-right">
+              <div>
+                <div class="empty-stat-label">Zestimate&reg;</div>
+                <div class="empty-stat-value">$——</div>
+              </div>
+              <div class="empty-stats-grid">
+                <div class="empty-stat-tile">
+                  <div class="empty-stat-tile-label">30-day change</div>
+                  <div class="empty-stat-tile-value">$——</div>
+                </div>
+                <div class="empty-stat-tile">
+                  <div class="empty-stat-tile-label">Zestimate per sqft</div>
+                  <div class="empty-stat-tile-value">$——</div>
+                </div>
+                <div class="empty-stat-tile" style="grid-column: 1 / -1;">
+                  <div class="empty-stat-tile-label">Zestimate range</div>
+                  <div class="empty-stat-tile-value">$—— – $——</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Not-ready nudge -->
+          <div class="not-ready-banner">
+            <div class="not-ready-icon">&#9968;</div>
+            <div class="not-ready-body">
+              <div class="not-ready-title">Not ready to sell yet?</div>
+              <div class="not-ready-sub">No rush — this tab will be here when you are. In the meantime, you can still explore your home's value, track your equity, and get familiar with the process.</div>
+              <a href="nfshdp-preclaim.html" class="not-ready-cta">&#8592; Go back to my home</a>
+            </div>
+          </div>
+
+        </main>
+
+        <!-- Right sidebar -->
+        <div class="right-sidebar">
+
+          <div class="right-card">
+            <div class="right-card-title">Choose your agent</div>
+            <div class="agent-placeholder">
+              <div class="agent-placeholder-avatar">&#128100;</div>
+              <div class="agent-placeholder-body">
+                <div class="agent-placeholder-title">Connect with a local expert</div>
+                <div class="agent-placeholder-sub">Finding the right agent makes all the difference. Agents provide the best hands-on guidance.</div>
+                <a href="#" class="agent-placeholder-cta">Explore agents</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="right-card">
+            <div class="right-card-title">Understand the process</div>
+            <div class="process-row">
+              <div class="process-icon">&#9685;</div>
+              <div class="process-row-body">
+                <div class="process-row-title">Understand your selling position</div>
+                <div class="process-row-desc">Get clear on your home's value, timing, and selling options.</div>
+              </div>
+            </div>
+            <div class="process-row">
+              <div class="process-icon">&#9962;</div>
+              <div class="process-row-body">
+                <div class="process-row-title">Prepare your home &amp; list it</div>
+                <div class="process-row-desc">Set your strategy and prepare your home to attract buyers.</div>
+              </div>
+            </div>
+            <div class="process-row">
+              <div class="process-icon">&#9906;</div>
+              <div class="process-row-body">
+                <div class="process-row-title">Find a buyer</div>
+                <div class="process-row-desc">Review your offers and choose what works best for you.</div>
+              </div>
+            </div>
+            <div class="process-row">
+              <div class="process-icon">&#10003;</div>
+              <div class="process-row-body">
+                <div class="process-row-title">Close your sale</div>
+                <div class="process-row-desc">Wrap up the final steps and complete your sale.</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Voyager right panel -->
+        <div class="voyager-sidebar">
+          <div class="voyager-panel">
+            <div class="voyager-panel-header">
+              <span class="voyager-panel-title">Your Home Advisor</span>
+              <span class="voyager-panel-mode">Explorer mode</span>
+            </div>
+            <div class="voyager-messages">
+              <div class="msg-voyager">
+                Hey Jasmine — looks like you landed on the Plan tab.<br><br>
+                This is where your selling plan comes together when you're ready to make a move. The numbers will fill in once you decide to start planning your sale.<br><br>
+                If you're not quite there yet, that's completely fine — there's no pressure. Come back whenever selling starts to feel real.
+                <a href="nfshdp-preclaim.html" class="msg-cta">&#8592; Go back to my home</a>
+              </div>
+            </div>
+            <div class="voyager-bottom">
+              <div class="voyager-suggestions">
+                <button class="suggested-q" onclick="typeQuestion(this)">"What would I see here if I was ready to sell?"</button>
+                <button class="suggested-q" onclick="typeQuestion(this)">"How do I know when I'm ready to sell?"</button>
+              </div>
+              <div class="voyager-input-row">
+                <div class="voyager-input-wrap">
+                  <input id="voyager-input" class="voyager-input" type="text" placeholder="Ask your home advisor anything...">
+                  <button class="voyager-send" onclick="sendMessage()">&#8593;</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+
+  var suggestedReplies = {
+    'What would I see here if I was ready to sell?': 'When you\'re ready to sell, the Plan tab shows your home\'s current value and equity, a side-by-side comparison of your selling options — listing vs. cash offer — live demand data for your market, and a step-by-step selling timeline you can work through with your agent.',
+    'How do I know when I\'m ready to sell?': 'A few signals worth thinking about: you have a sense of where you\'d move next, you\'ve looked at your equity and know what you\'d walk away with, and the timing feels right for your life — not just the market. There\'s no perfect moment, but having a plan makes it feel a lot more manageable.'
+  };
+
+  function typeQuestion(btn) {
+    var val = btn.textContent.replace(/^"|"$/g, '');
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user' in window ? 'msg-user' : 'msg-voyager';
+    userBubble.style.cssText = 'background:#000000; color:#ffffff; border-radius:8px 0 8px 8px; padding:10px 12px; font-size:12px; line-height:1.6; align-self:flex-end; max-width:85%;';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager';
+    reply.textContent = suggestedReplies[val] || 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.';
+    msgs.appendChild(reply);
+    requestAnimationFrame(function() { msgs.scrollTop = msgs.scrollHeight; });
+  }
+
+  function sendMessage() {
+    var input = document.getElementById('voyager-input');
+    var val = input.value.trim();
+    if (!val) return;
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.style.cssText = 'background:#000000; color:#ffffff; border-radius:8px 0 8px 8px; padding:10px 12px; font-size:12px; line-height:1.6; align-self:flex-end; max-width:85%;';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager';
+    reply.textContent = 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.';
+    msgs.appendChild(reply);
+    input.value = '';
+    requestAnimationFrame(function() { msgs.scrollTop = msgs.scrollHeight; });
+  }
+
+  document.getElementById('voyager-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+  </script>
+</body>
+</html>

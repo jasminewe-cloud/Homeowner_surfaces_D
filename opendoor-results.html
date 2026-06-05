@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Your Cash Offer Estimate — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; min-height: 100vh; padding-bottom: 40px; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    .success-banner { background: #212529; color: #ffffff; padding: 14px 40px; font-size: 14px; font-weight: 600; text-align: center; }
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+    .breadcrumb { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 10px 40px; font-size: 13px; color: #ADB5BD; }
+    .breadcrumb a { color: #ADB5BD; text-decoration: none; }
+    .claimed-badge { display: inline-block; background: #212529; color: #ffffff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 8px; }
+
+    .content { max-width: 960px; margin: 0 auto; padding: 32px 20px; }
+    .page-title { font-size: 26px; font-weight: 800; color: #000000; margin-bottom: 20px; }
+    .home-photo { width: 100%; height: 220px; background: #DEE2E6; border: 1px solid #CED4DA; display: flex; align-items: center; justify-content: center; color: #ADB5BD; font-size: 14px; border-radius: 4px; margin-bottom: 16px; }
+    .specs-row { font-size: 15px; color: #343A40; font-weight: 600; margin-bottom: 24px; padding: 12px 0; border-bottom: 1px solid #DEE2E6; }
+
+    /* Results module */
+    .results-module { background: #ffffff; border: 1.5px solid #000000; border-radius: 6px; padding: 32px; }
+    .results-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #ADB5BD; margin-bottom: 8px; }
+    .results-title { font-size: 18px; font-weight: 700; color: #000000; margin-bottom: 20px; }
+    .estimate-range { font-size: 40px; font-weight: 900; color: #000000; margin-bottom: 28px; letter-spacing: -1px; }
+
+    .summary-rows { margin-bottom: 28px; display: flex; flex-direction: column; gap: 12px; }
+    .summary-row { display: flex; align-items: center; gap: 12px; font-size: 15px; color: #343A40; padding: 12px 16px; background: #F8F9FA; border-radius: 4px; }
+    .summary-row .row-icon { font-size: 18px; }
+
+    .btn-primary { display: block; width: 100%; background: #212529; color: #ffffff; font-size: 15px; font-weight: 700; padding: 14px 20px; border-radius: 4px; text-decoration: none; text-align: center; margin-bottom: 14px; }
+    .btn-primary:hover { background: #343A40; opacity: 1; }
+
+    .back-link { display: block; text-align: center; font-size: 13px; color: #ADB5BD; text-decoration: none; }
+    .back-link:hover { color: #343A40; text-decoration: underline; opacity: 1; }
+
+    .voyager-panel { position: fixed; bottom: 32px; right: 32px; width: 280px; background: #ffffff; border: 1.5px solid #000000; border-radius: 6px; padding: 16px; z-index: 200; }
+    .voyager-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #000000; border-bottom: 1px solid #DEE2E6; padding-bottom: 8px; margin-bottom: 10px; }
+    .voyager-mode { font-size: 11px; color: #ADB5BD; margin-bottom: 10px; }
+    .voyager-prompt { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #343A40; margin-bottom: 6px; font-style: italic; }
+  </style>
+</head>
+<body>
+
+  <div class="success-banner">&#10003; You've claimed 4821 Maple Ave. Here's what's unlocked.</div>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="breadcrumb">
+    <a href="index.html">Home</a> &rsaquo; <a href="#">Seattle, WA</a> &rsaquo; 4821 Maple Ave
+    <span class="claimed-badge">Claimed &#10003;</span>
+  </div>
+
+  <main class="content">
+
+    <h1 class="page-title">4821 Maple Ave, Seattle, WA 98103</h1>
+    <div class="home-photo">[ Home photo ]</div>
+    <div class="specs-row">3 bed &nbsp;/&nbsp; 2 bath &nbsp;/&nbsp; 1,840 sq ft</div>
+
+    <!-- Results module -->
+    <div class="results-module">
+      <div class="results-label">Cash offer estimate</div>
+      <div class="results-title">Your cash offer estimate</div>
+      <div class="estimate-range">$578,000 &ndash; $601,000</div>
+
+      <div class="summary-rows">
+        <div class="summary-row">
+          <span class="row-icon">&#9889;</span>
+          <span>Closing in 14–21 days</span>
+        </div>
+        <div class="summary-row">
+          <span class="row-icon">&#127968;</span>
+          <span>No showings required</span>
+        </div>
+        <div class="summary-row">
+          <span class="row-icon">&#10003;</span>
+          <span>Sell as-is</span>
+        </div>
+      </div>
+
+      <a href="plan-overview.html" class="btn-primary">When you're ready to move forward &rarr;</a>
+      <a href="nfshdp-accordion.html" class="back-link">&#8592; Back to selling options</a>
+    </div>
+
+  </main>
+
+  <div class="voyager-panel">
+    <div class="voyager-label">VOYAGER</div>
+    <div class="voyager-mode">Contextualizer mode</div>
+    <div class="voyager-prompt">"How does this compare to what I'd get listing with an agent?"</div>
+  </div>
+
+  <script>
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+  </script>
+</body>
+</html>

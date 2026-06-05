@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>4821 Maple Ave — Selling Options — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; min-height: 100vh; padding-bottom: 40px; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    /* Success banner */
+    .success-banner { background: #212529; color: #ffffff; padding: 14px 40px; font-size: 14px; font-weight: 600; text-align: center; }
+
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+    .claimed-badge { display: inline-block; background: #212529; color: #ffffff; font-size: 10px; font-weight: 700; padding: 2px 7px; border-radius: 20px; margin-left: 8px; letter-spacing: 0.3px; }
+
+    /* ── PHOTO SECTION ── */
+    .photo-section { max-width: 960px; margin: 0 auto; padding: 16px 20px 0; position: relative; }
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 140px 140px; gap: 4px; height: 284px; }
+    .photo-hero { grid-row: 1 / 3; background: #DCDEE5; border: 1px solid #CED4DA; display: flex; align-items: center; justify-content: center; color: #6C757D; font-size: 13px; position: relative; border-radius: 4px 0 0 4px; }
+    .photo-thumb { background: #DCDEE5; border: 1px solid #CED4DA; display: flex; align-items: center; justify-content: center; color: #ADB5BD; font-size: 11px; }
+    .photo-thumb:nth-child(2) { border-radius: 0 4px 0 0; }
+    .photo-thumb:last-of-type { position: relative; }
+    .off-market-badge { position: absolute; top: 10px; left: 10px; background: #343A40; color: #ffffff; font-size: 11px; font-weight: 700; padding: 3px 9px; border-radius: 3px; letter-spacing: 0.3px; }
+    .see-all-photos { position: absolute; bottom: 10px; right: 10px; background: #ffffff; border: 1px solid #CED4DA; color: #000000; font-size: 12px; font-weight: 600; padding: 5px 10px; border-radius: 3px; text-decoration: none; }
+    .see-all-photos:hover { background: #F8F9FA; opacity: 1; }
+
+    /* ── TWO-COLUMN LAYOUT ── */
+    .page-body { max-width: 960px; margin: 0 auto; padding: 0 20px 32px; display: grid; grid-template-columns: 1fr 300px; gap: 24px; align-items: start; }
+
+    /* ── LEFT COLUMN ── */
+    .main-col { min-width: 0; padding-top: 20px; }
+
+    .zestimate-eyebrow { font-size: 11px; color: #495057; margin-bottom: 4px; }
+    .zestimate-eyebrow span { font-weight: 700; color: #000000; }
+    .price-large { font-size: 30px; font-weight: 800; color: #000000; line-height: 1.1; margin-bottom: 4px; }
+    .address-line { font-size: 15px; color: #343A40; margin-bottom: 6px; }
+    .specs-inline { font-size: 14px; color: #343A40; font-weight: 600; margin-bottom: 8px; }
+    .refi-row { font-size: 13px; color: #495057; padding: 8px 0; border-top: 1px solid #E9ECEF; border-bottom: 1px solid #E9ECEF; margin-bottom: 16px; }
+    .refi-row a { color: #000000; font-weight: 600; }
+
+    .details-grid { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid #C8CDD3; border-radius: 4px; overflow: hidden; margin-bottom: 20px; background: #ffffff; }
+    .details-cell { padding: 12px 14px; border-right: 1px solid #DEE2E6; border-bottom: 1px solid #DEE2E6; font-size: 12px; color: #495057; }
+    .details-cell:nth-child(3n) { border-right: none; }
+    .details-cell:nth-child(4), .details-cell:nth-child(5), .details-cell:nth-child(6) { border-bottom: none; }
+    .details-cell strong { display: block; font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+
+    .section-heading { font-size: 17px; font-weight: 700; color: #000000; margin-bottom: 12px; }
+
+    .value-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 12px; }
+    .value-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; }
+    .value-card-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: #495057; margin-bottom: 6px; }
+    .value-card-amount { font-size: 20px; font-weight: 800; color: #000000; }
+    .edit-facts-row { font-size: 13px; color: #495057; margin-bottom: 20px; }
+    .edit-facts-row a { color: #000000; font-weight: 600; }
+
+    .history-heading-row { display: flex; align-items: baseline; gap: 16px; margin-bottom: 4px; }
+    .history-subtext { font-size: 13px; color: #495057; margin-bottom: 10px; }
+    .tab-row { display: flex; gap: 0; border-bottom: 2px solid #DEE2E6; margin-bottom: 14px; }
+    .tab { font-size: 13px; font-weight: 600; color: #6C757D; padding: 7px 14px; cursor: pointer; text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .tab.active { color: #000000; border-bottom-color: #000000; }
+    .chart-placeholder { width: 100%; height: 160px; background: #DCDEE5; border: 1px solid #C8CDD3; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #ADB5BD; font-size: 13px; margin-bottom: 8px; }
+    .table-link { font-size: 13px; color: #000000; font-weight: 600; margin-bottom: 20px; display: block; }
+
+    .card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .card-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #000000; margin-bottom: 8px; }
+
+    .equity-row { display: flex; gap: 32px; }
+    .equity-item { font-size: 14px; color: #343A40; }
+    .equity-item strong { display: block; font-size: 18px; font-weight: 800; color: #000000; }
+    .equity-label { font-size: 12px; color: #ADB5BD; margin-bottom: 2px; }
+    .equity-sub { font-size: 12px; color: #ADB5BD; margin-top: 2px; }
+
+    .market-stats { font-size: 13px; color: #343A40; line-height: 1.8; }
+    .market-stats strong { color: #000000; }
+
+    .ai-blurb { background: #ffffff; border: 1.5px solid #000000; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .ai-blurb-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #212529; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .ai-blurb p { font-size: 14px; color: #343A40; line-height: 1.6; }
+
+    /* Accordion card — expanded, thicker border */
+    .accordion-card { background: #ffffff; border: 1.5px solid #000000; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .accordion-title { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #000000; margin-bottom: 16px; }
+    .option-row { border-top: 1px solid #DEE2E6; padding: 16px 0; display: flex; align-items: flex-start; justify-content: space-between; gap: 20px; }
+    .option-row:first-of-type { border-top: none; padding-top: 0; }
+    .option-info { flex: 1; }
+    .option-name { font-size: 15px; font-weight: 700; color: #000000; margin-bottom: 4px; }
+    .option-desc { font-size: 13px; color: #ADB5BD; line-height: 1.5; }
+    .option-cta { flex-shrink: 0; }
+    .accordion-note { font-size: 12px; color: #ADB5BD; margin-top: 12px; border-top: 1px solid #DEE2E6; padding-top: 12px; font-style: italic; }
+
+    .btn { display: inline-block; background: #212529; color: #ffffff; font-size: 13px; font-weight: 700; padding: 9px 16px; border-radius: 4px; text-decoration: none; white-space: nowrap; }
+    .btn:hover { background: #343A40; opacity: 1; }
+    .btn-sm { font-size: 13px; padding: 8px 14px; }
+
+    /* ── RIGHT SIDEBAR ── */
+    .sidebar { padding-top: 20px; }
+    .sidebar-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
+    .sidebar-card-title { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 8px; }
+    .sidebar-claimed-badge { display: inline-block; background: #212529; color: #ffffff; font-size: 10px; font-weight: 700; padding: 2px 8px; border-radius: 20px; margin-bottom: 10px; }
+    .sidebar-stat-row { font-size: 13px; color: #343A40; padding: 4px 0; }
+    .sidebar-stat-row strong { color: #000000; }
+    .sidebar-divider { border: none; border-top: 1px solid #DEE2E6; margin: 12px 0; }
+    .sidebar-link { font-size: 13px; color: #000000; font-weight: 600; display: inline-block; margin-right: 16px; }
+    .sidebar-active-btn { display: block; width: 100%; text-align: center; background: #F8F9FA; color: #000000; font-size: 14px; font-weight: 700; padding: 10px 18px; border-radius: 4px; text-decoration: none; border: 1.5px solid #000000; margin-top: 14px; cursor: default; }
+
+    .sidebar-section-heading { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 12px; }
+    .agent-card-stacked { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; margin-bottom: 10px; display: flex; align-items: center; gap: 12px; }
+    .agent-avatar-sm { width: 40px; height: 40px; border-radius: 50%; background: #DCDEE5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #ADB5BD; }
+    .agent-info { flex: 1; min-width: 0; }
+    .agent-name { font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 1px; }
+    .agent-brokerage { font-size: 11px; color: #ADB5BD; }
+    .agent-stars { font-size: 11px; color: #343A40; }
+
+    /* Voyager */
+    .voyager-panel { position: fixed; bottom: 32px; right: 32px; width: 280px; background: #ffffff; border: 1.5px solid #000000; border-radius: 6px; padding: 16px; z-index: 200; }
+    .voyager-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #000000; border-bottom: 1px solid #DEE2E6; padding-bottom: 8px; margin-bottom: 10px; }
+    .voyager-mode { font-size: 11px; color: #ADB5BD; margin-bottom: 10px; }
+    .voyager-prompt { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 4px; padding: 8px 10px; font-size: 12px; color: #343A40; margin-bottom: 6px; font-style: italic; }
+    .voyager-note { font-size: 11px; color: #ADB5BD; margin-top: 8px; }
+  </style>
+</head>
+<body>
+
+  <div class="success-banner">&#10003; You've claimed 4821 Maple Ave. Here's what's unlocked.</div>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Photo section -->
+  <div class="photo-section">
+    <div class="photo-grid">
+      <div class="photo-hero">
+        <span class="off-market-badge">Off market</span>
+        Main photo — 528 11th Ave E
+      </div>
+      <div class="photo-thumb">Photo 2</div>
+      <div class="photo-thumb">Photo 3</div>
+      <div class="photo-thumb">Photo 4
+        <a href="#" class="see-all-photos">&#9633; See all 16 photos</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Two-column body -->
+  <div class="page-body">
+
+    <!-- LEFT COLUMN -->
+    <main class="main-col">
+
+      <!-- Address + specs -->
+      <div class="zestimate-eyebrow"><span>Z</span> &nbsp;Zestimate&reg;</div>
+      <div class="price-large">$612,000</div>
+      <div class="address-line">4821 Maple Ave, Seattle, WA 98103 <span class="claimed-badge">Claimed &#10003;</span></div>
+      <div class="specs-inline">3 beds &nbsp;&nbsp;&bull;&nbsp;&nbsp; 2 baths &nbsp;&nbsp;&bull;&nbsp;&nbsp; 1,840 sqft</div>
+      <div class="refi-row">Est. refi payment: $3,240/mo &nbsp;&nbsp;<a href="#">&#128309; Refinance your loan</a></div>
+
+      <!-- Property details grid -->
+      <div class="details-grid">
+        <div class="details-cell"><strong>Single family</strong>Type</div>
+        <div class="details-cell"><strong>Built in 1998</strong>Year built</div>
+        <div class="details-cell"><strong>5,200 sqft</strong>Lot size</div>
+        <div class="details-cell"><strong>$612,000</strong>Zestimate&reg;</div>
+        <div class="details-cell"><strong>$332/sqft</strong>Price per sqft</div>
+        <div class="details-cell"><strong>$2,100</strong>Estimated rent</div>
+      </div>
+
+      <!-- Home value section -->
+      <div class="section-heading">Home value</div>
+      <div class="value-cards">
+        <div class="value-card">
+          <div class="value-card-label">Zestimate&reg;</div>
+          <div class="value-card-amount">$612,000</div>
+        </div>
+        <div class="value-card">
+          <div class="value-card-label">Estimated sales range</div>
+          <div class="value-card-amount">$581K – $643K</div>
+        </div>
+        <div class="value-card">
+          <div class="value-card-label">Rent Zestimate&reg;</div>
+          <div class="value-card-amount">$2,100/mo</div>
+        </div>
+      </div>
+      <div class="edit-facts-row">Help make your Zestimate&reg; more accurate &nbsp;<a href="#">Edit home facts</a></div>
+
+      <!-- Zestimate history -->
+      <div class="history-heading-row">
+        <div class="section-heading">Zestimate&reg; history</div>
+        <span style="font-size:13px; color:#495057;">Table view</span>
+      </div>
+      <div class="history-subtext">+8% in last 1 year</div>
+      <div class="tab-row">
+        <a href="#" class="tab active">Home values</a>
+        <a href="#" class="tab">Rent Zestimate</a>
+        <a href="#" class="tab">Tax paid</a>
+      </div>
+      <div class="chart-placeholder">Zestimate history chart</div>
+      <a href="#" class="table-link">Table view</a>
+
+      <!-- Home equity -->
+      <div class="card">
+        <div class="card-title">Home equity</div>
+        <div class="equity-row">
+          <div class="equity-item">
+            <div class="equity-label">Estimated equity</div>
+            <strong>$187,000</strong>
+          </div>
+          <div class="equity-item">
+            <div class="equity-label">Estimated net proceeds</div>
+            <strong>~$162,000</strong>
+            <div class="equity-sub">after selling costs</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Your market insights -->
+      <div class="card">
+        <div class="card-title">Your market insights</div>
+        <div class="market-stats">
+          <div><strong>3-bed homes in your ZIP:</strong> median 18 days on market</div>
+          <div><strong>Appreciation:</strong> +8.2% YoY</div>
+          <div><strong>Buyer demand:</strong> High</div>
+        </div>
+      </div>
+
+      <!-- AI summary blurb -->
+      <div class="ai-blurb">
+        <div class="ai-blurb-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#343A40"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#343A40"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#343A40"/></svg>AI Summary</div>
+        <p>Here's where you stand if you were to sell today: Your home has appreciated 8% in the last 12 months. Seattle inventory is low — homes like yours are selling in under 3 weeks.</p>
+      </div>
+
+      <!-- Selling options — EXPANDED (accordion) -->
+      <div class="accordion-card">
+        <div class="accordion-title">Selling options</div>
+
+        <div class="option-row">
+          <div class="option-info">
+            <div class="option-name">Cash offer</div>
+            <div class="option-desc">Sell directly to a buyer without listing publicly. Fast, certain, no showings.</div>
+          </div>
+          <div class="option-cta">
+            <a href="opendoor-questionnaire.html" class="btn">Explore cash offer &rarr;</a>
+          </div>
+        </div>
+
+        <div class="option-row">
+          <div class="option-info">
+            <div class="option-name">Listing agent</div>
+            <div class="option-desc">Work with an agent to list your home on the market. Widest buyer reach.</div>
+          </div>
+          <div class="option-cta">
+            <a href="plan-overview.html" class="btn">Ready to dig deeper? &rarr;</a>
+          </div>
+        </div>
+
+        <div class="option-row">
+          <div class="option-info">
+            <div class="option-name">FSBO (For Sale By Owner)</div>
+            <div class="option-desc">Sell without an agent. More control, more work.</div>
+          </div>
+          <div class="option-cta">
+            <a href="plan-overview.html" class="btn">Ready to dig deeper? &rarr;</a>
+          </div>
+        </div>
+
+        <div class="accordion-note">These will take you to your selling plan on the Plan tab.</div>
+      </div>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR -->
+    <aside class="sidebar">
+
+      <!-- Your home summary card -->
+      <div class="sidebar-card">
+        <div class="sidebar-card-title">Your home summary</div>
+        <div class="sidebar-claimed-badge">Claimed &#10003;</div>
+        <div class="sidebar-stat-row"><strong>Equity:</strong> $187,000</div>
+        <div class="sidebar-stat-row"><strong>Net proceeds:</strong> ~$162,000</div>
+        <div class="sidebar-stat-row"><strong>Zestimate:</strong> $612,000</div>
+        <div class="sidebar-divider"></div>
+        <a href="#" class="sidebar-link">Edit home facts</a>
+        <a href="#" class="sidebar-link">Edit photos</a>
+        <div class="sidebar-active-btn">Selling options &#9650; expanded</div>
+      </div>
+
+      <!-- Agents -->
+      <div class="sidebar-section-heading">Find an agent in Seattle</div>
+
+      <div class="agent-card-stacked">
+        <div class="agent-avatar-sm">&#128100;</div>
+        <div class="agent-info">
+          <div class="agent-name">Sarah Chen — Redfin</div>
+          <div class="agent-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        </div>
+        <a href="agent-modal.html" class="btn btn-sm">Connect</a>
+      </div>
+
+      <div class="agent-card-stacked">
+        <div class="agent-avatar-sm">&#128100;</div>
+        <div class="agent-info">
+          <div class="agent-name">Marcus Lee — Compass</div>
+          <div class="agent-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        </div>
+        <a href="agent-modal.html" class="btn btn-sm">Connect</a>
+      </div>
+
+      <div class="agent-card-stacked">
+        <div class="agent-avatar-sm">&#128100;</div>
+        <div class="agent-info">
+          <div class="agent-name">Priya Nair — Zillow Premier Agent</div>
+          <div class="agent-stars">&#9733;&#9733;&#9733;&#9733;&#9733;</div>
+        </div>
+        <a href="agent-modal.html" class="btn btn-sm">Connect</a>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- Voyager Panel -->
+  <div class="voyager-panel">
+    <div class="voyager-label">VOYAGER</div>
+    <div class="voyager-mode">Contextualizer mode</div>
+    <div class="voyager-prompt">"What's the difference between a cash offer and listing with an agent?"</div>
+    <div class="voyager-note">Ask Voyager anything about what you're seeing.</div>
+  </div>
+
+  <script>
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+  </script>
+</body>
+</html>

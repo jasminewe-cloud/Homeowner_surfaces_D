@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Plan — Overview — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; overflow: hidden; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #F8F9FA; color: #343A40; display: flex; flex-direction: column; overflow: hidden; }
+    a { color: #000000; text-decoration: underline; }
+    a:hover { opacity: 0.7; }
+
+    /* ── GLOBAL NAV ── */
+    .global-nav { background: #ffffff; border-bottom: 1px solid #DEE2E6; padding: 0 40px; height: 60px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; position: relative; z-index: 200; }
+    .global-nav-wordmark { font-size: 28px; font-weight: 900; color: #000000; letter-spacing: -1px; text-decoration: none; }
+    .global-nav-links { display: flex; gap: 28px; }
+    .global-nav-links a { font-size: 14px; font-weight: 500; color: #343A40; text-decoration: none; }
+    .global-nav-links a:hover { color: #000000; opacity: 1; }
+    .global-nav-user { display: flex; align-items: center; gap: 10px; position: relative; }
+    .global-nav-name { font-size: 13px; color: #343A40; }
+    .global-nav-avatar { width: 34px; height: 34px; border-radius: 50%; background: #000000; color: #ffffff; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; cursor: pointer; user-select: none; }
+    .user-menu { position: absolute; top: 44px; right: 0; background: #ffffff; border: 1px solid #DEE2E6; border-radius: 4px; box-shadow: 0 4px 16px rgba(0,0,0,0.12); min-width: 220px; z-index: 300; padding: 4px 0; }
+    .user-menu a { display: block; padding: 11px 20px; font-size: 14px; font-weight: 700; color: #000000; text-decoration: none; }
+    .user-menu a:hover { background: #F8F9FA; opacity: 1; }
+    .user-menu a.active { background: #D0D2DD; }
+    .user-menu-divider { height: 1px; background: #DEE2E6; margin: 4px 0; }
+
+    /* ── APP SHELL ── */
+    .app-shell { flex: 1; min-height: 0; display: flex; flex-direction: row; overflow: hidden; }
+
+    /* ── LEFT ICON NAV ── */
+    .icon-nav { width: 64px; flex-shrink: 0; height: 100%; background: #ffffff; border-right: 1px solid #DEE2E6; display: flex; flex-direction: column; align-items: center; padding-top: 16px; gap: 4px; }
+    .icon-nav-item { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 10px 0; width: 100%; cursor: pointer; text-decoration: none; }
+    .icon-nav-item:hover { background: #F8F9FA; opacity: 1; }
+    .icon-glyph { width: 28px; height: 28px; border-radius: 50%; background: #DCDEE5; display: flex; align-items: center; justify-content: center; font-size: 14px; color: #495057; }
+    .icon-label { font-size: 10px; color: #495057; font-weight: 500; }
+    .icon-nav-item.active .icon-glyph { background: #212529; color: #ffffff; }
+    .icon-nav-item.active .icon-label { color: #000000; font-weight: 700; }
+
+    /* ── PAGE WRAPPER ── */
+    .page-wrapper { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+
+    /* ── PAGE HEADER ── */
+    .page-header { flex-shrink: 0; padding: 28px 40px 0; background: #F8F9FA; }
+    .page-title { font-size: 36px; font-weight: 900; color: #000000; margin-bottom: 16px; }
+    .tab-bar { display: flex; gap: 0; border-bottom: 2px solid #DEE2E6; }
+    .plan-tab { font-size: 15px; font-weight: 500; color: #495057; padding: 10px 20px; text-decoration: none; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+    .plan-tab.active { color: #000000; font-weight: 700; border-bottom-color: #000000; }
+    .plan-tab:hover { color: #343A40; opacity: 1; }
+
+    /* ── PAGE BODY: main | right sidebar | voyager ── */
+    .page-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 1fr 340px 380px; }
+
+    /* ── MAIN COLUMN ── */
+    .main-col { overflow-y: auto; padding: 28px 24px 40px 40px; min-width: 0; }
+
+    /* AI nudge */
+    .ai-nudge { background: #D0D2DD; border: 1px solid #C8CDD3; border-radius: 4px; padding: 16px 18px; margin-bottom: 24px; }
+    .ai-nudge-label { font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #212529; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+    .ai-nudge p { font-size: 13px; color: #343A40; line-height: 1.6; }
+    .ai-nudge a { color: #000000; font-weight: 700; }
+
+    /* Section heading */
+    .section-heading { font-size: 18px; font-weight: 800; color: #000000; margin-bottom: 14px; }
+
+    /* Financial snapshot */
+    .snapshot-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; overflow: hidden; margin-bottom: 20px; display: grid; grid-template-columns: 200px 1fr; }
+    .snapshot-left { background: #DCDEE5; color: #212529; padding: 24px 20px; display: flex; flex-direction: column; justify-content: space-between; }
+    .snapshot-left-title { font-size: 20px; font-weight: 800; color: #212529; line-height: 1.2; margin-bottom: 8px; }
+    .snapshot-left-sub { font-size: 12px; color: #495057; line-height: 1.5; margin-bottom: 16px; }
+    .snapshot-right { padding: 20px; }
+    .snapshot-zestimate-label { font-size: 11px; color: #6C757D; margin-bottom: 2px; }
+    .snapshot-zestimate-value { font-size: 28px; font-weight: 800; color: #000000; margin-bottom: 12px; }
+    .snapshot-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .snapshot-stat { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 10px 12px; }
+    .snapshot-stat-label { font-size: 11px; color: #343A40; margin-bottom: 3px; }
+    .snapshot-stat-value { font-size: 16px; font-weight: 800; color: #000000; }
+
+    /* ── RIGHT SIDEBAR ── */
+    .right-sidebar { overflow-y: auto; padding: 28px 16px 40px; border-left: 1px solid #DEE2E6; }
+    .right-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 18px 20px; margin-bottom: 16px; }
+    .right-card-title { font-size: 16px; font-weight: 800; color: #000000; margin-bottom: 14px; }
+
+    /* Connected agent */
+    .agent-row { display: flex; gap: 12px; align-items: flex-start; }
+    .agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: #343A40; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #ffffff; }
+    .agent-body { flex: 1; }
+    .agent-name { font-size: 14px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+    .agent-badge { display: inline-block; font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; background: #212529; color: #ffffff; padding: 2px 6px; border-radius: 3px; margin-bottom: 5px; }
+    .agent-meta { font-size: 11px; color: #495057; line-height: 1.5; margin-bottom: 8px; }
+    .agent-actions { display: flex; gap: 6px; }
+    .agent-btn { font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 4px; text-decoration: none; border: 1.5px solid #212529; color: #212529; }
+    .agent-btn.primary { background: #000000; color: #ffffff; }
+    .agent-btn:hover { opacity: 0.8; }
+
+    /* Process steps */
+    .process-row { display: flex; gap: 10px; padding: 10px 8px; border-bottom: 1px solid #DEE2E6; align-items: flex-start; cursor: pointer; border-radius: 4px; margin: 0 -8px; }
+    .process-row:last-child { border-bottom: none; padding-bottom: 10px; }
+    .process-row:hover { background: rgba(0,0,0,0.03); }
+    .process-row.selected { background: rgba(0,0,0,0.06); }
+    .process-icon { width: 32px; height: 32px; border-radius: 4px; background: #DCDEE5; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 13px; color: #ADB5BD; }
+    .process-row-body { flex: 1; }
+    .process-row-title { font-size: 12px; font-weight: 700; color: #000000; margin-bottom: 2px; }
+    .process-row-desc { font-size: 11px; color: #6C757D; line-height: 1.4; }
+    .right-card.active { background: #D0D2DD; border: 1px solid #C8CDD3; }
+    .msg-voyager-contextual { background: #D0D2DD; border: 1px solid #C8CDD3; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; animation: demandPulse 0.6s ease-out; }
+    @keyframes demandPulse {
+      0%   { box-shadow: 0 0 0 0 rgba(0,0,0,0.15); }
+      50%  { box-shadow: 0 0 0 6px rgba(0,0,0,0.06); }
+      100% { box-shadow: 0 0 0 0 rgba(0,0,0,0); }
+    }
+
+    /* ── VOYAGER SIDEBAR ── */
+    .voyager-sidebar { border-left: 1px solid #DEE2E6; display: flex; flex-direction: column; background: #ffffff; min-height: 0; }
+    .voyager-panel { flex: 1; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+    .voyager-panel-header { padding: 12px 14px; border-bottom: 1px solid #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+    .voyager-panel-title { font-size: 12px; font-weight: 800; color: #000000; }
+    .voyager-panel-mode { font-size: 10px; color: #ADB5BD; }
+    .voyager-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
+    .voyager-messages > * { flex-shrink: 0; }
+    .chat-history-toggle { display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; align-self: stretch; }
+    .chat-history-toggle-line { flex: 1; height: 1px; background: #DEE2E6; }
+    .chat-history-toggle-btn { font-size: 11px; font-weight: 600; color: #495057; background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 20px; padding: 4px 10px; white-space: nowrap; flex-shrink: 0; }
+    .chat-history-toggle:hover .chat-history-toggle-btn { background: #E9ECEF; color: #343A40; }
+    .chat-history-items { display: none; flex-direction: column; gap: 12px; align-self: stretch; }
+    .chat-history-items.open { display: flex; }
+    .msg-voyager { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; }
+    .msg-voyager strong { color: #000000; }
+    .msg-user { background: #000000; color: #ffffff; border-radius: 8px 0 8px 8px; padding: 10px 12px; font-size: 12px; line-height: 1.6; align-self: flex-end; max-width: 85%; }
+    .msg-cta { display: block; background: #212529; color: #ffffff; font-size: 12px; font-weight: 700; padding: 9px 12px; border-radius: 4px; text-decoration: none; text-align: center; margin-top: 10px; }
+    .msg-cta:hover { background: #343A40; opacity: 1; }
+    .msg-module-link { font-size: 12px; font-weight: 600; color: #000000; text-decoration: none; display: block; padding: 2px 0; }
+    .msg-module-link:hover { opacity: 0.7; }
+    .voyager-bottom { flex-shrink: 0; border-top: 1px solid #DEE2E6; background: #ffffff; }
+    .voyager-suggestions { padding: 8px 12px 4px; display: flex; flex-direction: column; gap: 5px; }
+    .suggested-q { background: #F8F9FA; border: 1px solid #CED4DA; border-radius: 6px; padding: 7px 10px; font-size: 11px; color: #343A40; font-style: italic; cursor: pointer; text-align: left; font-family: inherit; white-space: normal; line-height: 1.4; width: 100%; }
+    .suggested-q:hover { background: #E9ECEF; }
+    .voyager-input-row { padding: 8px 12px 12px; }
+    .voyager-input-wrap { position: relative; display: flex; align-items: center; }
+    .voyager-input { width: 100%; border: 1.5px solid #CED4DA; border-radius: 20px; padding: 9px 44px 9px 16px; font-size: 12px; font-family: inherit; outline: none; }
+    .voyager-input:focus { border-color: #000000; }
+    .voyager-send { position: absolute; right: 5px; width: 30px; height: 30px; border-radius: 50%; background: #212529; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 14px; color: #ffffff; }
+  </style>
+</head>
+<body>
+
+  <header class="global-nav">
+    <span class="global-nav-wordmark">Zillow</span>
+    <nav class="global-nav-links">
+      <a href="#">Buy</a>
+      <a href="#">Rent</a>
+      <a href="#">Sell</a>
+      <a href="#">Home Loans</a>
+      <a href="#">Agent Finder</a>
+    </nav>
+    <div class="global-nav-user">
+      <span class="global-nav-name">Jasmine W.</span>
+      <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
+      <div id="user-menu" class="user-menu" style="display:none;">
+        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="#">Your team</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Saved homes</a>
+        <a href="#">Saved searches</a>
+        <a href="#">Recently viewed</a>
+        <a href="#">Tours</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Applications</a>
+        <a href="#">Your rental</a>
+        <div class="user-menu-divider"></div>
+        <a href="#">Account settings</a>
+        <a href="#">Sign out</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="app-shell">
+
+  <!-- Left icon nav -->
+  <nav class="icon-nav">
+    <a href="index.html" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/></svg></div>
+      <span class="icon-label">Search</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+      <span class="icon-label">Updates</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="8"/></svg></div>
+      <span class="icon-label">Favorites</span>
+    </a>
+    <a href="plan-overview.html" class="icon-nav-item active">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg></div>
+      <span class="icon-label">Plan</span>
+    </a>
+    <a href="#" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg></div>
+      <span class="icon-label">Inbox</span>
+    </a>
+    <a href="reengagement.html" class="icon-nav-item">
+      <div class="icon-glyph"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l2.5 2.5"/><path d="M3.05 11a9 9 0 1 0 .5-3M3 4v4h4"/></svg></div>
+      <span class="icon-label">Recent</span>
+    </a>
+  </nav>
+
+  <div class="page-wrapper">
+
+    <!-- Page header -->
+    <div class="page-header">
+      <div class="page-title">Plan</div>
+      <div class="tab-bar">
+        <a href="plan-overview.html" class="plan-tab active">Overview</a>
+        <a href="plan-selling.html" class="plan-tab">Selling</a>
+      </div>
+    </div>
+
+    <!-- Page body: main | right sidebar | voyager -->
+    <div class="page-body">
+
+      <!-- Main content -->
+      <main class="main-col">
+
+        <!-- AI nudge (conditional) -->
+        <div id="ai-nudge" class="ai-nudge">
+          <div class="ai-nudge-label"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#343A40"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#343A40"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#343A40"/></svg>Voyager</div>
+          <p id="ai-nudge-text">You've connected with Sarah Chen and your cash offer comparison is saved. When you're ready, <a href="plan-selling.html">review your selling options in the Selling tab</a>.</p>
+        </div>
+
+        <!-- Financial snapshot -->
+        <div class="section-heading">Financial snapshot</div>
+        <div class="snapshot-card">
+          <div class="snapshot-left">
+            <div>
+              <div class="snapshot-left-title">Your home's value</div>
+              <div class="snapshot-left-sub">Track your home value and understand your equity.</div>
+            </div>
+            <div style="background:#DCDEE5; border-radius:4px; padding:8px 12px; font-size:13px; color:#212529;">4821 Maple Ave, Seattle, WA 98103</div>
+          </div>
+          <div class="snapshot-right">
+            <div class="snapshot-zestimate-label">Zestimate&reg;</div>
+            <div class="snapshot-zestimate-value">$612,000</div>
+            <div class="snapshot-stats">
+              <div class="snapshot-stat">
+                <div class="snapshot-stat-label">30-day change</div>
+                <div class="snapshot-stat-value">+$4,800</div>
+              </div>
+              <div class="snapshot-stat">
+                <div class="snapshot-stat-label">Zestimate per sqft</div>
+                <div class="snapshot-stat-value">$332</div>
+              </div>
+              <div class="snapshot-stat" style="grid-column: 1 / -1;">
+                <div class="snapshot-stat-label">Zestimate range</div>
+                <div class="snapshot-stat-value">$581k – $643k</div>
+              </div>
+            </div>
+            <div style="margin-top:12px;"><a href="nfshdp-postclaim.html" style="font-size:12px; font-weight:600; color:#000;">View history &rsaquo;</a></div>
+          </div>
+        </div>
+
+      </main>
+
+      <!-- Right sidebar: connected agent + process -->
+      <div class="right-sidebar">
+
+        <!-- Agent card: connected (conditional) vs. placeholder -->
+        <div id="agent-card-connected" class="right-card">
+          <div class="right-card-title">Your agent</div>
+          <div class="agent-row">
+            <div class="agent-avatar">SC</div>
+            <div class="agent-body">
+              <div class="agent-name">Sarah Chen</div>
+              <span class="agent-badge">Zillow Partner Agent</span>
+              <div class="agent-meta">47 sales near 98103 &nbsp;·&nbsp; 4.9 &#9733; (62)<br>Responds in under 1 hour</div>
+            </div>
+          </div>
+        </div>
+        <div id="agent-card-empty" class="right-card" style="display:none;">
+          <div class="right-card-title">Choose your agent</div>
+          <div style="font-size:12px; color:#777; line-height:1.5; margin-bottom:10px;">Connect with a top local agent who knows your market.</div>
+          <a href="agent-modal.html" style="display:block; background:#212529; color:#fff; font-size:12px; font-weight:700; padding:9px 12px; border-radius:4px; text-decoration:none; text-align:center;">Explore agents</a>
+        </div>
+
+        <div id="process-card" class="right-card" onmouseleave="deactivateProcessCard()">
+          <div class="right-card-title">Understand the process</div>
+          <div id="step-position" class="process-row" onclick="processRowClick('position')">
+            <div class="process-icon">&#9685;</div>
+            <div class="process-row-body">
+              <div class="process-row-title">Understand your selling position</div>
+              <div class="process-row-desc">Get clear on your home's value, timing, and selling options.</div>
+            </div>
+          </div>
+          <div id="step-prepare" class="process-row" onclick="processRowClick('prepare')">
+            <div class="process-icon">&#9962;</div>
+            <div class="process-row-body">
+              <div class="process-row-title">Prepare your home &amp; list it</div>
+              <div class="process-row-desc">Set your strategy and prepare your home to attract buyers.</div>
+            </div>
+          </div>
+          <div id="step-buyer" class="process-row" onclick="processRowClick('buyer')">
+            <div class="process-icon">&#9906;</div>
+            <div class="process-row-body">
+              <div class="process-row-title">Find a buyer</div>
+              <div class="process-row-desc">Review your offers and choose what works best for you.</div>
+            </div>
+          </div>
+          <div id="step-close" class="process-row" onclick="processRowClick('close')">
+            <div class="process-icon">&#10003;</div>
+            <div class="process-row-body">
+              <div class="process-row-title">Close your sale</div>
+              <div class="process-row-desc">Wrap up the final steps and complete your sale.</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Voyager right panel -->
+      <div class="voyager-sidebar">
+        <div class="voyager-panel">
+          <div class="voyager-panel-header">
+            <span class="voyager-panel-title">Your Home Advisor</span>
+            <span class="voyager-panel-mode">Navigator mode</span>
+          </div>
+          <div class="voyager-messages">
+
+            <!-- Collapsed history from previous surface (post-claim) -->
+            <div class="chat-history-toggle" onclick="toggleChatHistory(this)">
+              <div class="chat-history-toggle-line"></div>
+              <div class="chat-history-toggle-btn">&#8679; 3 previous messages</div>
+              <div class="chat-history-toggle-line"></div>
+            </div>
+            <div class="chat-history-items" id="chat-history-items">
+              <div class="msg-user">Is now a good time to sell?</div>
+              <div class="msg-voyager">
+                Seattle is a neutral market — homes like yours are selling in about 15 days. Based on your Zestimate and recent activity, your timing looks solid.
+                <a href="nfshdp-postclaim.html" class="msg-module-link" style="margin-top:6px;">&#8594; View: Here's where you stand if you were to sell today</a>
+              </div>
+              <div id="cash-offer-bubble" class="msg-voyager">
+                <strong>Intent detected:</strong> based on getting a cash offer, it looks like you're seriously thinking about selling.<br><br>
+                Your Opendoor estimate: <strong>$578k–$601k</strong>. Your full comparison is on your property page.<br><br>
+                <span id="cash-offer-agent-ref">You've connected with Sarah Chen — she can walk you through your options in detail.</span>
+                <a href="plan-selling.html" class="msg-cta">Compare your options in the Selling tab &rarr;</a>
+              </div>
+            </div>
+
+            <!-- Anchor message: most recent from prior surface -->
+            <div class="msg-voyager" style="opacity: 0.6; font-size: 11px; font-style: italic; align-self: stretch; text-align: center; background: transparent; border: none; padding: 0;">From your property page</div>
+
+            <!-- New messages for this surface -->
+            <div id="voyager-welcome" class="msg-voyager">
+              Welcome to your Plan — this is where everything comes together.<br><br>
+              On the <strong>Overview tab</strong> you can track your home's value and understand where you stand financially. The <strong>Selling tab</strong> is where you compare your options, see demand data, and work through the decision with Sarah Chen.<br><br>
+              I'm here as you go. Click any section to get context, or ask me anything — I'll pull from your home's data to answer.
+            </div>
+          </div>
+          <div class="voyager-bottom">
+            <div class="voyager-suggestions">
+              <button class="suggested-q" onclick="typeQuestion(this)">"What does my Zestimate of $612k mean for selling?"</button>
+              <button id="sarah-prompt" class="suggested-q" onclick="typeQuestion(this)">"What should I expect working with Sarah Chen?"</button>
+              <button class="suggested-q" onclick="typeQuestion(this)">"Where am I in the selling process?"</button>
+            </div>
+            <div class="voyager-input-row">
+              <div class="voyager-input-wrap">
+                <input id="voyager-input" class="voyager-input" type="text" placeholder="Ask your home advisor anything...">
+                <button class="voyager-send" onclick="sendMessage()">&#8593;</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  </div><!-- end app-shell -->
+
+  <script>
+  function initPlan() {
+    var cashDone = sessionStorage.getItem('cashOfferComplete') === '1';
+    var agentDone = sessionStorage.getItem('agentConnected') === '1';
+
+    // AI nudge: only show when both are complete; adjust copy otherwise
+    var nudge = document.getElementById('ai-nudge');
+    var nudgeText = document.getElementById('ai-nudge-text');
+    if (cashDone && agentDone) {
+      nudge.style.display = '';
+      nudgeText.innerHTML = 'You\'ve connected with Sarah Chen and your cash offer comparison is saved. When you\'re ready, <a href="plan-selling.html">review your selling options in the Selling tab</a>.';
+    } else if (cashDone) {
+      nudge.style.display = '';
+      nudgeText.innerHTML = 'Your cash offer comparison is saved. <a href="agent-modal.html">Connect with an agent</a> to help you weigh your options.';
+    } else if (agentDone) {
+      nudge.style.display = '';
+      nudgeText.innerHTML = 'You\'ve connected with Sarah Chen. When you\'re ready, explore your selling options in the <a href="plan-selling.html">Selling tab</a>.';
+    } else {
+      nudge.style.display = 'none';
+    }
+
+    // Agent card: show connected card only if agent flow complete
+    document.getElementById('agent-card-connected').style.display = agentDone ? '' : 'none';
+    document.getElementById('agent-card-empty').style.display = agentDone ? 'none' : '';
+
+    // Cash offer bubble in chat history: only show if cash flow complete
+    var cashBubble = document.getElementById('cash-offer-bubble');
+    if (cashBubble) cashBubble.style.display = cashDone ? '' : 'none';
+
+    // Update collapsed history toggle count
+    var historyItems = document.getElementById('chat-history-items');
+    var visibleCount = historyItems.querySelectorAll('.msg-user, .msg-voyager').length;
+    // Count visible ones
+    var count = 0;
+    historyItems.querySelectorAll('.msg-user, .msg-voyager').forEach(function(el) {
+      if (el.style.display !== 'none') count++;
+    });
+    var toggleBtn = document.querySelector('.chat-history-toggle-btn');
+    if (toggleBtn) toggleBtn.innerHTML = '&#8679; ' + count + ' previous message' + (count !== 1 ? 's' : '');
+
+    // Agent ref line inside cash bubble
+    var agentRef = document.getElementById('cash-offer-agent-ref');
+    if (agentRef) agentRef.style.display = agentDone ? '' : 'none';
+
+    // Welcome message: swap out Sarah Chen reference if no agent
+    var welcome = document.getElementById('voyager-welcome');
+    if (welcome && !agentDone) {
+      welcome.innerHTML = 'Welcome to your Plan — this is where everything comes together.<br><br>On the <strong>Overview tab</strong> you can track your home\'s value and understand where you stand financially. The <strong>Selling tab</strong> is where you compare your options and see demand data for your area.<br><br>I\'m here as you go. Click any section to get context, or ask me anything — I\'ll pull from your home\'s data to answer.';
+    }
+
+    // Sarah Chen suggested prompt: hide if no agent connected
+    var sarahPrompt = document.getElementById('sarah-prompt');
+    if (sarahPrompt) sarahPrompt.style.display = agentDone ? '' : 'none';
+  }
+
+  initPlan();
+
+  function toggleUserMenu() {
+    var menu = document.getElementById('user-menu');
+    menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+  }
+  document.addEventListener('click', function(e) {
+    if (!e.target.closest('.global-nav-user')) {
+      var menu = document.getElementById('user-menu');
+      if (menu) menu.style.display = 'none';
+    }
+  });
+
+  function scrollMessages() {
+    var msgs = document.querySelector('.voyager-messages');
+    requestAnimationFrame(function() { msgs.scrollTop = msgs.scrollHeight; });
+  }
+
+  function toggleChatHistory(toggle) {
+    var items = toggle.nextElementSibling;
+    var btn = toggle.querySelector('.chat-history-toggle-btn');
+    var isOpen = items.classList.toggle('open');
+    btn.textContent = isOpen ? '&#8681; Hide history' : '&#8679; 3 previous messages';
+    btn.innerHTML = isOpen ? '&#8681; Hide history' : '&#8679; 3 previous messages';
+  }
+
+  function typeQuestion(btn) {
+    var val = btn.textContent.replace(/^"|"$/g, '');
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager';
+    reply.textContent = 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.';
+    msgs.appendChild(reply);
+    scrollMessages();
+  }
+
+  function sendMessage() {
+    var input = document.getElementById('voyager-input');
+    var val = input.value.trim();
+    if (!val) return;
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = val;
+    msgs.appendChild(userBubble);
+    var reply = document.createElement('div');
+    reply.className = 'msg-voyager';
+    reply.textContent = 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.';
+    msgs.appendChild(reply);
+    input.value = '';
+    scrollMessages();
+  }
+
+  document.getElementById('voyager-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendMessage();
+  });
+
+  var processInsights = {
+    position: {
+      user: 'Tell me about "Understand your selling position"',
+      response: 'Your position determines which options are even on the table. With $612k in estimated value and a 30-day gain of $4.8k, you\'re not in a rush — but that equity gap between a cash offer ($578–601k) and a listing (~$600–630k) is meaningful. Sellers who understand their position before listing tend to negotiate from confidence, not anxiety.'
+    },
+    prepare: {
+      user: 'What goes into preparing my home?',
+      response: 'Prep has the highest ROI of any selling step — but the window is short. Homes that reduce days on market by even 5 days typically net 1–2% more. Deep cleaning, decluttering, and minor repairs matter more than renovations. Sarah Chen can advise on what\'s worth doing for your specific neighborhood and price point.'
+    },
+    buyer: {
+      user: 'How does finding a buyer actually work?',
+      response: 'Most sellers focus on the offer price — but terms matter just as much. Close date flexibility, inspection contingencies, and financing type all affect your actual net. With multiple offers, the highest number isn\'t always the best offer. This is where having Sarah Chen review the full picture pays for itself.'
+    },
+    close: {
+      user: 'What happens at closing?',
+      response: 'Closing costs are the most common financial surprise for sellers — typically 1–3% of the sale price, not including agent commission. For a $612k home, that\'s $6–18k you need to account for before calculating net proceeds. Your title company handles the paperwork; your agent handles the timeline. Budget 30–45 days from accepted offer to keys out.'
+    }
+  };
+
+  function processRowClick(step) {
+    var card = document.getElementById('process-card');
+    card.classList.add('active');
+    document.querySelectorAll('.process-row').forEach(function(r) { r.classList.remove('selected'); });
+    document.getElementById('step-' + step).classList.add('selected');
+
+    var insight = processInsights[step];
+    var msgs = document.querySelector('.voyager-messages');
+    var userBubble = document.createElement('div');
+    userBubble.className = 'msg-user';
+    userBubble.textContent = insight.user;
+    msgs.appendChild(userBubble);
+
+    var voyagerBubble = document.createElement('div');
+    voyagerBubble.className = 'msg-voyager-contextual';
+    voyagerBubble.textContent = insight.response;
+    msgs.appendChild(voyagerBubble);
+    scrollMessages();
+  }
+
+  function deactivateProcessCard() {
+    document.getElementById('process-card').classList.remove('active');
+    document.querySelectorAll('.process-row').forEach(function(r) { r.classList.remove('selected'); });
+  }
+  </script>
+
+</body>
+</html>

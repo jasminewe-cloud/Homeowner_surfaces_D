@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Connect with Sarah Chen — Zillow</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #ADB5BD; color: #343A40; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 40px 20px; }
+    a { color: #000000; }
+
+    .modal { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; width: 100%; max-width: 520px; padding: 40px; box-shadow: 0 4px 24px rgba(0,0,0,0.15); }
+
+    .modal-eyebrow { font-size: 12px; color: #ADB5BD; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+    .modal-title { font-size: 22px; font-weight: 800; color: #000000; margin-bottom: 10px; }
+    .modal-body { font-size: 14px; color: #343A40; line-height: 1.6; margin-bottom: 24px; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-label { display: block; font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 6px; }
+    .form-input { width: 100%; padding: 11px 14px; border: 1.5px solid #DEE2E6; border-radius: 4px; font-size: 14px; font-family: inherit; color: #343A40; outline: none; }
+    .form-input:focus { border-color: #000000; }
+    .form-input::placeholder { color: #ADB5BD; }
+    .form-textarea { width: 100%; padding: 11px 14px; border: 1.5px solid #DEE2E6; border-radius: 4px; font-size: 14px; font-family: inherit; color: #343A40; outline: none; min-height: 90px; resize: vertical; }
+    .form-textarea::placeholder { color: #ADB5BD; }
+    .form-textarea:focus { border-color: #000000; }
+
+    .form-input.prefilled { background: #F8F9FA; color: #343A40; }
+
+    .submit-note { font-size: 12px; color: #ADB5BD; margin-bottom: 16px; font-style: italic; }
+
+    .btn { display: block; width: 100%; background: #212529; color: #ffffff; font-size: 15px; font-weight: 700; padding: 14px 20px; border-radius: 4px; text-decoration: none; text-align: center; border: none; cursor: pointer; font-family: inherit; margin-bottom: 14px; }
+    .btn:hover { background: #343A40; }
+
+    .link-cancel { display: block; text-align: center; font-size: 14px; color: #ADB5BD; text-decoration: none; }
+    .link-cancel:hover { color: #343A40; text-decoration: underline; }
+
+    .agent-badge { display: flex; align-items: center; gap: 12px; background: #F8F9FA; border-radius: 4px; padding: 12px 14px; margin-bottom: 24px; }
+    .agent-avatar { width: 40px; height: 40px; border-radius: 50%; background: #DCDEE5; display: flex; align-items: center; justify-content: center; font-size: 16px; color: #ADB5BD; }
+    .agent-info { flex: 1; }
+    .agent-name { font-size: 14px; font-weight: 700; color: #000000; }
+    .agent-stars { font-size: 12px; color: #343A40; }
+  </style>
+</head>
+<body>
+
+  <div class="modal">
+    <div class="modal-eyebrow">Agent connection</div>
+    <h1 class="modal-title">Connect with Sarah Chen, Redfin</h1>
+
+    <div class="agent-badge">
+      <div class="agent-avatar">&#128100;</div>
+      <div class="agent-info">
+        <div class="agent-name">Sarah Chen — Redfin</div>
+        <div class="agent-stars">&#9733;&#9733;&#9733;&#9733;&#9733; &nbsp; Top agent in Seattle</div>
+      </div>
+    </div>
+
+    <p class="modal-body">Sarah will reach out within 24 hours to discuss your home and goals.</p>
+
+    <div class="form-group">
+      <label class="form-label">Name</label>
+      <input class="form-input prefilled" type="text" value="Jasmine W." readonly>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input prefilled" type="email" value="jasmine@email.com" readonly>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Phone</label>
+      <input class="form-input" type="tel" placeholder="Your phone number">
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Message</label>
+      <textarea class="form-textarea" placeholder="Tell Sarah a little about your timeline and goals"></textarea>
+    </div>
+
+    <p class="submit-note">Submitting this form will take you to your Plan to track this connection.</p>
+
+    <a href="plan-overview.html" class="btn" onclick="sessionStorage.setItem('agentConnected','1')">Send message</a>
+    <a href="nfshdp-postclaim.html" class="link-cancel">Cancel</a>
+  </div>
+
+</body>
+</html>
