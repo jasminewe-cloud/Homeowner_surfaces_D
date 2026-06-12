@@ -159,7 +159,7 @@
     .voyager-panel { background: #ffffff; border: 1px solid #DEE2E6; border-radius: 0; display: flex; flex-direction: column; overflow: hidden; flex: 1; min-height: 0; }
     .voyager-panel-header { padding: 12px 14px; border-bottom: 1px solid #DEE2E6; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
     .voyager-panel-title { font-size: 12px; font-weight: 800; color: #000000; }
-    .voyager-panel-mode { font-size: 10px; color: #ADB5BD; }
+    .voyager-panel-mode { display: none; }
     /* Messages scroll area — min-height:0 is critical to allow shrinking */
     .voyager-messages { flex: 1; min-height: 0; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
     /* Prevent flex compression of message children — lets overflow-y scroll instead */
@@ -167,6 +167,10 @@
     /* Message bubbles */
     .msg-voyager { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 0 8px 8px 8px; padding: 10px 12px; font-size: 12px; color: #343A40; line-height: 1.6; align-self: flex-start; max-width: 92%; }
     .msg-voyager strong { color: #000000; }
+    #voyager-ctx-menu { position: fixed; background: #fff; border: 1px solid #C8CDD3; border-radius: 6px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); padding: 4px 0; z-index: 9999; display: none; min-width: 120px; }
+    .voyager-ctx-item { padding: 9px 14px; font-size: 13px; color: #212529; cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .voyager-ctx-item:hover { background: #F8F9FA; }
+    .voyager-ctx-pinned { font-size: 11px; color: #6C757D; padding: 6px 14px 4px; pointer-events: none; display: none; }
     .msg-user { background: #000000; color: #ffffff; border-radius: 8px 0 8px 8px; padding: 10px 12px; font-size: 12px; line-height: 1.6; align-self: flex-end; max-width: 85%; }
     /* Intent chips (inside message bubble) */
     .intent-chips { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
@@ -202,7 +206,8 @@
     /* ── MARKET INSIGHTS SECTION ── */
     .market-insights-section { margin-bottom: 28px; }
     .market-grid { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 12px; align-items: stretch; }
-    .market-index-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; height: 100%; box-sizing: border-box; }
+    .market-index-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 14px 16px; height: 100%; box-sizing: border-box; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .market-index-card:hover { border-color: #000; box-shadow: 0 0 0 1px #000; }
     .market-index-label { font-size: 13px; font-weight: 700; color: #000000; margin-bottom: 2px; }
     .market-index-info { font-size: 11px; color: #ADB5BD; margin-bottom: 8px; }
     .market-index-score { font-size: 26px; font-weight: 800; color: #000000; line-height: 1; margin-bottom: 2px; }
@@ -211,7 +216,9 @@
     .market-bar-tick { position: absolute; top: -3px; bottom: -3px; width: 3px; background: #000000; border-radius: 2px; left: 50%; transform: translateX(-50%); }
     .market-bar-labels { display: flex; justify-content: space-between; font-size: 10px; color: #6C757D; }
     .stat-tiles { grid-column: 2 / 4; display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-content: start; }
-    .stat-tile { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 12px 14px; box-sizing: border-box; }
+    .stat-tile { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 12px 14px; box-sizing: border-box; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s; }
+    .stat-tile:hover { border-color: #000; box-shadow: 0 0 0 1px #000; }
+    .stat-tile.active, .market-index-card.active { border-color: #000; box-shadow: 0 0 0 2px #000; }
     .stat-tile-value { font-size: 20px; font-weight: 800; color: #000000; line-height: 1.1; margin-bottom: 4px; }
     .stat-tile-label { font-size: 11px; color: #343A40; line-height: 1.3; }
 
@@ -337,6 +344,113 @@
     .voyager-typing span:nth-child(3) { animation-delay: 0.4s; }
     @keyframes typingDot { 0%,60%,100% { opacity: 0.2; transform: translateY(0); } 30% { opacity: 1; transform: translateY(-3px); } }
 
+    /* ── HOME HEALTH SCORE CARD ── */
+    #home-health-score-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 20px 24px; margin-bottom: 16px; }
+    .hhs-score-row { display: flex; align-items: baseline; gap: 4px; margin-bottom: 4px; }
+    .hhs-score-big { font-size: 40px; font-weight: 900; color: #000; font-family: "Object Sans","Inter",sans-serif; line-height: 1; }
+    .hhs-score-denom { font-size: 16px; color: #ADB5BD; font-weight: 500; }
+    .hhs-subtitle { font-size: 12px; color: #6C757D; margin-bottom: 12px; }
+    .hhs-bar-wrap { width: 100%; height: 6px; background: #DEE2E6; border-radius: 3px; margin-bottom: 16px; overflow: hidden; }
+    .hhs-bar-fill { height: 100%; background: #2a7d4f; border-radius: 3px; }
+    .hhs-item-row { display: flex; align-items: center; justify-content: space-between; padding: 8px 0; }
+    .hhs-item-label { font-size: 13px; color: #343A40; }
+    .hhs-badge { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 20px; }
+    .hhs-badge-amber { background: #FFF3CD; color: #E07B00; }
+    .hhs-badge-green { background: #D4EDDA; color: #2a7d4f; }
+    .hhs-badge-muted { background: #F8F9FA; color: #6C757D; }
+    .hhs-footer { font-size: 12px; color: #6C757D; padding-top: 12px; }
+
+    /* ── GET STARTED CHECKLIST CARD ── */
+    #get-started-checklist { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 20px 24px; margin-bottom: 16px; }
+    .gsc-header { display: flex; align-items: center; justify-content: space-between; cursor: pointer; user-select: none; }
+    .gsc-title { font-size: 15px; font-weight: 700; color: #000; }
+    .gsc-right { display: flex; align-items: center; gap: 8px; }
+    .gsc-count { font-size: 13px; color: #6C757D; }
+    .gsc-chevron { font-size: 12px; color: #6C757D; transition: transform 0.2s; display: inline-block; }
+    .gsc-chevron.open { transform: rotate(180deg); }
+    .gsc-progress-bar { display: flex; gap: 3px; margin: 12px 0; }
+    .gsc-progress-seg { flex: 1; height: 4px; background: #DEE2E6; border-radius: 2px; }
+    .gsc-progress-seg.done { background: #2a7d4f; }
+    .gsc-progress-seg.active { background: #6C757D; }
+    .gsc-body { display: flex; flex-direction: column; }
+    .gsc-body.collapsed { display: none; }
+    .gsc-task-row { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid #F0F0F0; cursor: pointer; }
+    .gsc-task-row:last-child { border-bottom: none; }
+    .gsc-task-row:hover { opacity: 0.8; }
+    .gsc-circle { width: 18px; height: 18px; border-radius: 50%; border: 1.5px solid #CED4DA; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #fff; transition: background 0.2s; }
+    .gsc-circle.in-progress { background: #6C757D; border-color: #6C757D; }
+    .gsc-circle.done { background: #2a7d4f; border-color: #2a7d4f; }
+    .gsc-task-label { font-size: 13px; color: #343A40; }
+    .gsc-task-label.in-progress { color: #6C757D; }
+
+    /* ── NEIGHBORHOOD COMPARISON ── */
+    .nbhd-compare-wrap { border-top: 1px solid #DEE2E6; margin-top: 12px; padding-top: 12px; }
+    .nbhd-compare-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: #6C757D; margin-bottom: 8px; }
+    .nbhd-compare-row { display: flex; justify-content: space-between; align-items: center; padding: 4px 0; }
+    .nbhd-compare-name { font-size: 13px; color: #343A40; }
+    .nbhd-compare-val { font-size: 13px; font-weight: 700; }
+    .nbhd-compare-val.green { color: #2a7d4f; }
+    .nbhd-compare-val.muted { color: #6C757D; }
+
+    /* ── LEARNING RESOURCES CARD ── */
+    #learning-resources-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 20px 24px; margin-bottom: 16px; }
+    .lr-title { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 14px; }
+    .lr-row { display: flex; align-items: center; justify-content: space-between; padding: 11px 0; border-bottom: 1px solid #DEE2E6; cursor: pointer; }
+    .lr-row:last-child { border-bottom: none; }
+    .lr-row:hover { opacity: 0.8; }
+    .lr-row-title { font-size: 14px; font-weight: 600; color: #000; margin-bottom: 2px; }
+    .lr-row-meta { font-size: 12px; color: #6C757D; }
+    .lr-chevron { font-size: 14px; color: #6C757D; flex-shrink: 0; margin-left: 12px; }
+
+    /* ── GOAL CARD ── */
+    #goal-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 20px 24px; margin-bottom: 16px; }
+    .goal-eyebrow { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #6C757D; margin-bottom: 8px; }
+    .goal-text { font-size: 16px; font-weight: 800; color: #000; margin-bottom: 8px; font-family: "Object Sans","Inter",sans-serif; }
+    .goal-body { font-size: 14px; color: #6C757D; line-height: 1.6; margin-bottom: 16px; }
+    .goal-btn { display: block; width: 100%; text-align: center; background: #212529; color: #ffffff; font-size: 14px; font-weight: 700; padding: 11px 18px; border-radius: 999px; text-decoration: none; }
+    .goal-btn:hover { background: #343A40; opacity: 1; }
+
+    /* ── PINS BOARD CARD ── */
+    #pins-board-card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 6px; padding: 20px 24px; margin-bottom: 16px; }
+    .pins-title { font-size: 15px; font-weight: 700; color: #000; margin-bottom: 4px; }
+    .pins-subtitle { font-size: 13px; color: #6C757D; margin-bottom: 14px; line-height: 1.5; }
+    .pin-item { background: #F8F9FA; border: 1px solid #DEE2E6; border-radius: 6px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
+    .pin-text { font-size: 14px; color: #343A40; line-height: 1.5; flex: 1; }
+    .pin-remove { background: none; border: none; font-size: 16px; color: #ADB5BD; cursor: pointer; flex-shrink: 0; line-height: 1; padding: 0; margin-top: 1px; }
+    .pin-remove:hover { color: #343A40; }
+    .pin-input-row { display: flex; gap: 8px; margin-top: 10px; }
+    .pin-input { flex: 1; border: 1.5px solid #CED4DA; border-radius: 20px; padding: 8px 14px; font-size: 13px; font-family: inherit; color: #343A40; outline: none; background: #fff; }
+    .pin-input:focus { border-color: #000; }
+    .pin-add-btn { background: #212529; color: #fff; border: none; border-radius: 999px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; flex-shrink: 0; }
+    .pin-add-btn:hover { background: #343A40; }
+
+    /* ── ABSTRACT MODE TOGGLE ── */
+    #abstract-mode-toggle { position: fixed; top: 16px; right: 16px; z-index: 9999; background: #fff; border: 1px solid #DEE2E6; border-radius: 999px; padding: 6px 8px; display: flex; align-items: center; gap: 4px; box-shadow: 0 2px 12px rgba(0,0,0,0.12); font-size: 12px; font-family: "Inter",sans-serif; }
+    #abstract-mode-toggle .toggle-label { font-size: 11px; color: #6C757D; font-weight: 600; margin-right: 4px; }
+    .toggle-btn { border: none; cursor: pointer; border-radius: 999px; padding: 5px 12px; font-size: 12px; font-weight: 600; font-family: inherit; transition: background 0.15s; }
+    .toggle-btn.active { background: #212529; color: #fff; }
+    .toggle-btn.inactive { background: #F8F9FA; color: #495057; }
+
+    /* ── ABSTRACT MODE CSS — condition-triggered modules only ── */
+    body.abstract-mode #home-equity-card .equity-item strong,
+    body.abstract-mode #home-equity-card [style*="font-size: 26px"],
+    body.abstract-mode #home-equity-card [style*="font-size:26px"] {
+      color: transparent !important;
+      background: #DEE2E6 !important;
+      border-radius: 3px !important;
+      display: inline-block !important;
+      min-width: 80px !important;
+      height: 14px !important;
+    }
+    body.abstract-mode #home-equity-card .hhs-bar-fill,
+    body.abstract-mode #home-equity-card [class*="bar-fill"] { background: #DEE2E6 !important; }
+    body.abstract-mode #cash-offer-module .comparison-price,
+    body.abstract-mode #cash-offer-module .comparison-brand { color: transparent !important; background: #DEE2E6 !important; border-radius: 3px !important; display: inline-block !important; min-width: 80px !important; height: 14px !important; }
+    body.abstract-mode #homeowner-insights-card .market-stats strong,
+    body.abstract-mode #homeowner-insights-card [style*="font-size:18px"],
+    body.abstract-mode #homeowner-insights-card [style*="font-size: 18px"] { color: transparent !important; background: #DEE2E6 !important; border-radius: 3px !important; display: inline-block !important; min-width: 60px !important; height: 14px !important; }
+    body.abstract-mode #demand-chart-section { background: #DEE2E6 !important; height: 120px !important; color: transparent !important; }
+
     /* ── CONSTELLATION OVERRIDES ── */
     /* Object Sans on brand text */
     .global-nav-wordmark,
@@ -368,16 +482,7 @@
       height: 32px !important;
     }
     /* Voyager mode badge as pill */
-    .voyager-panel-mode {
-      border: 1px solid #C8CDD3;
-      border-radius: 999px;
-      padding: 2px 8px;
-      font-size: 10px;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      color: #6C757D;
-    }
+    .voyager-panel-mode { display: none; }
     /* Voyager title — Object Sans */
     .voyager-panel-title {
       font-family: "Object Sans", "Inter", sans-serif;
@@ -637,43 +742,53 @@
       </div>
 
       <!-- Return visit toggle (subtle, top of content) -->
-      <div id="return-visit-toggle" style="text-align:right; margin-bottom:8px;">
-        <button onclick="toggleReturnVisit()" style="background:none; border:none; font-size:11px; color:#6C757D; text-decoration:underline; cursor:pointer; font-family:inherit; padding:0;">Simulate return visit</button>
+      <div id="return-visit-toggle" style="text-align:right; margin-bottom:8px; display:flex; justify-content:flex-end; gap:12px; align-items:center;">
+        <button onclick="toggleReturnVisit()" style="background:none; border:none; font-size:11px; color:#6C757D; text-decoration:underline; cursor:pointer; font-family:inherit; padding:0;">Simulate first return visit</button>
+        <button onclick="activateReturnVisit2()" style="background:none; border:none; font-size:11px; color:#6C757D; text-decoration:underline; cursor:pointer; font-family:inherit; padding:0;">Simulate return visit 2 (back from Paris)</button>
       </div>
 
       <!-- Since your last visit card (return visit only) -->
-      <div id="since-last-visit-card" style="display:none; background:#D0D2DD; border:1px solid #C8CDD3; border-radius:6px; padding:20px 24px; margin-bottom:20px;">
-        <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#212529; margin-bottom:14px; display:flex; align-items:center; gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#212529"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#212529"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#212529"/></svg>
-          Since your last visit &nbsp;·&nbsp; Feb 2026
+      <div id="since-last-visit-card" style="display:none; background:#1a1f36; border:none; border-radius:8px; padding:20px 24px; margin-bottom:20px; position:relative;">
+        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+          <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#9BA8C0; display:flex; align-items:center; gap:6px;">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#9BA8C0"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#9BA8C0"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#9BA8C0"/></svg>
+            Since your last visit &nbsp;·&nbsp; Feb 2026
+          </div>
+          <div style="display:flex; align-items:center; gap:8px;">
+            <button onclick="pinSinceLastVisit()" title="Pin this to your pins board" style="background:none; border:none; cursor:pointer; padding:4px; color:#9BA8C0; display:flex; align-items:center;">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v3.76z"/></svg>
+            </button>
+            <button onclick="document.getElementById('since-last-visit-card').style.display='none'" title="Dismiss" style="background:none; border:none; cursor:pointer; padding:4px; color:#9BA8C0; font-size:22px; line-height:1; display:flex; align-items:center;">&times;</button>
+          </div>
         </div>
         <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">
-          <div style="background:#ffffff; border-radius:4px; padding:12px 14px;">
-            <div style="font-size:22px; font-weight:800; color:#000; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">+$24k</div>
-            <div style="font-size:11px; color:#495057; line-height:1.5;">Your Zestimate<br>+4% in 4 months</div>
+          <div style="background:rgba(255,255,255,0.07); border-radius:4px; padding:12px 14px;">
+            <div style="font-size:22px; font-weight:800; color:#fff; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">+$24k</div>
+            <div style="font-size:11px; color:#9BA8C0; line-height:1.5;">Your Zestimate<br>+4% in 4 months</div>
           </div>
-          <div style="background:#ffffff; border-radius:4px; padding:12px 14px;">
-            <div style="font-size:22px; font-weight:800; color:#000; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">12 days</div>
-            <div style="font-size:11px; color:#495057; line-height:1.5;">Median days to pending<br>was 15 days in Feb</div>
+          <div style="background:rgba(255,255,255,0.07); border-radius:4px; padding:12px 14px;">
+            <div style="font-size:22px; font-weight:800; color:#fff; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">12 days</div>
+            <div style="font-size:11px; color:#9BA8C0; line-height:1.5;">Median days to pending<br>was 15 days in Feb</div>
           </div>
-          <div style="background:#ffffff; border-radius:4px; padding:12px 14px;">
-            <div style="font-size:22px; font-weight:800; color:#000; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">3 sold</div>
-            <div style="font-size:11px; color:#495057; line-height:1.5;">Comparable homes near you<br>2 closed above asking</div>
+          <div style="background:rgba(255,255,255,0.07); border-radius:4px; padding:12px 14px;">
+            <div style="font-size:22px; font-weight:800; color:#fff; font-family:'Object Sans','Inter',sans-serif; line-height:1; margin-bottom:5px;">3 sold</div>
+            <div style="font-size:11px; color:#9BA8C0; line-height:1.5;">Comparable homes near you<br>2 closed above asking</div>
           </div>
         </div>
-        <div style="font-size:13px; color:#212529; line-height:1.6; border-top:1px solid rgba(0,0,0,0.1); padding-top:12px;">
-          The market has moved in your favor since February. If you've been thinking about your options, <strong>now is a good window to explore.</strong>
+        <div style="font-size:13px; color:#9BA8C0; line-height:1.6; border-top:1px solid rgba(255,255,255,0.1); padding-top:12px;">
+          The market has moved in your favor since February. If you've been thinking about what's next, <strong style="color:#fff;">now is a good window to explore.</strong>
         </div>
+        <div style="font-size:13px; color:#9BA8C0; line-height:1.6; margin-top:8px;">Your home facts haven't been updated in a while — tell Voyager what's changed when you're ready. <a href="#" onclick="openHomeFacts(); return false;" style="color:#fff; font-weight:600; text-decoration:underline;">Edit home facts</a></div>
       </div>
 
       <!-- Welcome card (first visit only) -->
-      <div id="welcome-card" style="background:#D0D2DD; border:1px solid #C8CDD3; border-radius:6px; padding:20px 24px; margin-bottom:20px;">
-        <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#495057; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#495057"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#495057"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#495057"/></svg>
+      <div id="welcome-card" style="background:#1a1f36; border:none; border-radius:8px; padding:20px 24px; margin-bottom:20px;">
+        <div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#9BA8C0; margin-bottom:6px; display:flex; align-items:center; gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#9BA8C0"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#9BA8C0"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#9BA8C0"/></svg>
           Voyager
         </div>
-        <div style="font-size:16px; font-weight:700; color:#000; margin-bottom:6px;">This is your home dashboard — let's make it yours.</div>
-        <div style="font-size:13px; color:#495057; line-height:1.6;">Tell Voyager what you'd like to track and I'll build the right view for you. You can always add more later.</div>
+        <div style="font-size:16px; font-weight:700; color:#fff; margin-bottom:6px;">This is your home dashboard — let's make it yours.</div>
+        <div style="font-size:13px; color:#9BA8C0; line-height:1.6; font-style:italic;">Tell Voyager what you'd like to track and I'll build the right view for you. You can always add more later.</div>
       </div>
 
       <!-- Address + specs -->
@@ -713,6 +828,15 @@
         <div class="details-cell"><strong>$2,100</strong>Estimated rent</div>
       </div>
 
+
+      <!-- ── GOAL CARD (hidden until revealed) ── -->
+      <div id="goal-card" style="display:none;">
+        <div class="goal-eyebrow">Your goal is ready</div>
+        <div class="goal-text">Figure out what makes sense for my growing family</div>
+        <div class="goal-body">Voyager has created a goal with tasks to help you evaluate your options. Head to your Plan tab to work through them at your own pace.</div>
+        <a href="plan-overview.html?rv1=1" class="goal-btn">Go to Plan &#8594;</a>
+      </div>
+
       <!-- Home value section -->
       <div class="section-heading">Home value</div>
       <div class="value-cards">
@@ -746,12 +870,24 @@
           <a href="#" class="tab">Tax paid</a>
         </div>
         <div class="chart-placeholder">Zestimate history chart</div>
+        <div class="nbhd-compare-wrap">
+          <div class="nbhd-compare-label">How you compare</div>
+          <div class="nbhd-compare-row">
+            <span class="nbhd-compare-name">Your home</span>
+            <span class="nbhd-compare-val green">+18% since purchase</span>
+          </div>
+          <div class="nbhd-compare-row">
+            <span class="nbhd-compare-name">Your neighborhood avg</span>
+            <span class="nbhd-compare-val muted">+12% since purchase</span>
+          </div>
+        </div>
       </div>
 
       <!-- Home equity card -->
       <div id="home-equity-card" class="card" style="margin-bottom: 16px; display:none;">
         <div class="private-label"><span class="private-label-eye"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M16 8C8 8 2 16 2 16s6 8 14 8 14-8 14-8-6-8-14-8zm0 13a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm0-8a3 3 0 1 0 3 3 3 3 0 0 0-3-3z"/></svg></span> Visible only to you</div>
         <div class="card-title">Your home equity</div>
+        <div id="equity-return-subtitle" style="display:none; font-size:12px; color:#6C757D; margin-bottom:10px; margin-top:-4px;">Added because your equity grew meaningfully since your last visit</div>
         <!-- Side-by-side with vertical divider -->
         <div style="display: flex; gap: 0; margin-top: 12px;">
           <!-- Left: equity -->
@@ -868,7 +1004,7 @@
       <div id="market-insights-section" class="market-insights-section" style="display:none;">
         <div class="section-heading">Market insights for 98103</div>
         <div class="market-grid">
-          <div class="market-index-card">
+          <div class="market-index-card" onclick="marketTileClick(this,'index')">
             <div class="market-index-label">Neutral market <span style="font-size:11px; color:#ADB5BD;">&#9432;</span></div>
             <div class="market-index-score">51<span style="font-size:14px; font-weight:400; color:#495057;">/100</span></div>
             <div class="market-index-sublabel">Market index</div>
@@ -881,19 +1017,19 @@
             </div>
           </div>
           <div class="stat-tiles">
-            <div class="stat-tile">
+            <div class="stat-tile" onclick="marketTileClick(this,'forecast')">
               <div class="stat-tile-value">0.1%</div>
               <div class="stat-tile-label">1-year price forecast</div>
             </div>
-            <div class="stat-tile">
+            <div class="stat-tile" onclick="marketTileClick(this,'pending')">
               <div class="stat-tile-value">15 days</div>
               <div class="stat-tile-label">Median days to pending</div>
             </div>
-            <div class="stat-tile">
+            <div class="stat-tile" onclick="marketTileClick(this,'new-listings')">
               <div class="stat-tile-value">93</div>
               <div class="stat-tile-label">New listings in last 30 days</div>
             </div>
-            <div class="stat-tile">
+            <div class="stat-tile" onclick="marketTileClick(this,'active-listings')">
               <div class="stat-tile-value">286</div>
               <div class="stat-tile-label">Active listings for sale</div>
             </div>
@@ -994,6 +1130,43 @@
       </div>
 
 
+      <!-- ── PINS BOARD CARD (hidden until revealed) ── -->
+      <div id="pins-board-card" style="display:none;">
+        <div class="pins-title">Pins</div>
+        <div class="pins-subtitle">Things worth holding onto — remove when they've served their purpose.</div>
+        <div id="pins-list"></div>
+        <div class="pin-input-row">
+          <input type="text" class="pin-input" id="pin-input-field" placeholder="Add a note to pin…">
+          <button class="pin-add-btn" onclick="addManualPin()">Pin</button>
+        </div>
+      </div>
+
+      <!-- ── LEARNING RESOURCES CARD (hidden until revealed) ── -->
+      <div id="learning-resources-card" style="display:none;">
+        <div class="lr-title">Suggested reading</div>
+        <div class="lr-row">
+          <div>
+            <div class="lr-row-title">How home equity works and what you can do with it</div>
+            <div class="lr-row-meta">5 min · Read</div>
+          </div>
+          <span class="lr-chevron">&#8250;</span>
+        </div>
+        <div class="lr-row">
+          <div>
+            <div class="lr-row-title">Buying before selling: what to know about the timing</div>
+            <div class="lr-row-meta">7 min · Read</div>
+          </div>
+          <span class="lr-chevron">&#8250;</span>
+        </div>
+        <div class="lr-row">
+          <div>
+            <div class="lr-row-title">Renting out your first home: a practical guide</div>
+            <div class="lr-row-meta">6 min · Read</div>
+          </div>
+          <span class="lr-chevron">&#8250;</span>
+        </div>
+      </div>
+
       <!-- Other helpful tools (shown after onboarding, lists unselected modules) -->
       <div id="helpful-tools-card" class="card" style="display:none; margin-bottom:16px;">
         <div class="private-label" style="margin-bottom:6px;">
@@ -1020,27 +1193,27 @@
         <!-- Scrolling conversation area -->
         <div id="voyager-messages" class="voyager-messages">
 
-          <!-- ONBOARDING: Opening welcome bubble -->
+          <!-- ONBOARDING: Opening welcome bubble (Harriet use case) -->
           <div id="msg-onboarding-welcome" class="msg-voyager">
             Welcome — this is your owner view of 4821 Maple Ave. I'm here to help you build a dashboard that works for you.<br><br>
             What brings you here today?
-            <!-- Three bucket intent chips -->
             <div class="intent-chips" id="onboarding-bucket-chips">
-              <button class="intent-chip" onclick="selectBucket('track')">Track my home's value</button>
-              <button class="intent-chip" onclick="selectBucket('equity')">Understand my equity</button>
-              <button class="intent-chip" onclick="selectBucket('sell')">Explore selling options</button>
+              <button class="intent-chip" onclick="harrietIntent('worth')">I want to know what my home is worth</button>
+              <button class="intent-chip" onclick="harrietIntent('move')">I'm thinking about making a move</button>
+              <button class="intent-chip" onclick="harrietIntent('watch')">Just keeping an eye on things</button>
+              <button class="intent-chip" onclick="harrietIntent('save')">I want to save money on my home</button>
             </div>
           </div>
 
-          <!-- RETURN VISIT: Context-rich return bubble (hidden by default) -->
+          <!-- RETURN VISIT: Harriet context-rich return bubble (hidden by default) -->
           <div id="msg-return-welcome" class="msg-voyager" style="display:none;">
-            A few things have changed since February. Your home is up <strong>$24k</strong>, and the market is moving faster — median days to pending dropped from 15 to 12. Two comparable homes near you just closed above asking.<br><br>
-            Your equity position is now around <strong>~$211k</strong>. If selling has been in the back of your mind, your timing is strong right now.
+            Welcome back. Here's what's changed since February: your Zestimate is up <strong>$24,000</strong>, two comparable homes sold above asking in your area, and homes are going pending in <strong>12 days</strong> — down from 15. Your equity has grown to an estimated <strong>$201,000</strong> — that's a meaningful increase, so I've added your equity position card to your dashboard.<br><br>
+            Has anything changed for you since your last visit?
             <div class="intent-chips" id="return-intent-chips" style="margin-top:10px;">
-              <button class="intent-chip" onclick="returnIntent('sell')">Am I in a good position to sell?</button>
+              <button class="intent-chip" onclick="returnIntent('life')">Actually, yes — my life has changed</button>
               <button class="intent-chip" onclick="returnIntent('market')">What changed in the market?</button>
-              <button class="intent-chip" onclick="returnIntent('save')">Thinking about ways to save on my home</button>
-              <button class="intent-chip" onclick="returnIntent('watch')">Just keeping an eye on things</button>
+              <button class="intent-chip" onclick="returnIntent('save')">Thinking about ways to save</button>
+              <button class="intent-chip" onclick="returnIntent('watch')">Just checking in</button>
             </div>
           </div>
 
@@ -1204,6 +1377,585 @@
     });
   }
 
+  // ── HARRIET FIRST VISIT FLOW ──
+  var _postSaveIntentMap = ['worth', 'save', 'watch', 'move'];
+
+  function togglePostSaveChip(i) {
+    if (!window._postSaveSelected) window._postSaveSelected = [];
+    var idx = window._postSaveSelected.indexOf(i);
+    var btn = document.getElementById('psc-' + i);
+    var numEl = document.getElementById('psc-num-' + i);
+    if (idx === -1) {
+      window._postSaveSelected.push(i);
+      btn.style.background = '#212529';
+      btn.style.color = '#fff';
+      numEl.style.borderColor = '#fff';
+      numEl.style.color = '#fff';
+    } else {
+      window._postSaveSelected.splice(idx, 1);
+      btn.style.background = '';
+      btn.style.color = '';
+      numEl.style.borderColor = '#212529';
+      numEl.style.color = '#212529';
+    }
+    var confirmHint = document.getElementById('post-save-confirm-btn');
+    if (confirmHint) confirmHint.style.display = window._postSaveSelected.length > 0 ? '' : 'none';
+  }
+
+  function confirmPostSaveIntents() {
+    var wrap = document.getElementById('post-save-multi-wrap');
+    if (wrap) wrap.style.display = 'none';
+    var inputEl = document.getElementById('voyager-input');
+    if (inputEl) inputEl.placeholder = 'Ask your home advisor anything…';
+    var selected = (window._postSaveSelected || []).slice().sort();
+    var labels = ['Tracking my home\'s value', 'Understanding my equity', 'How my home compares in this market', 'Exploring my options to sell'];
+    var msgs = document.getElementById('voyager-messages');
+    appendMsg('msg-user', selected.map(function(i) { return labels[i]; }).join(' · '));
+    document.getElementById('welcome-card').style.display = 'none';
+    document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+    // Fire the first intent to get a response; silently trigger the rest
+    var intents = selected.map(function(i) { return _postSaveIntentMap[i]; });
+    var firstIntent = intents[0];
+    // Show relevant modules for all selected intents
+    if (intents.indexOf('worth') !== -1 || intents.indexOf('watch') !== -1) {
+      var marketEl = document.getElementById('market-insights-section');
+      if (marketEl) marketEl.style.display = '';
+    }
+    if (intents.indexOf('save') !== -1) {
+      var equityEl = document.getElementById('home-equity-card');
+      if (equityEl) equityEl.style.display = '';
+    }
+    // Scroll to the first revealed module (equity appears before market in the DOM)
+    setTimeout(function() {
+      var firstModule = document.getElementById('home-equity-card');
+      if (!firstModule || firstModule.style.display === 'none') {
+        firstModule = document.getElementById('market-insights-section');
+      }
+      if (firstModule && firstModule.style.display !== 'none') {
+        var mainCol = document.querySelector('.main-col') || document.getElementById('main-content');
+        if (mainCol) {
+          var elTop = firstModule.getBoundingClientRect().top - mainCol.getBoundingClientRect().top;
+          mainCol.scrollTo({ top: mainCol.scrollTop + elTop - 16, behavior: 'smooth' });
+        } else {
+          firstModule.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    }, 100);
+    showTypingThenReply(msgs, function() {
+      if (intents.length === 1) {
+        var responseMap = {
+          'worth': 'Your home is currently estimated at <strong>$589,000</strong> — up $41,000 since you bought it. I\'ve added a market insights module to your dashboard so you can track what\'s happening nearby.',
+          'save': 'Your estimated equity is <strong>$187,000</strong> — that\'s the difference between your Zestimate and what you\'d owe if you sold today. I\'ve added an equity module to your dashboard so you can track it over time.',
+          'watch': 'Got it. I\'ve added market insights to your dashboard — I\'ll surface anything worth knowing when local conditions change.',
+          'move': 'Your equity and the current pace of the market put you in a solid spot. Let me know when you want to dig into what selling would actually look like for you.'
+        };
+        appendMsg('msg-voyager', responseMap[firstIntent] + '<br><br>Anything else you want to dig into?');
+      } else {
+        var parts = [];
+        if (intents.indexOf('worth') !== -1) parts.push('a <strong>market insights</strong> module so you can track your value and what\'s happening nearby');
+        if (intents.indexOf('save') !== -1) parts.push('an <strong>equity tracker</strong> so you can see what you\'ve built up');
+        if (intents.indexOf('watch') !== -1 && intents.indexOf('worth') === -1) parts.push('a <strong>market pulse</strong> card so you can keep an eye on local conditions');
+        if (intents.indexOf('move') !== -1) parts.push('a note that you\'re exploring selling options — I\'ll surface the right tools when you\'re ready to go deeper');
+        appendMsg('msg-voyager', 'Got it — I\'ve added ' + parts.join(', and ') + ' to your dashboard.<br><br>Anything you want to start with?');
+      }
+      setSuggestions([]);
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          var tip = document.createElement('div');
+          tip.className = 'msg-voyager';
+          tip.setAttribute('style', 'background:#1a1f36 !important; border:none !important; border-radius:8px; padding:14px 16px; align-self:stretch; max-width:100%;');
+          tip.innerHTML = '<div style="font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#9BA8C0;margin-bottom:6px;display:flex;align-items:center;gap:5px;">' +
+            '<svg width="12" height="12" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><circle cx="8" cy="8" r="7" stroke="#9BA8C0" stroke-width="1.5"/><rect x="7.25" y="7" width="1.5" height="5" rx=".75" fill="#9BA8C0"/><rect x="7.25" y="4" width="1.5" height="1.5" rx=".75" fill="#9BA8C0"/></svg>' +
+            'Tip</div>' +
+            '<div style="font-size:13px;color:#fff;line-height:1.6;">The modules on your dashboard are interactive — click any stat, tile, or data point and I\'ll explain what it means for your home. You can also just ask me about anything you\'re seeing. I\'m a layer on top of your dashboard, not just a chat window.</div>';
+          msgs.appendChild(tip);
+          setSuggestions(['"How is my Zestimate calculated?"', '"What does my equity mean?"', '"What\'s happening in my market?"']);
+          scrollMessages();
+        }, 800);
+      }, 1800);
+    }, 900);
+  }
+
+  function harrietIntent(intent) {
+    var chips = document.getElementById('onboarding-bucket-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    if (intent === 'worth') {
+      appendMsg('msg-user', 'I want to know what my home is worth');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Your home is currently estimated at <strong>$589,000</strong> — up $41,000 since you bought it, which is an 18% increase. Your neighborhood has appreciated 12% on average over the same period, so you\'ve outperformed your market.<br><br>I\'m adding a market insights module to your dashboard so you can keep an eye on what\'s happening nearby — it\'s directly relevant to understanding your home\'s value over time.');
+        var marketEl = document.getElementById('market-insights-section');
+        marketEl.style.display = '';
+        setTimeout(function() {
+          var mainCol = document.querySelector('.main-col') || document.getElementById('main-content');
+          if (mainCol) {
+            var elTop = marketEl.getBoundingClientRect().top - mainCol.getBoundingClientRect().top;
+            mainCol.scrollTop = mainCol.scrollTop + elTop - 16;
+          } else {
+            marketEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }
+        }, 300);
+        document.getElementById('welcome-card').style.display = 'none';
+        document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+        setTimeout(function() {
+          showTypingThenReply(msgs, function() {
+            appendMsg('msg-voyager', 'Are you just keeping an eye on things, or is there something you\'re working toward?<div class="intent-chips" id="harriet-followup-chips" style="margin-top:10px;"><button class="intent-chip" onclick="harrietFollowup(\'watch\')">Just keeping an eye on things</button><button class="intent-chip" onclick="harrietFollowup(\'specific\')">I have something specific in mind</button></div>');
+          }, 700);
+        }, 1200);
+        setSuggestions(['"How is my Zestimate calculated?"', '"What does the market trend mean for my home?"', '"Why did my value go up?"']);
+      }, 900);
+
+    } else if (intent === 'move') {
+      appendMsg('msg-user', "I'm thinking about making a move");
+      // Route into sell path
+      document.getElementById('welcome-card').style.display = 'none';
+      document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Based on your equity position and how fast the Seattle market is moving, you\'re in a solid spot right now.<br><br>Before we go further: are you thinking about selling only, buying and selling at the same time, or have you considered renting it out?<div class="intent-chips" id="sell-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="selectSellPath(\'sell_only\')">Selling only</button><button class="intent-chip" onclick="selectSellPath(\'buy_sell\')">Buy and sell</button><button class="intent-chip" onclick="selectSellPath(\'rent\')">Rent it out instead</button></div>');
+      }, 900);
+
+    } else if (intent === 'watch') {
+      appendMsg('msg-user', 'Just keeping an eye on things');
+      document.getElementById('welcome-card').style.display = 'none';
+      document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Got it — I\'ll keep an eye on the market for you and surface anything worth knowing when conditions change. In the meantime, your home health score is a bit low. Updating your home facts is the fastest way to make sure your Zestimate reflects reality. You can start that from the checklist below, or just tell me what\'s changed.');
+        setSuggestions(['"How is my Zestimate calculated?"', '"What does the market data mean for me?"', '"How do I update my home facts?"']);
+      }, 900);
+
+    } else if (intent === 'save') {
+      appendMsg('msg-user', 'I want to save money on my home');
+      document.getElementById('welcome-card').style.display = 'none';
+      document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'A few angles worth looking at based on your situation:<br><br>· <strong>Refinancing:</strong> current 30-yr rate is 6.4%. If your existing rate is higher, there may be savings here — your equity gives you strong leverage.<br>· <strong>Insurance review:</strong> your home has appreciated meaningfully. That can mean you\'re either over- or under-insured, and adjusting could save you money.<br>· <strong>Equity access:</strong> you could tap equity for improvements that pay back in value.<br><br>Which of these sounds most relevant?<div class="intent-chips" id="save-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="triggerRefiFromChip()">Refinancing</button><button class="intent-chip" onclick="selectSavePath(\'insurance\')">Insurance review</button><button class="intent-chip" onclick="selectSavePath(\'equity\')">Using my equity</button></div>');
+        setSuggestions(['"At what rate would refinancing save me money?"', '"How does my equity affect my options?"', '"What home improvements add the most value?"']);
+      }, 900);
+    }
+  }
+
+  function harrietFollowup(choice) {
+    var chips = document.getElementById('harriet-followup-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    if (choice === 'watch') {
+      appendMsg('msg-user', 'Just keeping an eye on things');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Got it — I\'ll keep an eye on the market for you and surface anything worth knowing when conditions change. In the meantime, your home health score is a bit low. Updating your home facts is the fastest way to make sure your Zestimate reflects reality. You can start that from the checklist below, or just tell me what\'s changed.');
+        setSuggestions(['"How is my Zestimate calculated?"', '"What does the market data mean for me?"', '"How do I update my home facts?"']);
+      }, 700);
+    } else {
+      appendMsg('msg-user', 'I have something specific in mind');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Tell me more — what are you working toward?<div class="intent-chips" id="harriet-specific-chips" style="margin-top:10px;"><button class="intent-chip" onclick="harrietIntent(\'move\')">Thinking about moving</button><button class="intent-chip" onclick="harrietIntent(\'save\')">Looking to save money</button></div>');
+      }, 700);
+    }
+  }
+
+  // ── HARRIET LIFE EVENT FLOW (return visit) ──
+  function lifeEvent(event) {
+    var chips = document.getElementById('life-event-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    if (event === 'paris') {
+      appendMsg('msg-user', "I got a major work opportunity — I'm moving to Paris");
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'That\'s incredible — congratulations. Leading a studio in Paris is a big deal.<br><br>It also puts your home in a genuinely interesting position. Before we figure out what makes sense, I want to understand the assignment a bit better.<br><br>How long is the placement?<div class="intent-chips" id="paris-duration-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'duration\',\'2y\')">2–3 years, pretty fixed</button><button class="intent-chip" onclick="parisStep(\'duration\',\'open\')">2–3 years but could extend</button><button class="intent-chip" onclick="parisStep(\'duration\',\'perm\')">Could become permanent</button></div>');
+      }, 900);
+    } else if (event === 'married') {
+      appendMsg('msg-user', "I'm getting married");
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Congratulations! That\'s a big one. A few questions: will you both be living at 4821 Maple Ave, or are you thinking about finding a new place together?<div class="intent-chips" id="married-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'married\',\'stay\')">We\'ll stay here</button><button class="intent-chip" onclick="lifeEventStep(\'married\',\'move\')">We\'re thinking about moving</button><button class="intent-chip" onclick="lifeEventStep(\'married\',\'unsure\')">Not sure yet</button></div>');
+      }, 900);
+    } else if (event === 'relocating') {
+      appendMsg('msg-user', "Relocating for work");
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'That\'s a big change — congrats if it\'s a good one. Where are you headed?<div style="margin-top:10px;display:flex;gap:8px;"><input id="reloc-where-input" type="text" placeholder="City or country…" style="flex:1;border:1.5px solid #CED4DA;border-radius:999px;padding:8px 14px;font-size:13px;font-family:inherit;color:#333;outline:none;" onkeydown="if(event.key===\'Enter\')submitRelocWhere()"/><button onclick="submitRelocWhere()" style="background:#000;color:#fff;border:none;border-radius:999px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">Submit</button></div>');
+      }, 900);
+    } else if (event === 'other') {
+      appendMsg('msg-user', "Something else has changed");
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Tell me more — what\'s going on? Even if you\'re not sure how it connects to your home, I can help you think through what it might mean.');
+      }, 900);
+    }
+  }
+
+  function lifeEventStep(step, answer) {
+    var chipsId = step + '-chips';
+    var chips = document.getElementById(chipsId);
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    var labels = {
+      bedroom: { '1': 'Just one more', '2': 'Two more would be ideal', 'unsure': 'Not sure yet' },
+      neighborhood: { 'size': 'Mostly the size', 'nbhd': 'The neighborhood matters too', 'both': 'Both honestly' },
+      motivation: { 'space': 'More space or bedrooms needed', 'neighborhood': 'Better neighborhood or schools desired', 'both': 'Both — space and neighborhood', 'unsure': 'Not sure yet, just thinking ahead' },
+      bedroom: { '1': 'Just one more', '2': 'Two more would be ideal', 'unsure': 'Not sure yet' },
+      attachment: { 'love': 'Love where we are', 'open': 'Open to moving', 'unsure': 'Not sure' },
+      timeframe: { 'soon': 'Next few months', 'year': 'Within the year', 'nohurry': 'No rush, just planning' },
+      married: { 'stay': 'We\'ll stay here', 'move': 'We\'re thinking about moving', 'unsure': 'Not sure yet' },
+      relocating: { 'sell': 'Thinking about selling', 'rent': 'Considering renting it out', 'unsure': 'Still figuring it out' }
+    };
+
+    appendMsg('msg-user', labels[step][answer]);
+
+    if (step === 'motivation') {
+      showTypingThenReply(msgs, function() {
+        var spaceRelated = answer === 'space' || answer === 'both';
+        if (spaceRelated) {
+          appendMsg('msg-voyager', 'Good to know. I already have your home at 3 bedrooms from your home facts — are you thinking you\'d need one more, or more than that?<div class="intent-chips" id="bedroom-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'bedroom\',\'1\')">Just one more</button><button class="intent-chip" onclick="lifeEventStep(\'bedroom\',\'2\')">Two more would be ideal</button><button class="intent-chip" onclick="lifeEventStep(\'bedroom\',\'unsure\')">Not sure yet</button></div>');
+        } else {
+          appendMsg('msg-voyager', 'That makes sense — the neighborhood and school situation is often as important as the home itself. Are you attached to where you are now, or are you open to moving to a different area?<div class="intent-chips" id="attachment-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'love\')">Love where we are</button><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'open\')">Open to moving</button><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'unsure\')">Not sure</button></div>');
+        }
+      }, 900);
+    } else if (step === 'bedroom') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Are you attached to where you are now, or open to moving to a different area?<div class="intent-chips" id="attachment-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'love\')">Love where we are</button><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'open\')">Open to moving</button><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'unsure\')">Not sure</button></div>');
+      }, 900);
+    } else if (step === 'neighborhood') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Are you attached to where you are now, or are you open to moving to a different area?<div class="intent-chips" id="attachment-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'love\')">Love where we are</button><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'open\')">Open to moving</button><button class="intent-chip" onclick="lifeEventStep(\'attachment\',\'unsure\')">Not sure</button></div>');
+      }, 900);
+    } else if (step === 'attachment') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'What\'s your timeframe? When would you want to have figured this out by?<div class="intent-chips" id="timeframe-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'timeframe\',\'soon\')">Next few months</button><button class="intent-chip" onclick="lifeEventStep(\'timeframe\',\'year\')">Within the year</button><button class="intent-chip" onclick="lifeEventStep(\'timeframe\',\'nohurry\')">No rush, just planning</button></div>');
+      }, 900);
+    } else if (step === 'timeframe') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Here\'s what I\'m going to add to your dashboard based on what you\'ve told me: a learning resources module with reading relevant to your situation — buying before selling, timing the market, and your equity options. I\'ll also note your goal so you have a clear next step.<br><br>Before I do — any questions, or anything you\'d like to adjust?<div class="intent-chips" id="confirm-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventConfirm(\'yes\')">Looks good</button><button class="intent-chip" onclick="lifeEventConfirm(\'change\')">Actually, let me change something</button></div>');
+        setSuggestions(['"What is buying before selling?"', '"What does my equity mean for moving?"', '"How long would this take?"']);
+      }, 900);
+    }
+  }
+
+  function submitRelocWhere() {
+    var input = document.getElementById('reloc-where-input');
+    if (!input) return;
+    var val = input.value.trim();
+    if (!val) return;
+    appendMsg('msg-user', val);
+    var lower = val.toLowerCase();
+    var dest = lower.indexOf('paris') !== -1 ? 'paris' : (lower.match(/\b(us|usa|united states|america|new york|los angeles|chicago|austin|denver|seattle|boston|miami|atlanta)\b/) ? 'domestic' : 'other-intl');
+    relocWhere(dest, val);
+  }
+
+  function relocWhere(dest, rawLabel) {
+    var inputWrap = document.getElementById('reloc-where-input');
+    if (inputWrap) inputWrap.closest('div').style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    if (dest === 'paris') {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Paris — that\'s a real opportunity. How long is the assignment?<div class="intent-chips" id="paris-duration-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'duration\',\'2y\')">2–3 years, pretty fixed</button><button class="intent-chip" onclick="parisStep(\'duration\',\'open\')">2–3 years but could extend</button><button class="intent-chip" onclick="parisStep(\'duration\',\'perm\')">Could become permanent</button></div>');
+      }, 800);
+    } else {
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Got it. How long do you expect to be away?<div class="intent-chips" id="reloc-duration-chips" style="margin-top:10px;"><button class="intent-chip" onclick="relocGeneric(\'short\')">Less than a year</button><button class="intent-chip" onclick="relocGeneric(\'medium\')">1–3 years</button><button class="intent-chip" onclick="relocGeneric(\'open\')">Open-ended</button></div>');
+      }, 800);
+    }
+  }
+
+  function relocGeneric(duration) {
+    var chips = document.getElementById('reloc-duration-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+    var labels = { 'short': 'Less than a year', 'medium': '1–3 years', 'open': 'Open-ended' };
+    appendMsg('msg-user', labels[duration]);
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'That gives us a sense of the timeline. Are you thinking about selling before you go, renting the home out while you\'re away, or keeping it vacant?<div class="intent-chips" id="reloc-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEventStep(\'relocating\',\'sell\')">Thinking about selling</button><button class="intent-chip" onclick="lifeEventStep(\'relocating\',\'rent\')">Considering renting it out</button><button class="intent-chip" onclick="lifeEventStep(\'relocating\',\'unsure\')">Still figuring it out</button></div>');
+    }, 800);
+  }
+
+  // ── PARIS RELOCATION FLOW ──
+  var _parisCtx = {};
+
+  function parisStep(beat, answer) {
+    var chipsId = 'paris-' + beat + '-chips';
+    var chips = document.getElementById(chipsId);
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    if (beat === 'duration') {
+      _parisCtx.duration = answer;
+      var labels = { '2y': '2–3 years, pretty fixed', 'open': '2–3 years but could extend', 'perm': 'Could become permanent' };
+      appendMsg('msg-user', labels[answer]);
+      showTypingThenReply(msgs, function() {
+        var note = answer === 'perm'
+          ? 'Got it — so this could be a longer-term shift than it looks on paper. That changes the calculus on the home significantly.'
+          : 'Got it — ' + (answer === 'open' ? 'a few years with some uncertainty on the back end.' : 'a defined window, which is helpful.');
+        appendMsg('msg-voyager', note + '<br><br>Second question: do you want to come back to <em>this specific home</em> when you return, or are you open to selling now and buying something different when you\'re back?<div class="intent-chips" id="paris-attachment-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'attachment\',\'love\')">I want to come back to this home</button><button class="intent-chip" onclick="parisStep(\'attachment\',\'open\')">Open to selling and starting fresh when I\'m back</button><button class="intent-chip" onclick="parisStep(\'attachment\',\'unsure\')">Honestly not sure</button></div>');
+      }, 900);
+
+    } else if (beat === 'attachment') {
+      _parisCtx.attachment = answer;
+      var labels = { 'love': 'I want to come back to this home', 'open': 'Open to selling and starting fresh when I\'m back', 'unsure': 'Honestly not sure' };
+      appendMsg('msg-user', labels[answer]);
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'That\'s useful context. Now let\'s talk about the financial side.<br><br>Will the consultancy be covering your housing in Paris?<div class="intent-chips" id="paris-housing-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'housing\',\'covered\')">Yes — executive apartment, no rent</button><button class="intent-chip" onclick="parisStep(\'housing\',\'partial\')">Partial stipend</button><button class="intent-chip" onclick="parisStep(\'housing\',\'self\')">No, I\'ll be paying rent myself</button></div>');
+      }, 900);
+
+    } else if (beat === 'housing') {
+      _parisCtx.housing = answer;
+      var labels = { 'covered': 'Yes — executive apartment, no rent', 'partial': 'Partial stipend', 'self': 'No, I\'ll be paying rent myself' };
+      appendMsg('msg-user', labels[answer]);
+      showTypingThenReply(msgs, function() {
+        if (answer === 'covered') {
+          appendMsg('msg-voyager', 'Good — that removes a big variable. But you\'ll still have real expenses in Paris even without rent.<br><br>What will you be financially responsible for? Select everything that applies:<div id="paris-expenses-wrap" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">' +
+            ['Utilities', 'Food & groceries', 'Entertainment & dining out', 'Shopping & personal expenses'].map(function(label, i) {
+              return '<button class="intent-chip" id="pexp-' + i + '" style="text-align:left;display:flex;align-items:center;gap:10px;font-style:normal;" onclick="toggleParisExpense(' + i + ')">' +
+                '<span style="min-width:20px;height:20px;border-radius:50%;border:1.5px solid #212529;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#212529;" id="pexp-num-' + i + '">' + (i+1) + '</span>' +
+                '<span>' + label + '</span></button>';
+            }).join('') +
+            '<button class="intent-chip" id="pexp-all" style="text-align:left;display:flex;align-items:center;gap:10px;font-style:normal;" onclick="selectAllParisExpenses()">' +
+            '<span style="min-width:20px;height:20px;border-radius:50%;border:1.5px solid #212529;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#212529;" id="pexp-num-all">✓</span>' +
+            '<span>All of the above</span></button>' +
+            '<button onclick="confirmParisExpenses()" style="margin-top:4px;background:#212529;color:#fff;font-size:13px;font-weight:700;padding:9px 16px;border-radius:999px;border:none;cursor:pointer;" id="paris-exp-confirm">Submit</button>' +
+            '</div>');
+          window._parisExpenses = [];
+        } else {
+          appendMsg('msg-voyager', 'Understood — so housing costs in Paris will eat into your income on top of everything else. That makes carrying your Seattle mortgage more of a stretch.<br><br>After all your Paris expenses, do you think you\'d still be able to comfortably cover your mortgage each month?<div class="intent-chips" id="paris-carry-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'carry\',\'yes\')">Yes, I think I can manage both</button><button class="intent-chip" onclick="parisStep(\'carry\',\'tight\')">It would be tight</button><button class="intent-chip" onclick="parisStep(\'carry\',\'no\')">Probably not without some help</button><button class="intent-chip" onclick="parisStep(\'carry\',\'unsure\')">Not sure yet</button></div>');
+        }
+      }, 900);
+
+    } else if (beat === 'carry') {
+      _parisCtx.carry = answer;
+      var labels = { 'yes': 'Yes, I think I can manage both', 'tight': 'It would be tight', 'no': 'Probably not without some help', 'unsure': 'Not sure yet' };
+      appendMsg('msg-user', labels[answer]);
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Good to know. Last thing — this is more of a gut check.<br><br>Managing a rental from Paris means dealing with a property manager, maintenance calls, and tenant issues on a different time zone. Selling is a clean break but it\'s final. Keeping the home vacant is emotionally simpler but expensive and the home still needs oversight.<br><br>Which of those feels most like you?<div class="intent-chips" id="paris-risk-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'risk\',\'clean\')">I prefer a clean break — less to manage</button><button class="intent-chip" onclick="parisStep(\'risk\',\'asset\')">I\'d rather keep the asset even if it\'s complex</button><button class="intent-chip" onclick="parisStep(\'risk\',\'home\')">I just want to come home to my house when I\'m back</button></div>');
+      }, 900);
+
+    } else if (beat === 'risk') {
+      _parisCtx.risk = answer;
+      var labels = { 'clean': 'I prefer a clean break — less to manage', 'asset': 'I\'d rather keep the asset even if it\'s complex', 'home': 'I just want to come home to my house when I\'m back' };
+      appendMsg('msg-user', labels[answer]);
+      showTypingThenReply(msgs, function() {
+        parisGoalReveal(msgs);
+      }, 900);
+    }
+  }
+
+  window._parisExpenses = [];
+  var _parisExpenseLabels = ['Utilities', 'Food & groceries', 'Entertainment & dining out', 'Shopping & personal expenses'];
+
+  function toggleParisExpense(i) {
+    var idx = window._parisExpenses.indexOf(i);
+    var btn = document.getElementById('pexp-' + i);
+    var numEl = document.getElementById('pexp-num-' + i);
+    if (idx === -1) {
+      window._parisExpenses.push(i);
+      btn.style.background = '#212529'; btn.style.color = '#fff';
+      numEl.style.borderColor = '#fff'; numEl.style.color = '#fff';
+    } else {
+      window._parisExpenses.splice(idx, 1);
+      btn.style.background = ''; btn.style.color = '';
+      numEl.style.borderColor = '#212529'; numEl.style.color = '#212529';
+    }
+    var confirmBtn = document.getElementById('paris-exp-confirm');
+    if (confirmBtn) confirmBtn.style.display = window._parisExpenses.length > 0 ? '' : 'none';
+  }
+
+  function selectAllParisExpenses() {
+    var allBtn = document.getElementById('pexp-all');
+    var allNumEl = document.getElementById('pexp-num-all');
+    var count = _parisExpenseLabels.length;
+    window._parisExpenses = [0,1,2,3];
+    for (var i = 0; i < count; i++) {
+      var btn = document.getElementById('pexp-' + i);
+      var numEl = document.getElementById('pexp-num-' + i);
+      if (btn) { btn.style.background = '#212529'; btn.style.color = '#fff'; }
+      if (numEl) { numEl.style.borderColor = '#fff'; numEl.style.color = '#fff'; }
+    }
+    allBtn.style.background = '#212529'; allBtn.style.color = '#fff';
+    allNumEl.style.borderColor = '#fff'; allNumEl.style.color = '#fff';
+    var confirmBtn = document.getElementById('paris-exp-confirm');
+    if (confirmBtn) confirmBtn.style.display = '';
+  }
+
+  function confirmParisExpenses() {
+    var wrap = document.getElementById('paris-expenses-wrap');
+    if (wrap) wrap.style.display = 'none';
+    var selected = window._parisExpenses.slice().sort().map(function(i) { return _parisExpenseLabels[i]; });
+    _parisCtx.expenses = selected;
+    var msgs = document.getElementById('voyager-messages');
+    appendMsg('msg-user', selected.join(' · '));
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'So even without rent, you\'re covering ' + selected.join(', ') + ' in euros on a dollar income. The conversion gap is real — what feels comfortable in Seattle can get tight fast in Paris.<br><br>After accounting for that, do you think you\'d still be able to cover your Seattle mortgage each month?<div class="intent-chips" id="paris-carry-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'carry\',\'yes\')">Yes, I think I can manage both</button><button class="intent-chip" onclick="parisStep(\'carry\',\'tight\')">It would be tight</button><button class="intent-chip" onclick="parisStep(\'carry\',\'no\')">Probably not without some help</button><button class="intent-chip" onclick="parisStep(\'carry\',\'unsure\')">Not sure yet</button></div>');
+    }, 900);
+  }
+
+  function parisGoalReveal(msgs) {
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Here\'s where you are:<br><br>You have a home worth ~<strong>$636,000</strong> with roughly <strong>$211,000 in equity</strong>. You\'re leaving for 2–3 years. And you have a real decision to make before you go.<br><br>I\'m not going to tell you what to do — but I can tell you that this is exactly what the Plan tab is built for. Three paths, your numbers, your tradeoffs. I\'ll create a goal and get it set up for you.<br><br>Your goal: <strong>Figure out what to do with my home before I leave for Paris.</strong>');
+      // Reveal goal card with Paris copy
+      var goalCard = document.getElementById('goal-card');
+      if (goalCard) {
+        goalCard.style.display = '';
+        var goalText = goalCard.querySelector('.goal-text');
+        if (goalText) goalText.textContent = 'Figure out what to do with my home before I leave for Paris.';
+        var goalBody = goalCard.querySelector('.goal-body');
+        if (goalBody) goalBody.textContent = 'Three paths to evaluate: sell, rent it out, or keep it and carry it. Voyager has outlined your situation — go to your Plan tab to work through the tradeoffs.';
+        setTimeout(function() {
+          var mainCol = document.querySelector('.main-col');
+          if (mainCol) {
+            mainCol.scrollTo({ top: mainCol.scrollTop + (goalCard.getBoundingClientRect().top - mainCol.getBoundingClientRect().top) - 16, behavior: 'smooth' });
+          }
+        }, 400);
+      }
+      setTimeout(function() {
+        showTypingThenReply(msgs, function() {
+          appendMsg('msg-voyager', 'One more thing — your market is warm right now. Your Zestimate is up $24k since February and homes in 98103 are still moving fast. That context matters for whichever path you choose.<a href="plan-overview.html?rv1=1" class="msg-cta" style="margin-top:10px; display:block;">Go to Plan tab — explore your three paths &rarr;</a>');
+          setSuggestions(['"What would I net if I sold today?"', '"What does renting involve?"', '"How long do I have to decide?"']);
+        }, 800);
+      }, 1600);
+    }, 900);
+  }
+
+  function lifeEventConfirm(choice) {
+    var chips = document.getElementById('confirm-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    if (choice === 'change') {
+      appendMsg('msg-user', 'Actually, let me change something');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Of course — what would you like to adjust?');
+      }, 700);
+      return;
+    }
+
+    appendMsg('msg-user', 'Looks good');
+    showTypingThenReply(msgs, function() {
+      // Reveal learning resources and goal card
+      document.getElementById('learning-resources-card').style.display = '';
+      document.getElementById('goal-card').style.display = '';
+      appendMsg('msg-voyager', 'Done. I\'ve added those to your dashboard.<br><br>One more thing — based on your equity position, you\'re actually in a strong spot financially for whatever path you choose. Your $201k in equity could cover a meaningful down payment on a larger home in your area. Want to save that to your pins board?<div class="intent-chips" id="pin-offer-chips" style="margin-top:10px;"><button class="intent-chip" onclick="pinEquityInsight()">Pin that</button><button class="intent-chip" onclick="skipPin()">Not now</button></div>');
+      // Scroll to learning resources
+      setTimeout(function() {
+        var el = document.getElementById('learning-resources-card');
+        if (el) {
+          var mainCol = document.querySelector('.main-col');
+          mainCol.scrollTop = mainCol.scrollTop + (el.getBoundingClientRect().top - mainCol.getBoundingClientRect().top) - 16;
+        }
+      }, 400);
+    }, 700);
+  }
+
+  function pinEquityInsight() {
+    var chips = document.getElementById('pin-offer-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', 'Pin that');
+    // Reveal pins board and add the equity pin
+    document.getElementById('pins-board-card').style.display = '';
+    addPin('Your equity has grown enough to cover a meaningful down payment on a larger home in your area.');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Pinned. You can pin anything I say by right-clicking it or just telling me "pin this." It\'ll stay on your dashboard until you remove it. When you\'re ready to work through your options in detail, your Plan tab is the best place to do that.');
+      setSuggestions(['"What does my equity actually mean for me?"', '"Go to my Plan tab"', '"What should I do next?"']);
+    }, 700);
+  }
+
+  function pinSinceLastVisit() {
+    document.getElementById('since-last-visit-card').style.display = 'none';
+    document.getElementById('pins-board-card').style.display = '';
+    addPin('Since Feb 2026: Zestimate up $24k · Nearby homes pending in 12 days · 3 comparable homes sold');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Pinned. That summary will stay on your dashboard so you can reference it anytime. You can pin anything I say — just right-click it or tell me "pin this."');
+      setSuggestions(['"What does the market activity mean for my home?"', '"Why did my Zestimate go up?"', '"Go to my Plan tab"']);
+    }, 500);
+  }
+
+  function skipPin() {
+    var chips = document.getElementById('pin-offer-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', 'Not now');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'No problem. Your dashboard is set up with what you need for now. When you\'re ready to go deeper, your Plan tab is the best next step.<a href="plan-overview.html" class="msg-cta" style="margin-top:10px;">Go to Plan tab &rarr;</a>');
+      setSuggestions(['"What does my equity actually mean for me?"', '"Go to my Plan tab"', '"What should I do next?"']);
+    }, 700);
+  }
+
+  // ── PINS BOARD HELPERS ──
+  function addPin(text) {
+    var card = document.getElementById('pins-board-card');
+    if (card) card.style.display = '';
+    var list = document.getElementById('pins-list');
+    var item = document.createElement('div');
+    item.className = 'pin-item';
+    item.innerHTML = '<span class="pin-text">' + text + '</span><button class="pin-remove" onclick="removePin(this)" title="Remove pin">&times;</button>';
+    list.appendChild(item);
+  }
+
+  function removePin(btn) {
+    btn.closest('.pin-item').remove();
+  }
+
+  function addManualPin() {
+    var input = document.getElementById('pin-input-field');
+    var val = input.value.trim();
+    if (!val) return;
+    addPin(val);
+    input.value = '';
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    var pinInput = document.getElementById('pin-input-field');
+    if (pinInput) {
+      pinInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') addManualPin(); });
+    }
+    // Auto-open home facts drawer and set context-aware Voyager message when arriving from claim flow
+    if (window.location.search.indexOf('claim=1') !== -1) {
+      window._isClaimFlow = true;
+      // Swap the onboarding welcome bubble for a claim-context message
+      var welcomeMsg = document.getElementById('msg-onboarding-welcome');
+      if (welcomeMsg) {
+        welcomeMsg.innerHTML = 'Welcome — looks like you\'re updating your home facts. Go ahead and make your edits — but just so you know, you don\'t have to open this form. Just tell me what changed and I\'ll update it for you directly from our conversation.<br><br>What would you like to update?';
+      }
+      // Hide the onboarding intent chips — not relevant in this context
+      var chips = document.getElementById('onboarding-bucket-chips');
+      if (chips) chips.style.display = 'none';
+      // Set relevant suggestions
+      setSuggestions(['"My square footage"', '"I have a garage"', '"We renovated the kitchen"']);
+      setTimeout(function() { openHomeFacts(); }, 400);
+    }
+  });
+
+  // ── GET STARTED CHECKLIST ──
+  var checklistState = [false, false, false, false];
+  var checklistTasks = [
+    'Review and update your home facts',
+    'Confirm square footage & bedrooms',
+    'Add any recent renovations or upgrades',
+    'Check your photos are up to date'
+  ];
+  var checklistGuidance = [
+    "Let's take care of that. Your home facts are the foundation of your Zestimate — keeping them current helps make sure the number reflects reality. Want to do that now?",
+    "Let's take care of that. Confirming your square footage and bedroom count is quick and can meaningfully shift your Zestimate. Want to do that now?",
+    "Let's take care of that. Logging renovations — a kitchen remodel, new roof, or new HVAC — can add thousands to your Zestimate estimate. Want to log them now?",
+    "Let's take care of that. Up-to-date photos help buyers and appraisers get an accurate picture of your home. Want to review your photos now?"
+  ];
+
+  function toggleChecklist() {}
+  function startChecklistTask(idx) {}
+  function completeChecklistTask(idx) {}
+
+  // ── ABSTRACT MODE TOGGLE ──
+  function setAbstractMode(on) {
+    if (on) {
+      document.body.classList.add('abstract-mode');
+      document.getElementById('toggle-realistic').className = 'toggle-btn inactive';
+      document.getElementById('toggle-abstract').className = 'toggle-btn active';
+    } else {
+      document.body.classList.remove('abstract-mode');
+      document.getElementById('toggle-realistic').className = 'toggle-btn active';
+      document.getElementById('toggle-abstract').className = 'toggle-btn inactive';
+    }
+  }
+
   // ── RETURN VISIT TOGGLE ──
   var isReturnVisit = false;
 
@@ -1219,6 +1971,12 @@
     sinceCard.style.display = '';
     document.getElementById('voyager-panel-mode').textContent = 'Dashboard mode';
     if (toggleBtn) toggleBtn.textContent = 'Simulate first visit';
+
+    // Reveal equity card and market insights (both were added at dashboard setup)
+    document.getElementById('home-equity-card').style.display = '';
+    document.getElementById('equity-return-subtitle').style.display = '';
+    document.getElementById('market-insights-section').style.display = '';
+
 
     // Collapse any existing conversation into history before showing return welcome
     var msgs = document.getElementById('voyager-messages');
@@ -1249,10 +2007,36 @@
     returnWelcome.style.display = '';
     msgs.appendChild(returnWelcome);
 
+    // ── Update all value displays to RV1 numbers ($612k → $636k) ──
+    var priceEl = document.querySelector('.price-large');
+    if (priceEl) priceEl.textContent = '$636,000';
+
+    document.querySelectorAll('.details-cell strong').forEach(function(el) {
+      if (el.textContent.indexOf('612') !== -1) el.textContent = '$636,000';
+      if (el.textContent.indexOf('332') !== -1) el.textContent = '$345/sqft';
+    });
+
+    document.querySelectorAll('.value-card-amount').forEach(function(el) {
+      if (el.textContent.indexOf('612') !== -1) el.textContent = '$636,000';
+      if (el.textContent.indexOf('581') !== -1) el.textContent = '$604K – $668K';
+    });
+
+    // Equity card: amount + subtitle
+    var equityAmountEl = document.querySelector('#home-equity-card [style*="font-size: 26px"], #home-equity-card [style*="font-size:26px"]');
+    if (equityAmountEl) equityAmountEl.textContent = '$211,000';
+
+    document.querySelectorAll('#home-equity-card [style*="margin-top: 6px"]').forEach(function(el) {
+      if (el.innerHTML.indexOf('612') !== -1) el.innerHTML = 'Zestimate $636K &nbsp;&middot;&nbsp; Est. mortgage ~$425K';
+    });
+
+    document.querySelectorAll('.comparison-price').forEach(function(el) {
+      if (el.textContent.indexOf('612') !== -1) el.textContent = '~$636,000+';
+    });
+
     setSuggestions([
-      '"What would I net if I sold today?"',
-      '"How does my equity compare to similar homes?"',
-      '"What are my selling options?"'
+      '"What would my equity mean for buying a bigger home?"',
+      '"What changed in the market?"',
+      '"What are my options if I want to move?"'
     ]);
     scrollMessages();
   }
@@ -1269,6 +2053,123 @@
     }
   }
 
+  function activateReturnVisit2() {
+    // First run RV1 to collapse history + show return card
+    activateReturnVisit();
+
+    // Hide simulate links — already on RV2, they'd be confusing here
+    var toggleDiv = document.getElementById('return-visit-toggle');
+    if (toggleDiv) toggleDiv.style.display = 'none';
+
+    // ── Update all value displays to RV2 numbers (Harriet back from Paris, ~3 years later) ──
+    // RV1 already ran so DOM shows $636k — match against RV1 values AND fall back to base values
+
+    var priceEl = document.querySelector('.price-large');
+    if (priceEl) priceEl.textContent = '$762,000';
+
+    document.querySelectorAll('.details-cell strong').forEach(function(el) {
+      var t = el.textContent;
+      if (t.indexOf('636') !== -1 || t.indexOf('612') !== -1) el.textContent = '$762,000';
+      if (t.indexOf('345') !== -1 || t.indexOf('332') !== -1) el.textContent = '$414/sqft';
+      if (t.indexOf('2,100') !== -1) el.textContent = '$2,800';
+    });
+
+    document.querySelectorAll('.value-card-amount').forEach(function(el) {
+      var t = el.textContent;
+      if (t.indexOf('636') !== -1 || t.indexOf('612') !== -1) el.textContent = '$762,000';
+      if (t.indexOf('604') !== -1 || t.indexOf('581') !== -1) el.textContent = '$724K – $800K';
+      if (t.indexOf('2,100') !== -1) el.textContent = '$2,800/mo';
+    });
+
+    // Equity card: amount + subtitle
+    var equityAmountEl = document.querySelector('#home-equity-card [style*="font-size: 26px"], #home-equity-card [style*="font-size:26px"]');
+    if (equityAmountEl) equityAmountEl.textContent = '$360,000';
+
+    document.querySelectorAll('#home-equity-card [style*="margin-top: 6px"]').forEach(function(el) {
+      if (el.innerHTML.indexOf('636') !== -1 || el.innerHTML.indexOf('612') !== -1) {
+        el.innerHTML = 'Zestimate $762K  ·  Est. mortgage ~$402K';
+      }
+    });
+
+    // Comparison prices
+    document.querySelectorAll('.comparison-price').forEach(function(el) {
+      var t = el.textContent;
+      if (t.indexOf('636') !== -1 || t.indexOf('612') !== -1 || t.indexOf('578') !== -1) {
+        el.textContent = '~$762,000+';
+      }
+    });
+
+    // Zestimate history subtitle
+    var historySubEl = document.querySelector('.history-subtext');
+    if (historySubEl) historySubEl.textContent = '+22% since you left for Paris';
+
+    // Refi row
+    var refiRow = document.querySelector('.refi-row');
+    if (refiRow) {
+      refiRow.innerHTML = refiRow.innerHTML.replace('$3,580/mo', '$4,150/mo').replace('$3,240/mo', '$4,150/mo');
+    }
+
+    // Refi card value
+    document.querySelectorAll('[style*="font-size:14px"][style*="font-weight:800"], [style*="font-size: 14px"][style*="font-weight: 800"]').forEach(function(el) {
+      if (el.textContent === '$3,580/mo' || el.textContent === '$3,240/mo') el.textContent = '$4,150/mo';
+    });
+
+    // Overwrite the since-last-visit card with RV2 content
+    var sinceCard = document.getElementById('since-last-visit-card');
+    sinceCard.innerHTML = [
+      '<div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">',
+        '<div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#9BA8C0; display:flex; align-items:center; gap:6px;">',
+          '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" style="flex-shrink:0;"><path d="M9 2L10.5 6.5L15 8L10.5 9.5L9 14L7.5 9.5L3 8L7.5 6.5L9 2Z" fill="#9BA8C0"/><path d="M18 10L19 12.5L21.5 13.5L19 14.5L18 17L17 14.5L14.5 13.5L17 12.5L18 10Z" fill="#9BA8C0"/><path d="M6.5 16L7.25 18L9.25 18.75L7.25 19.5L6.5 21.5L5.75 19.5L3.75 18.75L5.75 18L6.5 16Z" fill="#9BA8C0"/></svg>',
+          'Since your last visit &nbsp;&middot;&nbsp; 3 years ago',
+        '</div>',
+        '<div style="display:flex; align-items:center; gap:8px;">',
+          '<button onclick="pinSinceLastVisit()" title="Pin this to your pins board" style="background:none; border:none; cursor:pointer; padding:4px; color:#9BA8C0; display:flex; align-items:center;">',
+            '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5"/><path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7h1a2 2 0 0 0 0-4H8a2 2 0 0 0 0 4h1v3.76z"/></svg>',
+          '</button>',
+          '<button onclick="document.getElementById(\'since-last-visit-card\').style.display=\'none\'" title="Dismiss" style="background:none; border:none; cursor:pointer; padding:4px; color:#9BA8C0; font-size:22px; line-height:1; display:flex; align-items:center;">&times;</button>',
+        '</div>',
+      '</div>',
+      '<div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:16px;">',
+        '<div style="background:rgba(255,255,255,0.07); border-radius:4px; padding:12px 14px;">',
+          '<div style="font-size:22px; font-weight:800; color:#fff; font-family:\'Object Sans\',\'Inter\',sans-serif; line-height:1; margin-bottom:5px;">+$126k</div>',
+          '<div style="font-size:11px; color:#9BA8C0; line-height:1.5;">Your Zestimate<br>now $762,000</div>',
+        '</div>',
+        '<div style="background:rgba(255,255,255,0.07); border-radius:4px; padding:12px 14px;">',
+          '<div style="font-size:22px; font-weight:800; color:#fff; font-family:\'Object Sans\',\'Inter\',sans-serif; line-height:1; margin-bottom:5px;">8 days</div>',
+          '<div style="font-size:11px; color:#9BA8C0; line-height:1.5;">Median days to pending<br>market is very hot</div>',
+        '</div>',
+        '<div style="background:rgba(255,255,255,0.07); border-radius:4px; padding:12px 14px;">',
+          '<div style="font-size:22px; font-weight:800; color:#fff; font-family:\'Object Sans\',\'Inter\',sans-serif; line-height:1; margin-bottom:5px;">5 sold above asking</div>',
+          '<div style="font-size:11px; color:#9BA8C0; line-height:1.5;">Comparable homes<br>last 30 days</div>',
+        '</div>',
+      '</div>',
+      '<div style="font-size:13px; color:#9BA8C0; line-height:1.6; border-top:1px solid rgba(255,255,255,0.1); padding-top:12px;">',
+        'Seattle has been on a run while you were away. Your home is up 22% and the market is as competitive as ever. <strong style="color:#fff;">You\'re in a strong position to sell.</strong>',
+      '</div>',
+      '<div style="margin-top:14px; padding:12px; background:rgba(255,255,255,0.07); border-radius:6px; font-size:13px; color:#9BA8C0; line-height:1.6;">',
+        'You have an active goal: <strong style="color:#fff;">Figure out what to do with your home before leaving for Paris.</strong> Your plan is right where you left it. <a href="plan-overview.html?rv2=1" style="color:#fff; font-weight:700; text-decoration:underline; white-space:nowrap;">Continue in Plan tab &rarr;</a>',
+      '</div>'
+    ].join('');
+
+    // Overwrite the Voyager return welcome bubble
+    var returnWelcome = document.getElementById('msg-return-welcome');
+    returnWelcome.innerHTML = [
+      'Welcome back, Harriet. A lot has changed in 3 years. Your Zestimate is up <strong>$126,000</strong> to <strong>$762,000</strong> — that\'s a 22% gain since you left for Paris. Your estimated equity is now <strong>$360,000</strong>, and Seattle is running hotter than ever: homes are going pending in <strong>8 days</strong> and five comparable homes sold above asking in the last 30 days.<br><br>',
+      'With your Paris assignment wrapping up, now is a great time to decide what to do with the home. Sell into this market, rent it out, or explore what it takes to move back in.<br><br>You still have an active goal: <strong>Figure out what to do with your home before leaving for Paris.</strong> Your plan is right where you left it.<a href="plan-overview.html?rv2=1" class="msg-cta" style="margin-top:8px;">Continue in Plan tab &rarr;</a>',
+      '<div class="intent-chips" style="margin-top:10px;">',
+        '<button class="intent-chip" onclick="returnIntent(\'sell_only\')">I\'m thinking of selling</button>',
+        '<button class="intent-chip" onclick="returnIntent(\'market\')">Tell me about the market</button>',
+        '<button class="intent-chip" onclick="returnIntent(\'equity\')">What can I do with my equity?</button>',
+      '</div>'
+    ].join('');
+
+    setSuggestions([
+      '"What would my equity mean for buying a bigger home?"',
+      '"How\'s the Seattle market right now?"',
+      '"What are my options now that I\'m back?"'
+    ]);
+    scrollMessages();
+  }
   function toggleChatHistory(toggleEl) {
     var historyEl = document.getElementById('chat-history-items');
     var btn = toggleEl.querySelector('.chat-history-toggle-btn');
@@ -1318,7 +2219,13 @@
 
     var msgs = document.getElementById('voyager-messages');
 
-    if (intent === 'sell') {
+    if (intent === 'life') {
+      appendMsg('msg-user', 'Actually, yes — my life has changed');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Tell me what\'s going on — I can help you figure out what that means for your home.<div class="intent-chips" id="life-event-chips" style="margin-top:10px;"><button class="intent-chip" onclick="lifeEvent(\'married\')">Getting married</button><button class="intent-chip" onclick="lifeEvent(\'relocating\')">Relocating for work</button><button class="intent-chip" onclick="lifeEvent(\'other\')">Something else has changed</button></div>');
+        setSuggestions(['"We\'re expecting a baby"', '"My situation has changed"']);
+      }, 900);
+    } else if (intent === 'sell') {
       appendMsg('msg-user', 'Am I in a good position to sell?');
       showTypingThenReply(msgs, function() {
         appendMsg('msg-voyager', 'Based on what\'s happened in your market since February, yes — your position is solid right now.<br><br>Your home is up <strong>$24k</strong>. Two comparable homes just closed above asking. Demand is tightening — days to pending dropped from 15 to 12.<br><br>Before we go further: are you thinking about selling only, buying and selling at the same time, or have you considered renting it out?<div class="intent-chips" id="sell-path-chips" style="margin-top:10px;"><button class="intent-chip" onclick="selectSellPath(\'sell_only\')">Selling only</button><button class="intent-chip" onclick="selectSellPath(\'buy_sell\')">Buy and sell</button><button class="intent-chip" onclick="selectSellPath(\'rent\')">Rent it out instead</button></div>');
@@ -1336,9 +2243,9 @@
         setSuggestions(['"At what rate would refinancing save me money?"', '"How does my equity affect my options?"', '"What home improvements add the most value?"']);
       }, 900);
     } else if (intent === 'watch') {
-      appendMsg('msg-user', 'Just keeping an eye on things');
+      appendMsg('msg-user', 'Just checking in');
       showTypingThenReply(msgs, function() {
-        appendMsg('msg-voyager', 'Understood. Your dashboard is up to date — your Zestimate is at $636k and your equity is around $211k.<br><br>I\'ll be here when something changes or you\'re ready to explore your options. In the meantime, your comps and equity modules are already on your page.');
+        appendMsg('msg-voyager', 'Got it — I\'ll keep an eye on the market for you and surface anything worth knowing when conditions change. In the meantime, your home health score is a bit low. Updating your home facts is the fastest way to make sure your Zestimate reflects reality. You can start that from the checklist below, or just tell me what\'s changed.');
         setSuggestions(['"What would I net if I sold today?"', '"How is my Zestimate calculated?"', '"What does my equity mean?"']);
       }, 900);
     }
@@ -2189,6 +3096,40 @@
   }
 
   var suggestedReplies = {
+    'My square footage': {
+      text: 'What\'s the correct square footage? Just type the number.'
+    },
+    'My square footage is different': {
+      text: 'What\'s the correct square footage? Just type the number.'
+    },
+    'I have a garage': {
+      text: 'Got it — how many cars does it fit?',
+      followUpQuestion: 'How many cars does it fit?',
+      followUpOptions: [
+        { label: '1 car', response: 'Saved — 1-car garage added to your home facts. That\'ll factor into your next Zestimate update.' },
+        { label: '2 cars', response: 'Saved — 2-car garage added to your home facts. That\'ll factor into your next Zestimate update.' },
+        { label: '3+ cars', response: 'Saved — 3-car garage added to your home facts. That\'ll factor into your next Zestimate update.' }
+      ],
+      followUpPrompt: 400
+    },
+    'We renovated the kitchen': {
+      text: 'Nice — roughly when was it done, and do you have a sense of what it cost? Even a ballpark helps the estimate.',
+      followUpQuestion: 'When was it done and what did it cost?',
+      followUpOptions: [
+        { label: 'Within the last year, under $30k', response: 'Logged — kitchen renovation, under $30k, within the last year. I\'ll add that to your improvement history.' },
+        { label: 'Within the last year, $30k–$75k', response: 'Logged — kitchen renovation, $30k–$75k, within the last year. That\'s a meaningful update for your Zestimate.' },
+        { label: 'A few years ago', response: 'Logged — kitchen renovation a few years back. I\'ll add it to your improvement history with an approximate date.' }
+      ],
+      followUpPrompt: 400
+    },
+    'How do I update my home facts?': {
+      text: 'You can update your home facts right here — no need to hunt for an edit button.<br><br>Just tell me what you want to change. For example:<br>• <em>"My square footage is actually 1,950"</em><br>• <em>"I have a 2-car garage"</em><br>• <em>"We finished the basement last year"</em><br><br>I\'ll open your home facts so you can review and confirm the change. You stay in control — I just make it easy to find and update.<br><br>Want to open your home facts now?',
+      followUpOptions: [
+        { label: 'Yes, open my home facts', response: '__open_home_facts__' },
+        { label: 'I\'ll do it later', response: 'No problem — whenever you\'re ready, just tell me what changed and I\'ll take you straight there.' }
+      ],
+      followUpQuestion: 'Want to open your home facts now?'
+    },
     'Is now a good time to sell?': {
       text: 'Seattle is a neutral market — homes like yours are selling in about 15 days. Your timing looks solid.<br><br>Zillow offers a few ways to sell — you can get a sense of what\'s available below. When you\'re ready to compare options in detail and build a plan, that\'s what the Plan tab is for. <a href="#" class="msg-module-link" style="text-decoration:underline;" onclick="scrollToModule(\'ai-summary\'); return false;">See what selling options are available</a>'
     },
@@ -2215,9 +3156,26 @@
     userBubble.textContent = val;
     msgs.appendChild(userBubble);
 
+    // Named-field chips always go through suggestedReplies, even if homeFactsMode is on.
+    // Everything else in homeFactsMode routes through sendMessage.
+    var namedChips = ['My square footage', 'I have a garage', 'We renovated the kitchen',
+                      'My square footage is different'];
+    if (homeFactsMode && namedChips.indexOf(val) === -1) {
+      msgs.removeChild(userBubble);
+      var fakeInput = document.getElementById('voyager-input');
+      fakeInput.value = val;
+      sendMessage();
+      return;
+    }
+
     var reply = msgs.querySelector ? null : null;
     var replyData = suggestedReplies[val];
     var replyText = replyData ? (replyData.text || replyData) : 'Got it — that\'s a great question. In the full product, your Home Advisor would respond here based on your home\'s data and context.';
+
+    // Square footage chip — activate homeFactsMode so the typed number is handled
+    if (val === 'My square footage' || val === 'My square footage is different') {
+      homeFactsMode = true;
+    }
 
     var replyEl = document.createElement('div');
     replyEl.className = 'msg-voyager';
@@ -2239,18 +3197,26 @@
           optBtn.className = 'suggested-q';
           optBtn.style.cssText = 'text-align:left; font-style:normal; font-weight:600;';
           optBtn.textContent = opt.label;
-          optBtn.onclick = function() {
+          optBtn.onclick = (function(o) { return function() {
             optionWrap.remove();
             var userReply = document.createElement('div');
             userReply.className = 'msg-user';
-            userReply.textContent = opt.label;
+            userReply.textContent = o.label;
             msgs.appendChild(userReply);
-            var voyagerReply = document.createElement('div');
-            voyagerReply.className = 'msg-voyager';
-            voyagerReply.innerHTML = opt.response;
-            msgs.appendChild(voyagerReply);
+            if (o.response === '__open_home_facts__') {
+              openHomeFacts();
+              var voyagerReply = document.createElement('div');
+              voyagerReply.className = 'msg-voyager';
+              voyagerReply.innerHTML = 'Here are your current home facts — review them and update anything that looks off. When you\'re done, just tell me <em>"that\'s everything"</em> or hit Save and I\'ll take it from there.';
+              msgs.appendChild(voyagerReply);
+            } else {
+              var voyagerReply = document.createElement('div');
+              voyagerReply.className = 'msg-voyager';
+              voyagerReply.innerHTML = o.response;
+              msgs.appendChild(voyagerReply);
+            }
             scrollMessages();
-          };
+          }; })(opt);
           optionWrap.appendChild(optBtn);
         });
         msgs.appendChild(optionWrap);
@@ -2337,6 +3303,8 @@
     homeFactsMode = false;
   }
 
+  function updateHomeHealthScore(score, subtitle) {}
+
   function saveAndCloseHomeFacts() {
     var msgs = document.getElementById('voyager-messages');
     var voyagerReply = document.createElement('div');
@@ -2349,41 +3317,165 @@
   }
 
   function firePostSaveFollowUp(msgs) {
+    setSuggestions([]); // clear home-facts chips immediately
     setTimeout(function() {
       showTypingThenReply(msgs, function() {
-        appendMsg('msg-voyager', 'Good — your Zestimate should be more accurate now. A few things worth thinking about from here:<br><br>1. <strong>Review your home value</strong> — check the Zestimate history chart to see how it\'s trended<br>2. <strong>Understand your equity</strong> — based on updated facts, your equity position may have shifted<br>3. <strong>Explore your options</strong> — if selling has been on your mind, the Plan tab is where you can go deeper<br><br>What would you like to do next?<div class="intent-chips" id="post-save-chips" style="margin-top:10px;"><button class="intent-chip" onclick="postSavePath(\'value\')">Review my home value</button><button class="intent-chip" onclick="postSavePath(\'equity\')">Understand my equity</button><button class="intent-chip" onclick="postSavePath(\'plan\')">Explore my options</button></div>');
-        setSuggestions(['"How is my Zestimate calculated?"', '"What does my equity mean?"', '"Is now a good time to sell?"']);
+        if (window._isClaimFlow) {
+          // Coming from claim flow — home facts updated, now transition into onboarding
+          var multiChipHtml = '<div id="post-save-multi-wrap" style="margin-top:10px;">' +
+            '<div style="font-size:13px;color:#6C757D;margin-bottom:8px;">Select all that apply:</div>' +
+            '<div id="post-save-multi-chips" style="display:flex;flex-direction:column;gap:8px;">' +
+            ['Tracking my home\'s value','Understanding my equity','How my home compares in this market','Exploring my options to sell'].map(function(label, i) {
+              return '<button class="intent-chip" id="psc-' + i + '" style="text-align:left;display:flex;align-items:center;gap:10px;font-style:normal;" onclick="togglePostSaveChip(' + i + ')">' +
+                '<span style="min-width:20px;height:20px;border-radius:50%;border:1.5px solid #212529;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#212529;" id="psc-num-' + i + '">' + (i+1) + '</span>' +
+                '<span>' + label + '</span></button>';
+            }).join('') +
+            '</div>' +
+            '<div id="post-save-confirm-btn" style="display:none;margin-top:10px;">' +
+            '<button onclick="confirmPostSaveIntents()" style="background:#212529;color:#fff;font-size:14px;font-weight:700;padding:10px 20px;border-radius:999px;border:none;cursor:pointer;width:100%;">Update my dashboard &rarr;</button>' +
+            '</div>' +
+            '</div>';
+          appendMsg('msg-voyager', 'Your Zestimate will reflect those updates within 24 hours.<br><br>Now that your home is set up — this is your dashboard. I can help you build it around what matters most to you.<br><br>What would you like to focus on?' + multiChipHtml);
+          window._postSaveSelected = [];
+          window._isClaimFlow = false;
+          var inputEl = document.getElementById('voyager-input');
+          if (inputEl) inputEl.placeholder = 'Type 1, 2, 3 or 4 and hit send…';
+        } else {
+          appendMsg('msg-voyager', 'Good — your Zestimate should be more accurate now. Changes will reflect within 24 hours.<br><br>Anything on your dashboard you want to dig into?<div class="intent-chips" id="post-save-chips" style="margin-top:10px;"><button class="intent-chip" onclick="digDeeper(\'trend\')">What\'s driving my value trend</button><button class="intent-chip" onclick="digDeeper(\'market\')">What the market data means for me</button></div>');
+          setSuggestions([]);
+        }
       }, 900);
     }, 1200);
   }
 
-  function postSavePath(choice) {
+  function digDeeper(topic) {
     var chips = document.getElementById('post-save-chips');
     if (chips) chips.style.display = 'none';
-
     var msgs = document.getElementById('voyager-messages');
-    var labels = { value: 'Review my home value', equity: 'Understand my equity', plan: 'Explore my options' };
-    appendMsg('msg-user', labels[choice]);
+
+    var labels = {
+      'value': 'How my home value is calculated',
+      'market': 'What the market data means for me',
+      'zestimate-accuracy': 'What I can do to improve my Zestimate'
+    };
+    appendMsg('msg-user', labels[topic]);
 
     showTypingThenReply(msgs, function() {
-      if (choice === 'value') {
-        appendMsg('msg-voyager', 'Your Zestimate history chart is just above — it shows how your home\'s value has trended over the last year. The +8% YoY figure reflects your home type in 98103.<br><br>Once your updated facts are processed (within 24 hours), the estimate will sharpen. Worth checking back then to see the impact of the changes you just made.');
-        setSuggestions(['"What affects my Zestimate most?"', '"How do I compare to similar homes?"', '"What would I net if I sold today?"']);
-      } else if (choice === 'equity') {
-        document.getElementById('home-equity-card').style.display = '';
-        appendMsg('msg-voyager', 'I\'ve added the home equity module to your dashboard — you\'ll see it just below your home value. Right now it\'s showing <strong>~$211k</strong> in estimated equity. Once your updated facts are reflected, that number may shift.<br><br>The "if you sold today" figure shows your net proceeds after agent, closing, and transfer fees.');
-        setSuggestions(['"What would I net if I sold today?"', '"How can I use my equity?"', '"Is now a good time to sell?"']);
-        setTimeout(function() {
-          var el = document.getElementById('home-equity-card');
-          if (el) {
-            var mainCol = document.querySelector('.main-col');
-            mainCol.scrollTop = mainCol.scrollTop + (el.getBoundingClientRect().top - mainCol.getBoundingClientRect().top) - 16;
-          }
-        }, 400);
+      if (topic === 'trend') {
+        appendMsg('msg-voyager', 'Your value trend chart is showing <strong>+8% year over year</strong> — that\'s the appreciation rate for homes like yours in 98103 over the past 12 months.<br><br>A few things are driving it: inventory in your area has stayed relatively low, and buyer demand has held steady — homes are still going pending in about 15 days. When supply stays tight and demand stays consistent, values tend to drift up.<br><br>The dip you might notice around month 8 on the chart reflects a brief slowdown when rates spiked — that\'s typical. Values recovered as buyers adjusted.<br><br>Bottom line: your home has appreciated at a healthy pace without the volatility some other markets have seen. The updated square footage you just added may nudge the estimate up slightly once it processes.');
+        setSuggestions(['"What could cause my value to go down?"', '"How does my appreciation compare to nearby homes?"', '"What does the market index mean?"']);
+      } else if (topic === 'market') {
+        appendMsg('msg-voyager', 'The market insights card on your dashboard is showing a <strong>neutral market</strong> — a 51/100 score means neither buyers nor sellers have a strong advantage right now.<br><br>The stat that\'s most relevant to you as a homeowner monitoring value: <strong>15 days to pending</strong>. That\'s how quickly homes are going under contract. It\'s a signal of demand. When that number drops, demand is rising — and typically so are values.<br><br>Want me to walk you through what each of the four stats on that card means for your home specifically?<div class="intent-chips" id="market-deepdive-chips" style="margin-top:10px;"><button class="intent-chip" onclick="marketDeepDive(\'stats\')">Yes, walk me through them</button><button class="intent-chip" onclick="marketDeepDive(\'skip\')">I\'m good for now</button></div>');
+        setSuggestions(['"What does the market index mean?"', '"Why are homes selling so fast?"', '"Is this a good time to buy or sell?"']);
       } else {
-        appendMsg('msg-voyager', 'The Plan tab is where your selling journey lives — compare options like a cash offer vs. listing with an agent, build a timeline, and connect with an agent if you\'re ready.<br><br>You can always come back to this dashboard to check your numbers before making any decisions.<a href="plan-overview.html" class="msg-cta" style="margin-top:10px;">Go to your Plan tab &rarr;</a>');
-        setSuggestions([{ label: 'Go to Plan tab →', href: 'plan-overview.html' }, '"What are my selling options?"']);
+        appendMsg('msg-voyager', 'The biggest lever you have right now is keeping your home facts current. You just updated your square footage — that\'s the most impactful single change you can make.<br><br>A few other things that help:<br>• Logging any improvements or renovations with their cost and year<br>• Confirming your bedroom and bathroom count is correct<br>• Adding your garage and lot size if they\'re not listed<br><br>Each one helps the model understand your home more precisely. Would you like to check if anything else is missing?<div class="intent-chips" id="accuracy-chips" style="margin-top:10px;"><button class="intent-chip" onclick="checkMissingFacts()">Check what\'s missing</button><button class="intent-chip" onclick="skipAccuracy()">I\'ll come back to this</button></div>');
+        setSuggestions(['"What other facts should I add?"', '"How do I log a renovation?"', '"When will my Zestimate update?"']);
       }
+    }, 700);
+  }
+
+  function marketDeepDive(choice) {
+    var chips = document.getElementById('market-deepdive-chips');
+    if (chips) chips.style.display = 'none';
+    var msgs = document.getElementById('voyager-messages');
+
+    if (choice === 'skip') {
+      appendMsg('msg-user', 'I\'m good for now');
+      showTypingThenReply(msgs, function() {
+        appendMsg('msg-voyager', 'Got it. Your market insights card will update as conditions change — I\'ll flag anything worth paying attention to. Anything else you want to dig into while you\'re here?');
+        setSuggestions(['"How is my Zestimate calculated?"', '"What can I do to improve my home value?"', '"How do I add an improvement?"']);
+      }, 600);
+      return;
+    }
+
+    appendMsg('msg-user', 'Yes, walk me through them');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Here\'s what the four stats on your market insights card actually mean for your home:<br><br><strong>0.1% 1-year price forecast</strong> — This is the expected appreciation for homes in 98103 over the next year. It\'s modest, which reflects a neutral market. Your home\'s value is unlikely to surge — but it\'s also unlikely to drop.<br><br><strong>15 days to pending</strong> — Homes are going under contract in about two weeks. That\'s a healthy pace. It means there\'s real buyer demand in your area.<br><br><strong>93 new listings in 30 days</strong> — Fresh supply coming to market. More listings means more competition if you ever did decide to sell — but right now this is just context for understanding how active the market is.<br><br><strong>286 active listings</strong> — Total homes available right now. Combined with the 15-day pending stat, this tells you inventory is moving steadily — not sitting.<br><br>The big picture: your market is balanced and active. For someone just keeping an eye on things, that\'s a stable backdrop.');
+      setSuggestions(['"What would change this market index?"', '"How does this compare to last year?"', '"What does this mean for my home value?"']);
+    }, 800);
+  }
+
+  function checkMissingFacts() {
+    var chips = document.getElementById('accuracy-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', 'Check what\'s missing');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Based on your current home facts, here\'s what\'s filled in and what could still improve accuracy:<br><br>✓ Bedrooms · 3<br>✓ Bathrooms · 2<br>✓ Square footage · 1,850 sq ft (just updated)<br>✓ Year built · 2003<br>⚠ Garage — not listed. Do you have a garage or covered parking?<br>⚠ Improvements — no renovations logged yet. Even a kitchen update or new roof can affect your estimate.<br><br>Want to add your garage info now?<div class="intent-chips" id="garage-chips" style="margin-top:10px;"><button class="intent-chip" onclick="addGarageInfo()">Yes, I have a garage</button><button class="intent-chip" onclick="skipGarage()">No garage</button><button class="intent-chip" onclick="skipGarage()">I\'ll do this later</button></div>');
+      setSuggestions(['"What counts as an improvement?"', '"How much does a garage affect my Zestimate?"', '"How do I log a renovation?"']);
+    }, 700);
+  }
+
+  function addGarageInfo() {
+    var chips = document.getElementById('garage-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', 'Yes, I have a garage');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Got it — I\'ve noted a garage on your home. How many cars does it fit?<div class="intent-chips" id="garage-size-chips" style="margin-top:10px;"><button class="intent-chip" onclick="saveGarageSize(1)">1 car</button><button class="intent-chip" onclick="saveGarageSize(2)">2 cars</button><button class="intent-chip" onclick="saveGarageSize(3)">3+ cars</button></div>');
+    }, 600);
+  }
+
+  function saveGarageSize(n) {
+    var chips = document.getElementById('garage-size-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', n + '-car garage');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Saved — ' + n + '-car garage added to your home facts. This will factor into your next Zestimate update.<br><br>Your home facts are in good shape now. The main thing left is logging any improvements — when you\'re ready, just tell me what you\'ve done to the home and I\'ll help you add it.');
+      setSuggestions(['"How do I log a renovation?"', '"What improvements add the most value?"', '"When will my Zestimate update?"']);
+    }, 600);
+  }
+
+  function skipGarage() {
+    var chips = document.getElementById('garage-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', 'I\'ll do this later');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'No problem — your home facts are in decent shape for now. Come back whenever you want to add more detail. The more complete the picture, the more accurate your Zestimate.');
+      setSuggestions(['"How do I log a renovation?"', '"What affects my Zestimate most?"', '"How often does my Zestimate update?"']);
+    }, 500);
+  }
+
+  function skipAccuracy() {
+    var chips = document.getElementById('accuracy-chips');
+    if (chips) chips.style.display = 'none';
+    appendMsg('msg-user', 'I\'ll come back to this');
+    var msgs = document.getElementById('voyager-messages');
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', 'Sure — your dashboard will be here when you\'re ready. Anything else on your mind about what you\'re seeing?');
+      setSuggestions(['"How is my Zestimate calculated?"', '"What does the market data mean for me?"', '"What would I net if I sold today?"']);
+    }, 500);
+  }
+
+  // ── MARKET INSIGHTS TILE CLICKS ──
+  function marketTileClick(el, tile) {
+    // Clear active state from all tiles in the module
+    document.querySelectorAll('.stat-tile, .market-index-card').forEach(function(t) { t.classList.remove('active'); });
+    el.classList.add('active');
+
+    var msgs = document.getElementById('voyager-messages');
+    var labels = {
+      'index': 'Market index — what does 51/100 mean?',
+      'forecast': '1-year price forecast — 0.1%',
+      'pending': 'Median days to pending — 15 days',
+      'new-listings': 'New listings in last 30 days — 93',
+      'active-listings': 'Active listings for sale — 286'
+    };
+    appendMsg('msg-user', labels[tile]);
+
+    var responses = {
+      'index': 'The market index runs from 0 to 100. Below 40 is a buyers market — more supply than demand, prices soften. Above 60 is a sellers market — high demand, low inventory, prices climb. At <strong>51</strong>, your market is balanced: neither side has a strong advantage right now.<br><br>For you as a homeowner tracking value, a neutral market means appreciation is likely to be steady rather than rapid. No windfall, but no erosion either. It\'s a stable backdrop.',
+      'forecast': 'The <strong>0.1% forecast</strong> is the projected appreciation for homes in 98103 over the next 12 months. It\'s modest — this reflects the neutral market conditions you\'re in.<br><br>For context, your home has already appreciated <strong>+8% over the past year</strong>. The forecast being lower doesn\'t mean your value will drop — it means the pace of growth is expected to slow and stabilize. That\'s normal after a period of strong appreciation.',
+      'pending': '<strong>15 days to pending</strong> means homes in your area are going under contract about two weeks after listing. That\'s a healthy pace — it signals real buyer demand.<br><br>This number is one of the best leading indicators of market health. If it starts dropping toward 7–10 days, demand is heating up and values tend to follow. If it climbs above 30, the market is cooling. Right now it\'s in a healthy middle zone.',
+      'new-listings': '<strong>93 new listings</strong> in the past 30 days means fresh supply is coming to market at a steady rate. This is what keeps the market balanced — enough new inventory to meet buyer demand without overwhelming it.<br><br>For you: more listings means buyers have options, which prevents the bidding-war dynamic that drives prices up fast. It\'s part of why the market index sits at 51 rather than 70+.',
+      'active-listings': '<strong>286 active listings</strong> is the total inventory available right now in 98103. Combined with the 15-day pending stat, you can see that inventory is moving — not sitting. When active listings stay elevated but homes keep going pending quickly, it means demand is absorbing supply at a steady pace.<br><br>If this number were to drop sharply while pending time also dropped, that\'s when you\'d start to see more competitive conditions and upward pressure on values.'
+    };
+
+    showTypingThenReply(msgs, function() {
+      appendMsg('msg-voyager', responses[tile]);
+      setSuggestions(['"What does this mean for my home value?"', '"How does this compare to last year?"', '"Which of these should I watch most closely?"']);
     }, 700);
   }
 
@@ -2414,6 +3506,38 @@
     scrollMessages();
 
     var lower = val.toLowerCase();
+
+    // Trigger: free-text life event matching (return visit context)
+    if (isReturnVisit && (lower.indexOf('paris') !== -1 || lower.indexOf('moving to') !== -1 || lower.indexOf('relocat') !== -1 || lower.indexOf('assignment') !== -1)) {
+      var hasParis = lower.indexOf('paris') !== -1;
+      showTypingThenReply(msgs, function() {
+        if (hasParis) {
+          appendMsg('msg-voyager', 'Paris — that\'s a real opportunity. How long is the assignment?<div class="intent-chips" id="paris-duration-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'duration\',\'2y\')">2–3 years, pretty fixed</button><button class="intent-chip" onclick="parisStep(\'duration\',\'open\')">2–3 years but could extend</button><button class="intent-chip" onclick="parisStep(\'duration\',\'perm\')">Could become permanent</button></div>');
+        } else {
+          appendMsg('msg-voyager', 'A work relocation — that\'s significant. Where are you headed?<div class="intent-chips" id="reloc-where-chips" style="margin-top:10px;"><button class="intent-chip" onclick="relocWhere(\'paris\')">Paris</button><button class="intent-chip" onclick="relocWhere(\'domestic\')">Somewhere in the US</button><button class="intent-chip" onclick="relocWhere(\'other-intl\')">Another country</button></div>');
+        }
+      }, 800);
+      return;
+    }
+    if (isReturnVisit && (lower.indexOf('married') !== -1 || lower.indexOf('engaged') !== -1 || lower.indexOf('wedding') !== -1)) {
+      lifeEvent('married');
+      return;
+    }
+    if (isReturnVisit && (lower.indexOf('baby') !== -1 || lower.indexOf('expecting') !== -1 || lower.indexOf('pregnant') !== -1 || lower.indexOf('growing family') !== -1)) {
+      lifeEvent('other');
+      return;
+    }
+
+    // Trigger: typed selections for post-save focus chips (e.g. "1 and 3", "1, 4", "2")
+    if (!homeFactsMode && document.getElementById('post-save-multi-wrap') && /\b[1-4]\b/.test(lower)) {
+      var nums4 = [];
+      [1,2,3,4].forEach(function(n) { if (new RegExp('\\b' + n + '\\b').test(lower)) nums4.push(n - 1); });
+      if (nums4.length > 0) {
+        window._postSaveSelected = nums4;
+        confirmPostSaveIntents();
+        return;
+      }
+    }
 
     // Trigger: numbered module selection (e.g. "1 and 3", "just 2", "1, 2")
     if (!homeFactsMode && /\b[123]\b/.test(lower)) {
@@ -2449,13 +3573,11 @@
     }
 
     // Trigger: open home facts drawer
-    if (!homeFactsMode && (lower.indexOf('home fact') !== -1 || lower.indexOf('update my home') !== -1 || lower.indexOf('edit home') !== -1)) {
+    if (!homeFactsMode && (lower.indexOf('home fact') !== -1 || lower.indexOf('update my home') !== -1 || lower.indexOf('edit home') !== -1 || lower.indexOf('how do i update') !== -1)) {
       showTypingThenReply(msgs, function() {
-        var reply = document.createElement('div');
-        reply.className = 'msg-voyager';
-        reply.innerHTML = 'I\'ve pulled up your home facts. Tell me what you\'d like to update and I\'ll make the change for you.';
-        msgs.appendChild(reply);
+        appendMsg('msg-voyager', 'You can update your home facts right here — no need to hunt for an edit button.<br><br>Just tell me what you want to change, for example:<br>• <em>"My square footage is actually 1,950"</em><br>• <em>"I have a 2-car garage"</em><br>• <em>"We finished the basement last year"</em><br><br>I\'ll pull up your home facts so you can review and confirm. I\'ve opened them now — tell me what needs updating.');
         openHomeFacts();
+        setSuggestions(['"My square footage is different"', '"I have a garage"', '"I added a bathroom"']);
       }, 700);
       return;
     }
@@ -2503,8 +3625,8 @@
         return;
       }
 
-      // Square footage update
-      if (sqftMatch && (lower.indexOf('sqft') !== -1 || lower.indexOf('sq ft') !== -1 || lower.indexOf('square') !== -1 || lower.indexOf('footage') !== -1)) {
+      // Square footage update — catch explicit units or a bare number (e.g. "1847")
+      if (sqftMatch && (lower.indexOf('sqft') !== -1 || lower.indexOf('sq ft') !== -1 || lower.indexOf('square') !== -1 || lower.indexOf('footage') !== -1 || /^\d[\d,]*$/.test(val.trim()))) {
         var newSqft = sqftMatch[1].replace(/,/g, '');
         var formatted = parseInt(newSqft).toLocaleString();
         showTypingThenReply(msgs, function() {
@@ -2593,7 +3715,18 @@
     }, 1000);
   })();
 
+  if (window.location.search.indexOf('rv2=1') !== -1) {
+    window.addEventListener('DOMContentLoaded', function() { activateReturnVisit2(); });
+  }
+
   </script>
+
+  <!-- ── ABSTRACT MODE TOGGLE ── -->
+  <div id="abstract-mode-toggle">
+    <span class="toggle-label">View:</span>
+    <button class="toggle-btn active" id="toggle-realistic" onclick="setAbstractMode(false)">Realistic</button>
+    <button class="toggle-btn inactive" id="toggle-abstract" onclick="setAbstractMode(true)">Abstract</button>
+  </div>
 
   <!-- ── HOME FACTS DRAWER ── -->
   <div id="hf-nav-block" class="hf-nav-block"></div>
@@ -2662,6 +3795,54 @@
       </div>
     </div>
   </div>
+
+  <!-- Voyager right-click context menu -->
+  <div id="voyager-ctx-menu">
+    <div class="voyager-ctx-pinned" id="voyager-ctx-pinned-label">Pinned</div>
+    <div class="voyager-ctx-item" id="voyager-ctx-pin-btn" onclick="voyagerCtxPin()">
+      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M26.49 13.93 18.07 5.51a1.76 1.76 0 0 0-2.48 0l-2.83 2.83a1.75 1.75 0 0 0-.34 2l-4.95 4.28a3.79 3.79 0 0 0-4.18.7l-.71.71a1 1 0 0 0 0 1.41l4.6 4.6-4.9 4.9a1 1 0 1 0 1.42 1.42l4.9-4.9 4.6 4.6a1 1 0 0 0 1.41 0l.71-.71a3.79 3.79 0 0 0 .7-4.18l4.28-4.95a1.75 1.75 0 0 0 2-.34l2.83-2.83a1.76 1.76 0 0 0 .36-2.12Z"/></svg>
+      Pin it
+    </div>
+  </div>
+  <script>
+  (function() {
+    var ctxMenu = document.getElementById('voyager-ctx-menu');
+    var ctxTarget = null;
+
+    document.addEventListener('contextmenu', function(e) {
+      var el = e.target.closest('.msg-voyager');
+      if (!el) return;
+      e.preventDefault();
+      ctxTarget = el;
+      var pinBtn = document.getElementById('voyager-ctx-pin-btn');
+      var pinnedLabel = document.getElementById('voyager-ctx-pinned-label');
+      if (el.dataset.pinned === '1') {
+        pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M26.49 13.93 18.07 5.51a1.76 1.76 0 0 0-2.48 0l-2.83 2.83a1.75 1.75 0 0 0-.34 2l-4.95 4.28a3.79 3.79 0 0 0-4.18.7l-.71.71a1 1 0 0 0 0 1.41l4.6 4.6-4.9 4.9a1 1 0 1 0 1.42 1.42l4.9-4.9 4.6 4.6a1 1 0 0 0 1.41 0l.71-.71a3.79 3.79 0 0 0 .7-4.18l4.28-4.95a1.75 1.75 0 0 0 2-.34l2.83-2.83a1.76 1.76 0 0 0 .36-2.12Z"/></svg> Already pinned';
+        pinnedLabel.style.display = 'block';
+      } else {
+        pinBtn.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M26.49 13.93 18.07 5.51a1.76 1.76 0 0 0-2.48 0l-2.83 2.83a1.75 1.75 0 0 0-.34 2l-4.95 4.28a3.79 3.79 0 0 0-4.18.7l-.71.71a1 1 0 0 0 0 1.41l4.6 4.6-4.9 4.9a1 1 0 1 0 1.42 1.42l4.9-4.9 4.6 4.6a1 1 0 0 0 1.41 0l.71-.71a3.79 3.79 0 0 0 .7-4.18l4.28-4.95a1.75 1.75 0 0 0 2-.34l2.83-2.83a1.76 1.76 0 0 0 .36-2.12Z"/></svg> Pin it';
+        pinnedLabel.style.display = 'none';
+      }
+      ctxMenu.style.display = 'block';
+      var x = e.clientX, y = e.clientY;
+      if (x + ctxMenu.offsetWidth > window.innerWidth) x = window.innerWidth - ctxMenu.offsetWidth - 8;
+      if (y + ctxMenu.offsetHeight > window.innerHeight) y = window.innerHeight - ctxMenu.offsetHeight - 8;
+      ctxMenu.style.left = x + 'px';
+      ctxMenu.style.top = y + 'px';
+    });
+
+    document.addEventListener('click', function() { ctxMenu.style.display = 'none'; });
+    document.addEventListener('keydown', function(e) { if (e.key === 'Escape') ctxMenu.style.display = 'none'; });
+
+    window.voyagerCtxPin = function() {
+      if (!ctxTarget || ctxTarget.dataset.pinned === '1') { ctxMenu.style.display = 'none'; return; }
+      var text = ctxTarget.innerText.trim();
+      addPin(text);
+      ctxTarget.dataset.pinned = '1';
+      ctxMenu.style.display = 'none';
+    };
+  })();
+  </script>
 
 </body>
 </html>

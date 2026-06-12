@@ -99,12 +99,19 @@
     .tab-row { display: flex; gap: 0; border-bottom: 2px solid #DEE2E6; margin-bottom: 14px; }
     .tab { font-size: 13px; font-weight: 600; color: #6C757D; padding: 7px 14px; cursor: pointer; text-decoration: none; border-bottom: 2px solid transparent; margin-bottom: -2px; }
     .tab.active { color: #000000; border-bottom-color: #000000; }
-    .chart-placeholder { width: 100%; height: 160px; background: #DCDEE5; border: 1px solid #C8CDD3; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #ADB5BD; font-size: 13px; margin-bottom: 8px; }
+    .chart-placeholder { width: 100%; height: 320px; background: #DCDEE5; border: 1px solid #C8CDD3; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #ADB5BD; font-size: 13px; margin-bottom: 8px; }
     .table-link { font-size: 13px; color: #000000; font-weight: 600; margin-bottom: 20px; display: block; }
 
     /* Edit facts callout */
-    .edit-facts-callout { font-size: 14px; color: #343A40; background: #F8F9FA; padding: 12px 16px; border-left: 3px solid #000000; margin-bottom: 16px; margin-top: 12px; }
-    .edit-facts-callout a { color: #000000; font-weight: 600; }
+    .edit-facts-callout { background: #1a1f36; border: none; border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; margin-top: 12px; }
+    .edit-facts-callout-eyebrow { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: #9BA8C0; margin-bottom: 10px; display: flex; align-items: center; gap: 5px; }
+    .edit-facts-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+    .facts-chip { font-size: 12px; font-weight: 600; color: #212529; background: #ffffff; border: 1.5px solid #ADB5BD; border-radius: 999px; padding: 4px 12px; }
+    .facts-chip.unknown { color: #9BA8C0; border: 1.5px dashed #4a5270; font-weight: 500; background: transparent; }
+    .edit-facts-callout-footer { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-top: 12px; border-top: 1px solid #2e3556; }
+    .edit-facts-callout-footer span { font-size: 12px; color: #9BA8C0; line-height: 1.4; font-style: italic; }
+    .edit-facts-callout a { display: inline-block; background: #2D8B5A; color: #ffffff; font-size: 12px; font-weight: 700; padding: 8px 16px; border-radius: 999px; text-decoration: none; white-space: nowrap; flex-shrink: 0; }
+    .edit-facts-callout a:hover { background: #236b46; }
 
     /* Cards */
     .card { background: #ffffff; border: 1px solid #C8CDD3; border-radius: 4px; padding: 18px 20px; margin-bottom: 16px; }
@@ -314,7 +321,7 @@
       <span class="global-nav-name">Jasmine W.</span>
       <div class="global-nav-avatar" id="nav-avatar" onclick="toggleUserMenu()">JW</div>
       <div id="user-menu" class="user-menu" style="display:none;">
-        <a href="nfshdp-postclaim.html" class="active">Your homes</a>
+        <a href="nfshdp-postclaim.html?claim=1" class="active">Your homes</a>
         <a href="#">Your team</a>
         <div class="user-menu-divider"></div>
         <a href="#">Saved homes</a>
@@ -456,7 +463,21 @@
 
         <!-- Edit facts callout — moved below history -->
         <div class="edit-facts-callout">
-          Help make your Zestimate&reg; more accurate &nbsp;<a href="claim-modal.html">Claim your home</a>
+          <div class="edit-facts-callout-eyebrow">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="12" height="12" fill="currentColor"><path d="M16 4a12 12 0 1 0 12 12A12 12 0 0 0 16 4zm0 22a10 10 0 1 1 10-10 10 10 0 0 1-10 10zm1-15h-2v6.41l4.29 4.3 1.42-1.42L17 16.59z"/></svg>
+            What Zillow knows
+          </div>
+          <div class="edit-facts-chips">
+            <span class="facts-chip">3 bed</span>
+            <span class="facts-chip">2 bath</span>
+            <span class="facts-chip">1,840 sq ft</span>
+            <span class="facts-chip unknown">upgrades?</span>
+            <span class="facts-chip unknown">condition?</span>
+          </div>
+          <div class="edit-facts-callout-footer">
+            <span>Add what only you know to make your Zestimate more accurate.</span>
+            <a href="claim-modal.html">Claim your home</a>
+          </div>
         </div>
       </div>
 
@@ -656,18 +677,34 @@
     <!-- RIGHT SIDEBAR -->
     <aside class="sidebar">
 
-      <!-- Claim your home card -->
-      <div class="sidebar-card">
-        <div class="sidebar-card-title">Is this your home?</div>
-        <div class="sidebar-card-body">Claim it to unlock owner-only insights:</div>
-        <ul class="claim-benefit-list">
-          <li>See your home equity and estimated net proceeds</li>
-          <li>Refine your Zestimate with your home's actual details</li>
-          <li>Get market stats specific to your home type</li>
-          <li>Track your home's value over time</li>
-          <li>Explore your selling, renting, and buying options</li>
-        </ul>
-        <a href="claim-modal.html" class="btn" style="width:100%; text-align:center; display:block;">Claim your home</a>
+      <div class="sidebar-card" style="text-align:center;">
+        <div style="margin-bottom:14px;">
+          <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="40" height="40" fill="currentColor">
+            <path d="M27.3 11.4L17.2 1.9a1.94 1.94 0 0 0-2.4 0L4.7 11.4A2 2 0 0 0 4 12.93V28a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V12.93a2 2 0 0 0-.7-1.53zM26 28H6V12.93L16 3.52 26 12.93V28z"/>
+            <path d="M20.5 15.8a3.2 3.2 0 0 0-4.5.7 3.2 3.2 0 0 0-4.5-.7 3.4 3.4 0 0 0 0 4.8L16 25l4.5-4.4a3.4 3.4 0 0 0 0-4.8z"/>
+          </svg>
+        </div>
+        <div style="font-size:16px; font-weight:800; color:#000; line-height:1.3; margin-bottom:8px; font-family:'Object Sans','Inter',sans-serif;">Keep an eye on this home</div>
+        <div style="font-size:12px; color:#6C757D; line-height:1.6; margin-bottom:16px;">Save it to your account and we'll let you know when something changes.</div>
+
+        <!-- Feature list -->
+        <div style="padding:4px 0; margin-bottom:16px; text-align:left; display:flex; flex-direction:column; gap:10px;">
+          <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:#343A40;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M28 28H6a2 2 0 0 1-2-2V4a1 1 0 0 0-2 0v22a4 4 0 0 0 4 4h22a1 1 0 0 0 0-2z"/><path d="M9 21a1 1 0 0 0 .71-.29l5.3-5.3 3.29 3.3a1 1 0 0 0 1.42 0l8-8A1 1 0 0 0 26.3 9.3L19 16.59l-3.29-3.3a1 1 0 0 0-1.42 0l-6 6A1 1 0 0 0 9 21z"/></svg>
+            Zestimate changes
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:#343A40;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path fill-rule="evenodd" clip-rule="evenodd" d="M27.29 11.4L17.2 1.9C16.49 1.37 15.51 1.37 14.8 1.9L4.71 11.4C4.26 11.78 4 12.34 4 12.93V28C4 29.1 4.9 30 6 30H26C27.1 30 28 29.1 28 28V12.93C28 12.34 27.74 11.78 27.29 11.4ZM6 28V12.93L16 3.52L26 12.93V28H20V20C20 18.9 19.1 18 18 18H14C12.9 18 12 18.9 12 20V28H6ZM14 28H18V20H14V28Z"/></svg>
+            If it lists for sale
+          </div>
+          <div style="display:flex; align-items:center; gap:10px; font-size:12px; color:#343A40;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M16 4a12 12 0 1 0 12 12A12 12 0 0 0 16 4zm0 22a10 10 0 1 1 10-10 10 10 0 0 1-10 10zm1-15h-2v6.41l4.29 4.3 1.42-1.42L17 16.59z"/></svg>
+            When it sells
+          </div>
+        </div>
+
+        <a href="#" style="display:block; background:#212529; color:#fff; font-size:13px; font-weight:700; padding:11px 20px; border-radius:999px; text-decoration:none; margin-bottom:10px;">Track this home</a>
+        <div style="font-size:11px; color:#ADB5BD;">No account needed &nbsp;·&nbsp; Unsave anytime</div>
       </div>
 
     </aside>
