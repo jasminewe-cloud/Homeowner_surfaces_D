@@ -884,7 +884,7 @@
       </div>
 
       <!-- Home equity card -->
-      <div id="home-equity-card" class="card" style="margin-bottom: 16px; display:none;">
+      <div id="home-equity-card" class="card" style="margin-bottom: 16px;">
         <div class="private-label"><span class="private-label-eye"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M16 8C8 8 2 16 2 16s6 8 14 8 14-8 14-8-6-8-14-8zm0 13a5 5 0 1 1 5-5 5 5 0 0 1-5 5zm0-8a3 3 0 1 0 3 3 3 3 0 0 0-3-3z"/></svg></span> Visible only to you</div>
         <div class="card-title">Your home equity</div>
         <div id="equity-return-subtitle" style="display:none; font-size:12px; color:#6C757D; margin-bottom:10px; margin-top:-4px;">Added because your equity grew meaningfully since your last visit</div>
@@ -1001,7 +1001,7 @@
       </div>
 
       <!-- Section A: Market insights -->
-      <div id="market-insights-section" class="market-insights-section" style="display:none;">
+      <div id="market-insights-section" class="market-insights-section" style="">
         <div class="section-heading">Market insights for 98103</div>
         <div class="market-grid">
           <div class="market-index-card" onclick="marketTileClick(this,'index')">
@@ -1456,7 +1456,7 @@
         if (intents.indexOf('save') !== -1) parts.push('an <strong>equity tracker</strong> so you can see what you\'ve built up');
         if (intents.indexOf('watch') !== -1 && intents.indexOf('worth') === -1) parts.push('a <strong>market pulse</strong> card so you can keep an eye on local conditions');
         if (intents.indexOf('move') !== -1) parts.push('a note that you\'re exploring selling options — I\'ll surface the right tools when you\'re ready to go deeper');
-        appendMsg('msg-voyager', 'Got it — I\'ve added ' + parts.join(', and ') + ' to your dashboard.<br><br>Anything you want to start with?');
+        appendMsg('msg-voyager', 'You\'ve got everything you need to monitor your home\'s value and equity.<br><br>Anything you want to start with?');
       }
       setSuggestions([]);
       setTimeout(function() {
@@ -1693,38 +1693,7 @@
       var labels = { 'love': 'I want to come back to this home', 'open': 'Open to selling and starting fresh when I\'m back', 'unsure': 'Honestly not sure' };
       appendMsg('msg-user', labels[answer]);
       showTypingThenReply(msgs, function() {
-        appendMsg('msg-voyager', 'That\'s useful context. Now let\'s talk about the financial side.<br><br>Will the consultancy be covering your housing in Paris?<div class="intent-chips" id="paris-housing-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'housing\',\'covered\')">Yes — executive apartment, no rent</button><button class="intent-chip" onclick="parisStep(\'housing\',\'partial\')">Partial stipend</button><button class="intent-chip" onclick="parisStep(\'housing\',\'self\')">No, I\'ll be paying rent myself</button></div>');
-      }, 900);
-
-    } else if (beat === 'housing') {
-      _parisCtx.housing = answer;
-      var labels = { 'covered': 'Yes — executive apartment, no rent', 'partial': 'Partial stipend', 'self': 'No, I\'ll be paying rent myself' };
-      appendMsg('msg-user', labels[answer]);
-      showTypingThenReply(msgs, function() {
-        if (answer === 'covered') {
-          appendMsg('msg-voyager', 'Good — that removes a big variable. But you\'ll still have real expenses in Paris even without rent.<br><br>What will you be financially responsible for? Select everything that applies:<div id="paris-expenses-wrap" style="margin-top:10px;display:flex;flex-direction:column;gap:8px;">' +
-            ['Utilities', 'Food & groceries', 'Entertainment & dining out', 'Shopping & personal expenses'].map(function(label, i) {
-              return '<button class="intent-chip" id="pexp-' + i + '" style="text-align:left;display:flex;align-items:center;gap:10px;font-style:normal;" onclick="toggleParisExpense(' + i + ')">' +
-                '<span style="min-width:20px;height:20px;border-radius:50%;border:1.5px solid #212529;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#212529;" id="pexp-num-' + i + '">' + (i+1) + '</span>' +
-                '<span>' + label + '</span></button>';
-            }).join('') +
-            '<button class="intent-chip" id="pexp-all" style="text-align:left;display:flex;align-items:center;gap:10px;font-style:normal;" onclick="selectAllParisExpenses()">' +
-            '<span style="min-width:20px;height:20px;border-radius:50%;border:1.5px solid #212529;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#212529;" id="pexp-num-all">✓</span>' +
-            '<span>All of the above</span></button>' +
-            '<button onclick="confirmParisExpenses()" style="margin-top:4px;background:#212529;color:#fff;font-size:13px;font-weight:700;padding:9px 16px;border-radius:999px;border:none;cursor:pointer;" id="paris-exp-confirm">Submit</button>' +
-            '</div>');
-          window._parisExpenses = [];
-        } else {
-          appendMsg('msg-voyager', 'Understood — so housing costs in Paris will eat into your income on top of everything else. That makes carrying your Seattle mortgage more of a stretch.<br><br>After all your Paris expenses, do you think you\'d still be able to comfortably cover your mortgage each month?<div class="intent-chips" id="paris-carry-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'carry\',\'yes\')">Yes, I think I can manage both</button><button class="intent-chip" onclick="parisStep(\'carry\',\'tight\')">It would be tight</button><button class="intent-chip" onclick="parisStep(\'carry\',\'no\')">Probably not without some help</button><button class="intent-chip" onclick="parisStep(\'carry\',\'unsure\')">Not sure yet</button></div>');
-        }
-      }, 900);
-
-    } else if (beat === 'carry') {
-      _parisCtx.carry = answer;
-      var labels = { 'yes': 'Yes, I think I can manage both', 'tight': 'It would be tight', 'no': 'Probably not without some help', 'unsure': 'Not sure yet' };
-      appendMsg('msg-user', labels[answer]);
-      showTypingThenReply(msgs, function() {
-        appendMsg('msg-voyager', 'Good to know. Last thing — this is more of a gut check.<br><br>Managing a rental from Paris means dealing with a property manager, maintenance calls, and tenant issues on a different time zone. Selling is a clean break but it\'s final. Keeping the home vacant is emotionally simpler but expensive and the home still needs oversight.<br><br>Which of those feels most like you?<div class="intent-chips" id="paris-risk-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'risk\',\'clean\')">I prefer a clean break — less to manage</button><button class="intent-chip" onclick="parisStep(\'risk\',\'asset\')">I\'d rather keep the asset even if it\'s complex</button><button class="intent-chip" onclick="parisStep(\'risk\',\'home\')">I just want to come home to my house when I\'m back</button></div>');
+        appendMsg('msg-voyager', 'That\'s useful context. Last thing — this is more of a gut check.<br><br>Managing a rental from Paris means dealing with a property manager, maintenance calls, and tenant issues on a different time zone. Selling is a clean break but it\'s final. Keeping the home vacant is emotionally simpler but expensive and the home still needs oversight.<br><br>Which of those feels most like you?<div class="intent-chips" id="paris-risk-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'risk\',\'clean\')">I prefer a clean break — less to manage</button><button class="intent-chip" onclick="parisStep(\'risk\',\'asset\')">I\'d rather keep the asset even if it\'s complex</button><button class="intent-chip" onclick="parisStep(\'risk\',\'home\')">I just want to come home to my house when I\'m back</button></div>');
       }, 900);
 
     } else if (beat === 'risk') {
@@ -1737,54 +1706,6 @@
     }
   }
 
-  window._parisExpenses = [];
-  var _parisExpenseLabels = ['Utilities', 'Food & groceries', 'Entertainment & dining out', 'Shopping & personal expenses'];
-
-  function toggleParisExpense(i) {
-    var idx = window._parisExpenses.indexOf(i);
-    var btn = document.getElementById('pexp-' + i);
-    var numEl = document.getElementById('pexp-num-' + i);
-    if (idx === -1) {
-      window._parisExpenses.push(i);
-      btn.style.background = '#212529'; btn.style.color = '#fff';
-      numEl.style.borderColor = '#fff'; numEl.style.color = '#fff';
-    } else {
-      window._parisExpenses.splice(idx, 1);
-      btn.style.background = ''; btn.style.color = '';
-      numEl.style.borderColor = '#212529'; numEl.style.color = '#212529';
-    }
-    var confirmBtn = document.getElementById('paris-exp-confirm');
-    if (confirmBtn) confirmBtn.style.display = window._parisExpenses.length > 0 ? '' : 'none';
-  }
-
-  function selectAllParisExpenses() {
-    var allBtn = document.getElementById('pexp-all');
-    var allNumEl = document.getElementById('pexp-num-all');
-    var count = _parisExpenseLabels.length;
-    window._parisExpenses = [0,1,2,3];
-    for (var i = 0; i < count; i++) {
-      var btn = document.getElementById('pexp-' + i);
-      var numEl = document.getElementById('pexp-num-' + i);
-      if (btn) { btn.style.background = '#212529'; btn.style.color = '#fff'; }
-      if (numEl) { numEl.style.borderColor = '#fff'; numEl.style.color = '#fff'; }
-    }
-    allBtn.style.background = '#212529'; allBtn.style.color = '#fff';
-    allNumEl.style.borderColor = '#fff'; allNumEl.style.color = '#fff';
-    var confirmBtn = document.getElementById('paris-exp-confirm');
-    if (confirmBtn) confirmBtn.style.display = '';
-  }
-
-  function confirmParisExpenses() {
-    var wrap = document.getElementById('paris-expenses-wrap');
-    if (wrap) wrap.style.display = 'none';
-    var selected = window._parisExpenses.slice().sort().map(function(i) { return _parisExpenseLabels[i]; });
-    _parisCtx.expenses = selected;
-    var msgs = document.getElementById('voyager-messages');
-    appendMsg('msg-user', selected.join(' · '));
-    showTypingThenReply(msgs, function() {
-      appendMsg('msg-voyager', 'So even without rent, you\'re covering ' + selected.join(', ') + ' in euros on a dollar income. The conversion gap is real — what feels comfortable in Seattle can get tight fast in Paris.<br><br>After accounting for that, do you think you\'d still be able to cover your Seattle mortgage each month?<div class="intent-chips" id="paris-carry-chips" style="margin-top:10px;"><button class="intent-chip" onclick="parisStep(\'carry\',\'yes\')">Yes, I think I can manage both</button><button class="intent-chip" onclick="parisStep(\'carry\',\'tight\')">It would be tight</button><button class="intent-chip" onclick="parisStep(\'carry\',\'no\')">Probably not without some help</button><button class="intent-chip" onclick="parisStep(\'carry\',\'unsure\')">Not sure yet</button></div>');
-    }, 900);
-  }
 
   function parisGoalReveal(msgs) {
     showTypingThenReply(msgs, function() {
