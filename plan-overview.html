@@ -44,7 +44,7 @@
 
     /* ── PAGE HEADER ── */
     .page-header { flex-shrink: 0; padding: 28px 40px 0; background: #F8F9FA; }
-    .page-title { font-size: 36px; font-weight: 900; color: #000000; margin-bottom: 16px; }
+    .page-title { font-size: 36px; font-weight: 900; color: #000000; margin-bottom: 16px; font-family: var(--font-brand); }
 
     /* ── PAGE BODY: left rail | center | voyager ── */
     .page-body { flex: 1; min-height: 0; display: grid; grid-template-columns: 280px 1fr 320px; }
@@ -901,8 +901,8 @@
           <!-- ── TASK 2: Compare your three paths financially ── -->
           <div id="section-2">
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#ADB5BD; margin-bottom:6px;">Task 2</div>
-            <div class="section-heading">How your three paths compare</div>
-            <div class="section-sub">Based on your equity position. Adjust the sliders below to match your situation and see how each path compares financially.</div>
+            <div class="section-heading">Prepare your home &amp; list it</div>
+            <div class="section-sub">Get your home ready to stand out and attract buyers.</div>
             <div class="ai-insight"><svg class="ai-insight-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M16 2c-.5 5.5-2.5 9.5-8 14 5.5.5 9.5 2.5 14 8 .5-5.5 2.5-9.5 8-14-5.5-.5-9.5-2.5-14-8Zm-10 2c-.3 2.5-1.2 4-3.5 5.5 2.3.3 4 1.2 5.5 3.5.3-2.3 1.2-4 3.5-5.5C9.2 7.2 7.5 6.3 6 4Z"/></svg>Three paths, your numbers. The right path depends on how much complexity you can manage from Paris and how attached you are to coming back to this specific home.</div>
 
             <div class="path-cards-grid">
@@ -1070,8 +1070,8 @@
           <!-- ── TASK 3: If selling feels right ── -->
           <div id="section-3">
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#ADB5BD; margin-bottom:6px;">Task 3</div>
-            <div class="section-heading">If selling: what execution looks like</div>
-            <div class="section-sub">Once you've decided to sell, timing still matters. Adjust the window to see how market conditions shift.</div>
+            <div class="section-heading">Find a buyer</div>
+            <div class="section-sub">Review your offers and choose what works best for you.</div>
 
             <!-- Sell now vs later interactive card -->
             <div class="content-card" style="margin-bottom:16px; padding:0; overflow:hidden;">
@@ -1170,8 +1170,8 @@
           <!-- ── TASK 4: Sale ── -->
           <div id="section-4">
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#ADB5BD; margin-bottom:6px;">Task 4</div>
-            <div class="section-heading">If renting or keeping: what that involves from abroad</div>
-            <div class="section-sub">Both paths keep you in the home long-term. They have very different cost and complexity profiles.</div>
+            <div class="section-heading">Close your sale</div>
+            <div class="section-sub">Wrap up the final steps and complete your sale.</div>
             <div class="ai-insight"><svg class="ai-insight-icon" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="16" height="16" fill="currentColor"><path d="M16 2c-.5 5.5-2.5 9.5-8 14 5.5.5 9.5 2.5 14 8 .5-5.5 2.5-9.5 8-14-5.5-.5-9.5-2.5-14-8Zm-10 2c-.3 2.5-1.2 4-3.5 5.5 2.3.3 4 1.2 5.5 3.5.3-2.3 1.2-4 3.5-5.5C9.2 7.2 7.5 6.3 6 4Z"/></svg>Renting from abroad is manageable but requires setup before you leave. A property manager is essential. The carrying cost path is simple but expensive — make sure you're clear on the monthly number.</div>
 
             <div class="content-card" style="margin-bottom:16px;">
@@ -2552,7 +2552,7 @@
     }
 
     // C. All tasks not started
-    for (var ti = 1; ti <= 5; ti++) {
+    for (var ti = 1; ti <= 4; ti++) {
       var tb = document.getElementById('task-badge-' + ti);
       var tc = document.getElementById('task-card-' + ti);
       if (tb) { tb.className = 'task-badge state-notstarted'; tb.textContent = ti; }
@@ -2569,8 +2569,10 @@
       var homeSnapshot = sellingPanel.querySelector('.home-snapshot-card');
       var summaryCard = document.createElement('div');
       summaryCard.id = 'rv2-summary-card';
-      summaryCard.style.cssText = 'background:#1a1f36; border:none; border-radius:8px; padding:20px 24px; margin-bottom:16px; color:#9BA8C0;';
+      summaryCard.style.cssText = 'color:#9BA8C0;';
       summaryCard.innerHTML =
+        '<div style="font-size:24px; font-weight:900; color:#212529; margin-bottom:12px; font-family:var(--font-brand); letter-spacing:-0.01em;">Evaluate your selling position.</div>' +
+        '<div style="background:#1a1f36; border:none; border-radius:8px; padding:20px 24px; margin-bottom:16px;">' +
         '<div style="font-size:11px; font-weight:800; text-transform:uppercase; letter-spacing:1px; color:#9BA8C0; margin-bottom:12px; display:flex; align-items:center; gap:6px;">' +
           SPARKLE_SVG + ' WHERE YOU LEFT OFF' +
         '</div>' +
@@ -2590,6 +2592,7 @@
         '</div>' +
         '<div style="font-size:13px; color:#fff; line-height:1.6; border-top:1px solid rgba(255,255,255,0.1); padding-top:12px;">' +
           'Seattle market is very hot — median DOM <strong>8 days</strong>, sale-to-list <strong>106%</strong>. 5 comparable homes sold above asking in the last 30 days.' +
+        '</div>' +
         '</div>';
       if (homeSnapshot && homeSnapshot.parentNode) {
         homeSnapshot.parentNode.insertBefore(summaryCard, homeSnapshot);
@@ -2700,12 +2703,12 @@
     // 2. Replace all 5 task cards with new ones
     if (taskList) {
       taskList.innerHTML =
-        // Task 1 — inprogress
-        '<div class="task-card task-inprogress" id="task-card-1" onclick="selectTask(1)">' +
-          '<div class="task-badge state-inprogress" id="task-badge-1">1</div>' +
+        // Task 1
+        '<div class="task-card" id="task-card-1" onclick="selectTask(1)">' +
+          '<div class="task-badge state-notstarted" id="task-badge-1">1</div>' +
           '<div class="task-body">' +
-            '<div class="task-name" id="task-name-1">Evaluate</div>' +
-            '<div class="task-sub">Know your numbers</div>' +
+            '<div class="task-name" id="task-name-1">Understand your selling position</div>' +
+            '<div class="task-sub">Get clear on your home\'s value, timing, and selling options.</div>' +
           '</div>' +
           '<div class="task-chevron" id="task-chevron-1">&#8250;</div>' +
         '</div>' +
@@ -2713,8 +2716,8 @@
         '<div class="task-card" id="task-card-2" onclick="selectTask(2)">' +
           '<div class="task-badge state-notstarted" id="task-badge-2">2</div>' +
           '<div class="task-body">' +
-            '<div class="task-name" id="task-name-2">Prepare</div>' +
-            '<div class="task-sub">Get sale ready</div>' +
+            '<div class="task-name" id="task-name-2">Prepare your home &amp; list it</div>' +
+            '<div class="task-sub">Get your home ready to stand out and attract buyers.</div>' +
           '</div>' +
           '<div class="task-chevron" id="task-chevron-2">&#8250;</div>' +
         '</div>' +
@@ -2727,8 +2730,8 @@
         '<div class="task-card" id="task-card-3" onclick="selectTask(3)">' +
           '<div class="task-badge state-notstarted" id="task-badge-3">3</div>' +
           '<div class="task-body">' +
-            '<div class="task-name" id="task-name-3">List</div>' +
-            '<div class="task-sub">Bring it to market</div>' +
+            '<div class="task-name" id="task-name-3">Find a buyer</div>' +
+            '<div class="task-sub">Review your offers and choose what works best for you.</div>' +
           '</div>' +
           '<div class="task-chevron" id="task-chevron-3">&#8250;</div>' +
         '</div>' +
@@ -2736,24 +2739,15 @@
         '<div class="task-card" id="task-card-4" onclick="selectTask(4)">' +
           '<div class="task-badge state-notstarted" id="task-badge-4">4</div>' +
           '<div class="task-body">' +
-            '<div class="task-name" id="task-name-4">Sale</div>' +
-            '<div class="task-sub">Showings &amp; negotiate</div>' +
+            '<div class="task-name" id="task-name-4">Close your sale</div>' +
+            '<div class="task-sub">Wrap up the final steps and complete your sale.</div>' +
           '</div>' +
           '<div class="task-chevron" id="task-chevron-4">&#8250;</div>' +
-        '</div>' +
-        // Task 5
-        '<div class="task-card" id="task-card-5" onclick="selectTask(5)">' +
-          '<div class="task-badge state-notstarted" id="task-badge-5">5</div>' +
-          '<div class="task-body">' +
-            '<div class="task-name" id="task-name-5">Close</div>' +
-            '<div class="task-sub">Hand over the keys</div>' +
-          '</div>' +
-          '<div class="task-chevron" id="task-chevron-5">&#8250;</div>' +
         '</div>';
 
       // Lock tasks 3–5
       var LOCK_SVG = '<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" viewBox="0 0 32 32" width="14" height="14" fill="currentColor"><path d="M26 12h-1V8a9 9 0 0 0-18 0v4H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h20a2 2 0 0 0 2-2V14a2 2 0 0 0-2-2ZM16 23a2 2 0 1 1 2-2 2 2 0 0 1-2 2Zm5-11H11V8a5 5 0 0 1 10 0Z"/></svg>';
-      [3, 4, 5].forEach(function(i) {
+      [3, 4].forEach(function(i) {
         var card = document.getElementById('task-card-' + i);
         var chevron = document.getElementById('task-chevron-' + i);
         if (card) card.classList.add('task-locked');
@@ -2782,8 +2776,8 @@
     if (s1 && s3orig) {
       s1.innerHTML =
         '<div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#ADB5BD; margin-bottom:6px;">Task 1</div>' +
-        '<div class="section-heading">Sale snapshot</div>' +
-        '<div class="section-sub">Here\'s where you stand today — what you\'d net, what the market looks like, and recent comps.</div>' +
+        '<div class="section-heading">Understand your selling position</div>' +
+        '<div class="section-sub">Get clear on your home\'s value, timing, and selling options.</div>' +
         s3orig.querySelector('.content-card').outerHTML +
         '<div class="voyager-prompt-bar">' +
           '<span class="voyager-prompt-text">"What would I actually walk away with if I sold in the next 60 days?"</span>' +
