@@ -2638,25 +2638,23 @@
       }
     };
 
-    // Apply sell goal state on load — builds task list, progress bar, locked tasks
-    setTimeout(function() {
-      applyRV2NewGoal();
-      // Hide departure banner, new goal card, task 1 content and its divider
-      ['selling-departure-banner', 'rv2-new-goal-card', 'section-1', 'divider-1'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.style.display = 'none';
-      });
-      // Show where-you-left-off card and home snapshot
-      ['rv2-summary-card', 'selling-home-snapshot'].forEach(function(id) {
-        var el = document.getElementById(id);
-        if (el) el.style.display = '';
-      });
-      // Reset task 1 badge to not-started
-      var b1 = document.getElementById('task-badge-1');
-      var c1 = document.getElementById('task-card-1');
-      if (b1) { b1.className = 'task-badge state-notstarted'; b1.textContent = '1'; }
-      if (c1) { c1.className = 'task-card'; }
-    }, 200);
+    // Apply sell goal state synchronously on load
+    applyRV2NewGoal();
+    // Hide departure banner, new goal card, task 1 content and its divider
+    ['selling-departure-banner', 'rv2-new-goal-card', 'section-1', 'divider-1'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    // Show where-you-left-off card and home snapshot
+    ['rv2-summary-card', 'selling-home-snapshot'].forEach(function(id) {
+      var el = document.getElementById(id);
+      if (el) el.style.display = '';
+    });
+    // Reset task 1 badge to not-started
+    var b1 = document.getElementById('task-badge-1');
+    var c1 = document.getElementById('task-card-1');
+    if (b1) { b1.className = 'task-badge state-notstarted'; b1.textContent = '1'; }
+    if (c1) { c1.className = 'task-card'; }
   }
 
   function applyRV2NewGoal() {
