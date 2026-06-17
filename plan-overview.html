@@ -2638,13 +2638,20 @@
       }
     };
 
-    // Show header cards on initial load (before any task is selected)
+    // Apply sell goal state on load — builds task list, progress bar, locked tasks
     setTimeout(function() {
+      applyRV2NewGoal();
+      // Show header cards after goal is applied
       ['rv2-summary-card', 'selling-home-snapshot'].forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.style.display = '';
       });
-    }, 100);
+      // Reset task 1 to not-started (applyRV2NewGoal sets it inprogress)
+      var b1 = document.getElementById('task-badge-1');
+      var c1 = document.getElementById('task-card-1');
+      if (b1) { b1.className = 'task-badge state-notstarted'; b1.textContent = '1'; }
+      if (c1) { c1.className = 'task-card'; }
+    }, 200);
   }
 
   function applyRV2NewGoal() {
