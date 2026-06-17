@@ -709,8 +709,8 @@
           <div class="task-list">
 
             <!-- Task 1 -->
-            <div class="task-card task-inprogress" id="task-card-1" onclick="selectTask(1)">
-              <div class="task-badge state-inprogress" id="task-badge-1">1</div>
+            <div class="task-card" id="task-card-1" onclick="selectTask(1)">
+              <div class="task-badge state-notstarted" id="task-badge-1">1</div>
               <div class="task-body">
                 <div class="task-name" id="task-name-1">Review your equity</div>
                 <div class="task-sub">Understand what you have and what it unlocks</div>
@@ -2548,42 +2548,17 @@
       var title = sellingRail.querySelector('.goal-title');
       var meta = sellingRail.querySelector('.goal-meta');
       if (eyebrow) eyebrow.textContent = 'Active Goal';
-      if (title) title.textContent = 'Figure out what to do with my home before I leave for Paris.';
-      if (meta) meta.innerHTML = 'Active &nbsp;&middot;&nbsp; Last updated 12 months ago &nbsp;&middot;&nbsp; Departure date: passed';
+      if (title) title.textContent = 'Sell my home.';
+      if (meta) meta.innerHTML = 'Active &nbsp;&middot;&nbsp; Just created';
     }
 
-    // C. Update task badges and cards
-    // Task 1: complete
-    var b1 = document.getElementById('task-badge-1');
-    var c1 = document.getElementById('task-card-1');
-    if (b1) { b1.className = 'task-badge state-complete'; b1.textContent = '✓'; }
-    if (c1) { c1.className = 'task-card task-complete'; }
-
-    // Task 2: complete
-    var b2 = document.getElementById('task-badge-2');
-    var c2 = document.getElementById('task-card-2');
-    if (b2) { b2.className = 'task-badge state-complete'; b2.textContent = '✓'; }
-    if (c2) { c2.className = 'task-card task-complete'; }
-
-    // Task 3: complete
-    var b3 = document.getElementById('task-badge-3');
-    var c3 = document.getElementById('task-card-3');
-    if (b3) { b3.className = 'task-badge state-complete'; b3.textContent = '✓'; }
-    if (c3) { c3.className = 'task-card task-complete'; }
-
-    // Task 4: in progress — update sub text
-    var b4 = document.getElementById('task-badge-4');
-    var c4 = document.getElementById('task-card-4');
-    if (b4) { b4.className = 'task-badge state-inprogress'; b4.textContent = '4'; }
-    if (c4) {
-      c4.className = 'task-card task-inprogress';
-      var sub4 = c4.querySelector('.task-sub');
-      if (sub4) sub4.textContent = 'Last active · In progress';
+    // C. All tasks not started
+    for (var ti = 1; ti <= 5; ti++) {
+      var tb = document.getElementById('task-badge-' + ti);
+      var tc = document.getElementById('task-card-' + ti);
+      if (tb) { tb.className = 'task-badge state-notstarted'; tb.textContent = ti; }
+      if (tc) { tc.className = 'task-card'; }
     }
-
-    // Task 5: not started
-    var b5 = document.getElementById('task-badge-5');
-    if (b5) { b5.className = 'task-badge state-notstarted'; b5.textContent = '5'; }
 
     // D. Replace departure banner in selling panel with rv2-summary-card
     var sellingPanel = document.getElementById('plan-panel-selling');
