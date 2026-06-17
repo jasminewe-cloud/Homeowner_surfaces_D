@@ -771,7 +771,6 @@
 
           <!-- Dev sim link -->
           <div style="text-align:right; margin-bottom:8px;">
-            <a href="nfshdp-postclaim.html?rv2=1" style="font-size:11px; color:#6C757D; text-decoration:underline; font-family:inherit;">Simulate return visit 2 (back from Paris) →</a>
           </div>
 
           <!-- Departure countdown banner -->
@@ -808,7 +807,7 @@
           </div>
 
           <!-- ── TASK 1: Review your equity here ── -->
-          <div id="section-1">
+          <div id="section-1" style="display:none;">
             <div style="font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.08em; color:#ADB5BD; margin-bottom:6px;">Task 1</div>
             <div class="section-heading">Your equity position</div>
             <div class="section-sub">Start here — understanding your equity is the foundation. Once you know what you have and what it unlocks, the path comparison in Task 2 will make a lot more sense.</div>
@@ -2638,6 +2637,14 @@
         rv2AppendMsg('msg-voyager', 'Got it — in the full product, your Home Advisor would respond here based on your home\'s data and context.');
       }
     };
+
+    // Show header cards on initial load (before any task is selected)
+    setTimeout(function() {
+      ['rv2-summary-card', 'selling-home-snapshot'].forEach(function(id) {
+        var el = document.getElementById(id);
+        if (el) el.style.display = '';
+      });
+    }, 100);
   }
 
   function applyRV2NewGoal() {
